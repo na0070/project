@@ -35,6 +35,8 @@ void kmain(void)
    // 0) Initialize Serial I/O 
    // functions to initialize serial I/O can be found in serial.c
    // there are 3 functions to call
+   
+   init_serial(COM1);
  
    klogv("Starting MPX boot sequence...");
    klogv("Initialized serial I/O on COM1 device...");
