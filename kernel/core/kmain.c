@@ -68,8 +68,8 @@ void kmain(void)
     // this creates and initializes a default interrupt vector table
     // this function is in tables.c
     
-    init_pic(void);
-    init_irq(void);
+    init_pic();
+    init_irq();
     sti();
     
     klogv("Interrupt vector table initialized!");
