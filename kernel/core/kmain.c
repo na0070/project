@@ -37,6 +37,8 @@ void kmain(void)
    // there are 3 functions to call
    
    init_serial(COM1);
+   set_serial_out(COM1);
+   set_serial_in(COM1);
  
    klogv("Starting MPX boot sequence...");
    klogv("Initialized serial I/O on COM1 device...");
@@ -44,6 +46,8 @@ void kmain(void)
    // 1) Initialize the support software by identifying the current
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
+   
+   mpx_init(MODULE_R1);
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
@@ -55,12 +59,18 @@ void kmain(void)
    //  you will need to initialize the global
    // this keeps track of allocated segments and pages
    klogv("Initializing descriptor tables...");
-
-
+   
+   init_gdt();
+   init_idt();
+   
 
     // 4)  Interrupt vector table --  tables.c
     // this creates and initializes a default interrupt vector table
     // this function is in tables.c
+    
+    init_pic(void);
+    init_irq(void);
+    sti();
     
     klogv("Interrupt vector table initialized!");
     
@@ -72,6 +82,8 @@ void kmain(void)
    // NOTE:  You will only have about 70000 bytes of dynamic memory
    //
    klogv("Initializing virtual memory...");
+   
+   init_paging();
 
 
    // 6) Call YOUR command handler -  interface method
