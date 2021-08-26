@@ -11,6 +11,9 @@
 #include <core/io.h>
 #include <core/serial.h>
 
+//temporary
+#include <modules/mpx_supt.h>
+
 #define NO_ERROR 0
 
 // Active devices used for serial I/O
@@ -93,10 +96,63 @@ int *polling(char *buffer, int *count){
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
 
+		int i = 0; //index
+		int counter = *count; // size of buffer (max number of characters allowewd)
+		
+		serial_print("Start typing:\n"); // prompt message to begin typing
+		
+		while (counter > 0) { // while buffer is not full
+			
+			if (inb(COM1+5)&1) {	//if data is available in COM1
+			
+			buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
+			
+			
+				if (buffer[i] == '\r') {	// if enter key is pressed
+					buffer[i] = '\n';		// set a new line where we stopped at in buffer
+					buffer[i+1] = '\0';		// add the terminating character to indicate end of string
+											
+					break; 					// good bye
+				}
+				else {	// other keys
+					
+					i = i+1;	// go to next empty location in buffer		
+					counter = counter-1;	// reduce max number of empty spaces by one
+					
+				}
+			
+			}
+		}
+		
+	/*
+		issues/to do:
+				- still not sure how to print one character at a time
+				- not sure how to "un-print" a character after printing it on terminal
+				- how to show in terminal that the cursor is moving left/right
+				- have to add other special functionality keys
+				- know how to create/edit makefiles for new .c files
+				- how to properly exit the program from terminal after "shutdown" instead of closing/reopening
+	*/
+	
+	
 // remove the following line after implementing your module, this is present
 // just to allow the program to compile before R1 is complete
 strlen(buffer);
 
 return count;
+}
+
+
+// temporary
+
+void comm() {
+	char buffer[80];
+	int size = 80;
+	
+	sys_req(READ,DEFAULT_DEVICE,buffer,&size);
+	
+	sys_req(WRITE,DEFAULT_DEVICE,buffer,&size);
+	return;
+
 }
 

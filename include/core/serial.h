@@ -49,4 +49,9 @@ int set_serial_in(int device);
 
 int *polling(char *buffer, int *count);
 
+//temporary
+
+
+void comm();
+
 #endif
