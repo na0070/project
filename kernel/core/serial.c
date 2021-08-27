@@ -105,23 +105,36 @@ int *polling(char *buffer, int *count){
 			
 			if (inb(COM1+5)&1) {	//if data is available in COM1
 			
-				buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
+			char letter = inb(COM1);
 			
-					if (buffer[i] == '\r') {	// if enter key is pressed
+				//buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
+			
+					if (letter == '\r') {	// if enter key is pressed
 						buffer[i] = '\n';		// set a new line where we stopped at in buffer
-						serial_print(&buffer[i]);
+						serial_print(&letter);
 						buffer[i+1] = '\0';		// add the terminating character to indicate end of string
 												
 						break; 					// good bye
 					}
 					
-					else if (buffer[i] == '\b') { // if backspace / delete is entered
+					else if (letter == '\x7F') { // if backspace / delete is entered
 						
-					//	buffer[i] = ' ';
-					//	serial_print(&buffer[i]);
 						
-					//	if (i > 0) i = i-1;
 						
+						if (i > 0)  i = i-1;
+						if (counter < *count) counter = counter + 1;
+						buffer[i] = '\0';
+								if (inb(COM1) == '[') {
+								serial_print("[ ");
+								
+									if (inb(COM1) == '3') {
+									serial_print("3 ");
+										if (inb(COM1) == '~'){
+										serial_print("~ ");
+										}
+										
+							}
+						}
 						
 					}
 					
@@ -133,9 +146,9 @@ int *polling(char *buffer, int *count){
 					
 					else {	// other keys
 					
-					//serial_print("\nregular letter\n");
+					buffer[i] = letter;
 						
-						serial_print(&buffer[i]);
+						serial_print(&letter);
 						i = i+1;	// go to next empty location in buffer		
 						counter = counter-1;	// reduce max number of empty spaces by one
 						
