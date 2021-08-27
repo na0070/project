@@ -99,39 +99,63 @@ int *polling(char *buffer, int *count){
 		int i = 0; //index
 		int counter = *count; // size of buffer (max number of characters allowewd)
 		
-		serial_print("Start typing:\n"); // prompt message to begin typing
+		serial_print("Start typing: "); // prompt message to begin typing
 		
 		while (counter > 0) { // while buffer is not full
 			
 			if (inb(COM1+5)&1) {	//if data is available in COM1
 			
-			buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
+				buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
 			
-			
-				if (buffer[i] == '\r') {	// if enter key is pressed
-					buffer[i] = '\n';		// set a new line where we stopped at in buffer
-					buffer[i+1] = '\0';		// add the terminating character to indicate end of string
-											
-					break; 					// good bye
-				}
-				else {	// other keys
+					if (buffer[i] == '\r') {	// if enter key is pressed
+						buffer[i] = '\n';		// set a new line where we stopped at in buffer
+						serial_print(&buffer[i]);
+						buffer[i+1] = '\0';		// add the terminating character to indicate end of string
+												
+						break; 					// good bye
+					}
 					
-					i = i+1;	// go to next empty location in buffer		
-					counter = counter-1;	// reduce max number of empty spaces by one
+					else if (buffer[i] == '\b') { // if backspace / delete is entered
+						
+					//	buffer[i] = ' ';
+					//	serial_print(&buffer[i]);
+						
+					//	if (i > 0) i = i-1;
+						
+						
+					}
 					
-				}
+					//else if (buffer[i] == "??") { // if arrow keys are pressed
+						
+						
+						
+					//}
+					
+					else {	// other keys
+					
+					//serial_print("\nregular letter\n");
+						
+						serial_print(&buffer[i]);
+						i = i+1;	// go to next empty location in buffer		
+						counter = counter-1;	// reduce max number of empty spaces by one
+						
+					}
 			
 			}
 		}
 		
 	/*
 		issues/to do:
-				- still not sure how to print one character at a time
-				- not sure how to "un-print" a character after printing it on terminal
-				- how to show in terminal that the cursor is moving left/right
+				
+				- not sure how to "un-print" a character after printing it on terminal (backspace)
+				- how to show in terminal that the cursor is moving left/right (without filling buffer)
 				- have to add other special functionality keys
-				- know how to create/edit makefiles for new .c files
-				- how to properly exit the program from terminal after "shutdown" instead of closing/reopening
+				- why "delete" key is set to ctrl+bs?
+				- 
+				
+				
+			
+				
 	*/
 	
 	
@@ -149,6 +173,7 @@ void comm() {
 	char buffer[80];
 	int size = 80;
 	
+	memset(buffer,'\0',size);
 	sys_req(READ,DEFAULT_DEVICE,buffer,&size);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,buffer,&size);
