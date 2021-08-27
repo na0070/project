@@ -11,8 +11,7 @@
 #include <core/io.h>
 #include <core/serial.h>
 
-//temporary
-#include <modules/mpx_supt.h>
+
 
 #define NO_ERROR 0
 
@@ -93,63 +92,80 @@ int set_serial_in(int device)
 
 int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
-// You must validat each key and handle special keys such as delete, back space, and
+// You must validate each key and handle special keys such as delete, back space, and
 // arrow keys
 
 		int i = 0; //index
 		int counter = *count; // size of buffer (max number of characters allowewd)
 		
-		serial_print("Start typing: "); // prompt message to begin typing
+		serial_print("Start typing: \n"); // prompt message to begin typing
 		
 		while (counter > 0) { // while buffer is not full
 			
 			if (inb(COM1+5)&1) {	//if data is available in COM1
 			
-			char letter = inb(COM1);
+				char letter = inb(COM1);
 			
 				//buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
 			
 					if (letter == '\r') {	// if enter key is pressed
-						buffer[i] = '\n';		// set a new line where we stopped at in buffer
-						serial_print(&letter);
-						buffer[i+1] = '\0';		// add the terminating character to indicate end of string
+						buffer[*count-1] = '\0';		// set a new line where we stopped at in buffer
+						serial_print("\n");
+						//buffer[i+1] = '\0';		// add the terminating character to indicate end of string
 												
 						break; 					// good bye
 					}
 					
-					else if (letter == '\x7F') { // if backspace / delete is entered
+					else if (letter == '\x7F' || letter == '\b') { // if DEL / backspace is entered
 						
+						serial_print("\b \b");	// "visually" remove the character left of cursor & move left
 						
+						if (i > 0)  i = i-1;	// point one character to the left in buffer
+						if (counter < *count) counter = counter + 1;	// indicate one more free space
 						
-						if (i > 0)  i = i-1;
-						if (counter < *count) counter = counter + 1;
-						buffer[i] = '\0';
-								if (inb(COM1) == '[') {
-								serial_print("[ ");
-								
-									if (inb(COM1) == '3') {
-									serial_print("3 ");
-										if (inb(COM1) == '~'){
-										serial_print("~ ");
-										}
-										
-							}
-						}
+						buffer[i] = ' ';
+						
+						inb(COM1);
 						
 					}
 					
-					//else if (buffer[i] == "??") { // if arrow keys are pressed
+					else if (letter == '\x1B') { // if arrow keys are pressed
 						
+						letter = inb(COM1);		//read whats after the ESC code
 						
+						if (letter == '[') {	
+							letter = inb(COM1);
+							
+							if (letter == 'D') {	//left arrow is pressed "\x1B[D"
+								
+								if (i > 0)  i = i-1; //point one character to the left in the buffer
+								serial_print("\x1B[D");	//move the curser itself on the terminal left
+								
+								
+							}
+							else if (letter == 'C') {	//right arrow is pressed "\x1B[C"
+								
+								if (buffer[i] != '\0' && i < *count-1)  { //don't move right if cursor reached the very edge
+									
+									i = i+1; //point one character to the right in the buffer
+									serial_print("\x1B[C");	//move the curser itself on the terminal right
+								}
+							}
+							else {} //dont do anything if its up/down arrows (for now)
+							
+						}
 						
-					//}
+						inb(COM1);	//flush out any remainig garbage from arrow keys (reset COM1)
+						
+					}
 					
 					else {	// other keys
 					
-					buffer[i] = letter;
+					buffer[i] = letter; // store the character
+					
 						
-						serial_print(&letter);
-						i = i+1;	// go to next empty location in buffer		
+						serial_print(&letter);	//visually print character
+						i = i+1;				// go to next empty location in buffer		
 						counter = counter-1;	// reduce max number of empty spaces by one
 						
 					}
@@ -160,15 +176,11 @@ int *polling(char *buffer, int *count){
 	/*
 		issues/to do:
 				
-				- not sure how to "un-print" a character after printing it on terminal (backspace)
-				- how to show in terminal that the cursor is moving left/right (without filling buffer)
-				- have to add other special functionality keys
-				- why "delete" key is set to ctrl+bs?
-				- 
-				
+				- *!!* how to shift all characters to the left after "deleting" a character
+				- * !* not sure how to "un-print" a character after printing it on terminal (backspace)
+				- or how to "properly" delete a character
 				
 			
-				
 	*/
 	
 	
@@ -180,17 +192,4 @@ return count;
 }
 
 
-// temporary
-
-void comm() {
-	char buffer[80];
-	int size = 80;
-	
-	memset(buffer,'\0',size);
-	sys_req(READ,DEFAULT_DEVICE,buffer,&size);
-	
-	sys_req(WRITE,DEFAULT_DEVICE,buffer,&size);
-	return;
-
-}
 

@@ -9,7 +9,7 @@
       Modifications by:    Andrew Duncan 2014,  John Jacko 2017
       				Ben Smith 2018, and Alex Wilson 2019
 */
-
+#include "modules/R1/comm.h"
 #include <stdint.h>
 #include <string.h>
 #include <system.h>
@@ -22,6 +22,8 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
+
+
 
 
 void kmain(void)
@@ -89,7 +91,7 @@ void kmain(void)
 
    // 6) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-	comm();
+	commhand();
 
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
