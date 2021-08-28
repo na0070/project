@@ -20,7 +20,7 @@ void commhand() {
 		memset(buffer,'\0',size);			// set aside memory for the buffer (and wipe it clean)
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		
-		serial_print("result: ");
+		//serial_print("result: ");
 		sys_req(WRITE,DEFAULT_DEVICE,buffer,&size);	//returned from polling
 		serial_print("\n");
 		

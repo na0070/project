@@ -98,13 +98,13 @@ int *polling(char *buffer, int *count){
 		int i = 0; //index
 		int counter = *count; // size of buffer (max number of characters allowewd)
 		
-		serial_print("Start typing: \n"); // prompt message to begin typing
+		serial_print("Enter command below: \n"); // prompt message to begin typing
 		
 		while (counter > 0) { // while buffer is not full
 			
 			if (inb(COM1+5)&1) {	//if data is available in COM1
 			
-				char letter = inb(COM1);
+				char letter = inb(COM1);	// store the data into the variable
 			
 				//buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
 					
@@ -118,20 +118,21 @@ int *polling(char *buffer, int *count){
 						break; 					// good bye
 					}
 					
-					else if (letter == '\x7F') { // if DEL / backspace is entered
+					
+					else if (letter == '\x7F' || letter == '\b') { // if DEL or backspace is entered
 						
 						//serial_print("\b \b");	// "visually" remove the character left of cursor & move left
 						
 						if (i > 0)  i = i-1;	// point one character to the left in buffer
-						if (counter < *count) counter = counter + 1;	// indicate one more free space
+						if (counter < *count) counter = counter + 1;	// indicate therer is one more free space
 						
-						int j = i;	//secondary index indicating where we are at now
+						int j = i;	//secondary index indicating where we are deleting from
 						
 						serial_print("\b");			// bring cursor one character back
 						serial_print("\x1B[s");		// save the current cursor location
-						serial_print("\x1B[2K");	// visually delete the line
+						serial_print("\x1B[2K");	// visually delete the entire line in terminal
 						serial_print("\x1B[0E");	// move cursor to beginning of bottom line
-						serial_print("\x1B[A");		// go up a line (to begin at printing line)
+						serial_print("\x1B[A");		// go up a line (to begin at original line)
 						
 						
 						while (i < *count-1) {		//loop through the buffer from where we want to delete
@@ -140,7 +141,7 @@ int *polling(char *buffer, int *count){
 							i = i+1;
 						}
 						
-						buffer[i] = '\0';	// for safety, set last character to null
+						buffer[i] = '\0';	// for safety, set last character to NULL
 						i = j;		// return index to original location
 						
 						inb(COM1);	// flush out COM1
@@ -182,40 +183,52 @@ int *polling(char *buffer, int *count){
 					
 					else {	// other keys (printable), will need to push everything to the right if writing from middle
 					
-					int j = i;	//secondary index indicating where we are at now
+					int j = i;	//secondary index indicating where to place new character
 					
-					buffer[i] = letter; // store the character
+					
+					i = *count-1;	// start from the end of the buffer
+					
+					while (i > j) {	// loop from end of buffer down until printing location
+						
+						buffer[i] = buffer[i-1];	// move every character after insertion point one space right
+						i = i-1;
+					}
+					
+					buffer[j] = letter;		// store the new letter at printing location
+					
+					
+						serial_print("\x1B[C");		// move cursor one character to the right
+						serial_print("\x1B[s");		// save the current cursor location
+						serial_print("\x1B[2K");	// visually delete the line
+						serial_print("\x1B[0E");	// move cursor to beginning of bottom line
+						serial_print("\x1B[A");		// go up a line (to begin at original line)
+					
+					
+					
+					//buffer[i] = letter; // store the character
 					
 						
-						serial_print(&letter);	//visually print character
-						i = i+1;				// go to next empty location in buffer		
-						counter = counter-1;	// reduce max number of empty spaces by one
+						serial_print(buffer);		// visually print the newly editted buffer
+						serial_print("\x1B[u");		// bring cursor back to saved location
+						
+						if (i < *count-1) i = j+1;	// go to next location in buffer		
+						counter = counter-1;		// reduce max number of empty spaces by one
 						
 					}
 					
 					
 					
-					if (letter == '\b') {		// this is here for testing only
+					//if (letter == '\b') {		// this is here for testing only
 						
-						serial_print("\x1B[0E");
-						serial_print("\x1B[A");
+						//serial_print("\x1B[0E");
+					//	serial_print("\x1B[A");
 						
 						
-					}
+					//}
 			
 			}
 		}
 		
-	/*
-		issues/to do:
-				
-				- *xx* how to shift all characters to the left after "deleting" a character (finished?)
-				- * x* not sure how to "un-print" a character after printing it on terminal (backspace) (finished?)
-				
-				- * !* shifting characters to the right as we type
-				
-			
-	*/
 	
 	
 // remove the following line after implementing your module, this is present
