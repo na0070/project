@@ -107,25 +107,46 @@ int *polling(char *buffer, int *count){
 				char letter = inb(COM1);
 			
 				//buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
+					
+			
 			
 					if (letter == '\r') {	// if enter key is pressed
-						buffer[*count-1] = '\0';		// set a new line where we stopped at in buffer
+						buffer[*count-1] = '\0';		// end the buffer
 						serial_print("\n");
 						//buffer[i+1] = '\0';		// add the terminating character to indicate end of string
 												
 						break; 					// good bye
 					}
 					
-					else if (letter == '\x7F' || letter == '\b') { // if DEL / backspace is entered
+					else if (letter == '\x7F') { // if DEL / backspace is entered
 						
-						serial_print("\b \b");	// "visually" remove the character left of cursor & move left
+						//serial_print("\b \b");	// "visually" remove the character left of cursor & move left
 						
 						if (i > 0)  i = i-1;	// point one character to the left in buffer
 						if (counter < *count) counter = counter + 1;	// indicate one more free space
 						
-						buffer[i] = ' ';
+						int j = i;	//secondary index indicating where we are at now
 						
-						inb(COM1);
+						serial_print("\b");			// bring cursor one character back
+						serial_print("\x1B[s");		// save the current cursor location
+						serial_print("\x1B[2K");	// visually delete the line
+						serial_print("\x1B[0E");	// move cursor to beginning of bottom line
+						serial_print("\x1B[A");		// go up a line (to begin at printing line)
+						
+						
+						while (i < *count-1) {		//loop through the buffer from where we want to delete
+						
+							buffer[i] = buffer[i+1];	// move every character after deletion point one space left
+							i = i+1;
+						}
+						
+						buffer[i] = '\0';	// for safety, set last character to null
+						i = j;		// return index to original location
+						
+						inb(COM1);	// flush out COM1
+						
+						serial_print(buffer);		// print the newly editted buffer
+						serial_print("\x1B[u");		// bring cursor back to saved position
 						
 					}
 					
@@ -138,7 +159,7 @@ int *polling(char *buffer, int *count){
 							
 							if (letter == 'D') {	//left arrow is pressed "\x1B[D"
 								
-								if (i > 0)  i = i-1; //point one character to the left in the buffer
+								if (i > 0)  i = i-1; //point index one character to the left in the buffer
 								serial_print("\x1B[D");	//move the curser itself on the terminal left
 								
 								
@@ -159,7 +180,9 @@ int *polling(char *buffer, int *count){
 						
 					}
 					
-					else {	// other keys
+					else {	// other keys (printable), will need to push everything to the right if writing from middle
+					
+					int j = i;	//secondary index indicating where we are at now
 					
 					buffer[i] = letter; // store the character
 					
@@ -169,6 +192,16 @@ int *polling(char *buffer, int *count){
 						counter = counter-1;	// reduce max number of empty spaces by one
 						
 					}
+					
+					
+					
+					if (letter == '\b') {		// this is here for testing only
+						
+						serial_print("\x1B[0E");
+						serial_print("\x1B[A");
+						
+						
+					}
 			
 			}
 		}
@@ -176,9 +209,10 @@ int *polling(char *buffer, int *count){
 	/*
 		issues/to do:
 				
-				- *!!* how to shift all characters to the left after "deleting" a character
-				- * !* not sure how to "un-print" a character after printing it on terminal (backspace)
-				- or how to "properly" delete a character
+				- *xx* how to shift all characters to the left after "deleting" a character (finished?)
+				- * x* not sure how to "un-print" a character after printing it on terminal (backspace) (finished?)
+				
+				- * !* shifting characters to the right as we type
 				
 			
 	*/
