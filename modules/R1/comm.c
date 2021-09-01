@@ -1,6 +1,8 @@
 
 #include "../mpx_supt.h"
 #include "comm.h"
+#include "getsetdate.h"
+#include "getandsettime.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -12,24 +14,27 @@
 void commhand() {
 	
 	
-	int size = 80;
+	int size = 80, sizeBuff = 7;
 	char buffer[size];	// initialize the buffer
-	
+	int dateBuff[sizeBuff];	// initialize date buffer
+	int timeBuff[sizeBuff];	// initialize time buffer
 	
 	
 	
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',size);			// set aside memory for the buffer (and wipe it clean)
+		memset(dateBuff,'\0',sizeBuff);
+		memset(timeBuff,'\0',sizeBuff);
 		
-		serial_print("Welcome to MPX_core main menu...\n");
-		serial_print("You can choose from one of the following options by typing its keyword:\n");
-		serial_print("-version\n");
-		serial_print("-help\n");
-		serial_print("-getdate\n");
-		serial_print("-setdate\n");
-		serial_print("-gettime\n");
-		serial_print("-settime\n");
-		serial_print("-shutdown\n");
+		serial_print("Welcome to MPX_core main menu, please choose one of the following options by typing the keyword..\n");
+		// serial_print("-version\n");
+		// serial_print("-help\n");
+		// serial_print("-getdate\n");
+		// serial_print("-setdate\n");
+		// serial_print("-gettime\n");
+		// serial_print("-settime\n");
+		// serial_print("-clear\n");
+		// serial_print("-shutdown\n");
 		// possibly adding more commands if needed
 		
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
@@ -40,25 +45,62 @@ void commhand() {
 		
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
 		
-		// if (strcmp(token,"date") == 0) {		// for testing purposes
+		if (strcmp(token,"getdate") == 0) {		// for testing purposes
 			
+			getdate((int*)dateBuff);
 			
-			// while (token != NULL) {
-				// serial_print(token);
-				// serial_print("\n");
-				// token = strtok(NULL, split);
-			// }
+			serial_print("Current date: ");
+			int i = 0;
+			while (i < sizeBuff-1) {
+				sys_req(WRITE,DEFAULT_DEVICE,(char *)&dateBuff[i],&sizeBuff);
+				sys_req(WRITE,DEFAULT_DEVICE,(char *)&dateBuff[i+1],&sizeBuff);
+				if (i+2 < sizeBuff-1) serial_print("/");
+				i = i+2;
+				
+			}
 			
-		// }
+		}
 		
-		if (strcmp(token,"s") == 0) { // testing
+		else if (strcmp(token,"setdate") == 0) { // testing
 			
+			token = strtok(NULL,split);
 			
-			// outb(0x70,0x00);
-			// unsigned char i = inb(0x71);
+			if (token == NULL) 
+				serial_print("ERROR: invalid number of parameters (too few).\n");
 			
-			// buffer[0] = i;
-			// serial_print((const char *)&i);
+			else {
+				int yr = atoi(token);
+				
+				token = strtok(NULL,split);
+				
+				if (token == NULL) 
+					serial_print("ERROR: invalid number of parameters (too few).\n");
+				
+				else {
+					int mth = atoi(token);
+					
+					token = strtok(NULL,split);
+					
+					if (token == NULL) 
+						serial_print("ERROR: invalid number of parameters (too few).\n");
+				
+					else {
+						int day = atoi(token);
+						
+						
+						if (strtok(NULL,split) != NULL)
+							serial_print("ERROR: invalid number of parameters (too many).\n");
+						
+						else if (yr > 30 || yr < 0 || mth > 12 || mth < 1 || day > 31 || day < 1)
+							serial_print("ERROR: invalid date setting.\n");
+						
+						else {
+							setdate(yr,mth,day);
+							serial_print("Date adjusted.\n");
+						}
+					}
+				}
+			}
 		}
 		
 		
@@ -68,27 +110,81 @@ void commhand() {
 		}
 		
 		
-		else if (strcmp(token,"help") == 0) {		// help command
+		else if (strcmp(token,"help") == 0) {			// help command
 			
 			serial_print("help() in progress.. check back later\n");
 		}
 		
-		else if (strcmp(token,"date") == 0) {		// date(s) command(s)
+		else if (strcmp(token,"gettime") == 0) {		// print current time
 			
-			serial_print("date(s) in progress.. check back later\n");
+			get_Time((int*)timeBuff);					// fill time buffer with current time info
+			
+			serial_print("Current time: ");
+			int i = 0;
+			while (i < sizeBuff-1) {					// loop the array to print the current time
+				sys_req(WRITE,DEFAULT_DEVICE,(char *)&timeBuff[i],&sizeBuff);
+				sys_req(WRITE,DEFAULT_DEVICE,(char *)&timeBuff[i+1],&sizeBuff);
+				if (i+2 < sizeBuff-1) serial_print(":");
+				i = i+2;
+				
+			}
+			
+			
 		}
 		
-		else if (strcmp(token,"time") == 0) {		// time(s) command
+		else if (strcmp(token,"settime") == 0) {		// change current time
+		
+			token = strtok(NULL,split);
 			
-			serial_print("time(s) in progress.. check back later\n");
-		}
+			if (token == NULL) 
+				serial_print("ERROR: invalid number of parameters (too few).\n");
+			
+			else {
+				int hr = atoi(token);
+				
+				token = strtok(NULL,split);
+				
+				if (token == NULL) 
+					serial_print("ERROR: invalid number of parameters (too few).\n");
+				
+				else {
+					int min = atoi(token);
+					
+					token = strtok(NULL,split);
+					
+					if (token == NULL) 
+						serial_print("ERROR: invalid number of parameters (too few).\n");
+				
+					else {
+						int sec = atoi(token);
+						
+						
+						if (strtok(NULL,split) != NULL)
+							serial_print("ERROR: invalid number of parameters (too many).\n");
+						
+						else if (hr > 23 || hr < 0 || min > 59 || min < 0 || sec > 59 || sec < 0)
+							serial_print("ERROR: invalid time setting.\n");
+						
+						else {
+							set_Time(hr,min,sec);
+							serial_print("Time adjusted.\n");
+						}
+						
+					}
+				}
+				
+				
+				
+			}
+			
+		
+		}	// end settime
 		
 		else if (strcmp(token,"shutdown") == 0) {		// shutdown command
 			
 			serial_print("shutdown() in progress.. check back later\n");
 		}
 		
-		//sys_req(WRITE,DEFAULT_DEVICE,buffer,&size);	//returned from polling
 		
 		else if (strcmp(token,"end") == 0) {	// if user entered "end"
 			
@@ -100,21 +196,19 @@ void commhand() {
 		else if (strcmp(token,"clear") == 0) {		// clearing the screen
 			
 			serial_print("\x1B[2J"); // clear screen
-			serial_print("\x1B[H"); // send cursor back to (0,0) position (top left corner)
+			serial_print("\x1B[H"); // send cursor back to (0,0) position (top left corner) before printing main menu
 			
 		}
 		
 		else {
 			
-			serial_print("unknown command entered. Please check spelling and/or syntax..\n");
+			serial_print("unknown command entered. Please check spelling and/or syntax..");
 			
 		}
 		
-		serial_print("\n");
+		if (strcmp(token,"clear") != 0) serial_print("\n\n");	// new lines if we didn't clear the screen yet
 	
 	} // leaving commhand
-	
-	
 	
 	return;
 

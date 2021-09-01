@@ -76,7 +76,7 @@ void get_Time (int * pointer) {
 						
 }
 
-Void set_Time (int hour, int minutes, int seconds ){
+void set_Time (int hour, int minutes, int seconds ){
 	
 	int s_time; 
 	
@@ -86,7 +86,7 @@ Void set_Time (int hour, int minutes, int seconds ){
 			outb (0x70, Hr);
 				outb(0x71, s_time);
 				
-		s_time = (( Minutes / 10) << 4 ) | (Minutes % 10);
+		s_time = (( minutes / 10) << 4 ) | (minutes % 10);
 			outb (0x70, Min);
 				outb(0x71, s_time);
 				
