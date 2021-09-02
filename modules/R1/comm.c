@@ -182,16 +182,42 @@ void commhand() {
 		
 		else if (strcmp(token,"shutdown") == 0) {		// shutdown command
 			
-			serial_print("shutdown() in progress.. check back later\n");
+			char input;
+			int size = 1;
+			
+			do {
+				
+				if (input == 'y' || input == 'n') {		// if yes/no will exit
+				
+					break;
+				
+				}
+				
+				serial_print("Do you want to shutdown if yes enter y if no enter n please \n");
+				sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
+				serial_print("\x1B[2K");	// delete what is printed
+				serial_print("\b");
+				
+
+			} while (input != 'y' || input != 'n');	// make sure the user enter either y or n
+			
+			if (input == 'y') {		// if yes will shutdown
+					input = ' ';	// reset input
+					break;
+				
+				}
+				
+			input = ' ';		// reset input
+			
 		}
 		
 		
-		else if (strcmp(token,"end") == 0) {	// if user entered "end"
+		// else if (strcmp(token,"end") == 0) {	// if user entered "end"
 			
-			serial_print("Ending commhand()...\n");	// leave commhand() and begin shutdown
-			break;
+			// serial_print("Ending commhand()...\n");	// leave commhand() and begin shutdown
+			// break;
 			
-		}
+		// }
 		
 		else if (strcmp(token,"clear") == 0) {		// clearing the screen
 			
