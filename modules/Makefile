@@ -15,6 +15,8 @@ mpx_supt.o\
 R1/comm.o\
 R1/getsetdate.o\
 R1/getandsettime.o\
+R1/help.o\
+R1/version.o\
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<

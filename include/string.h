@@ -3,28 +3,28 @@
 
 #include <system.h>
 
-/*
+/**
   Procedure..: isspace
   Description..: Determine if a character is whitespace.
   Params..: c-character to check
 */
 int isspace(const char *c);
 
-/*
+/**
   Procedure..: memset
   Description..: Set a region of memory.
   Params..: s-destination, c-byte to write, n-count
 */
 void* memset(void *s, int c, size_t n);
 
-/*
+/**
   Procedure..: strcpy
   Description..: Copy one string to another.
   Params..: s1-destination, s2-source
 */
 char* strcpy(char *s1, const char *s2);
 
-/*
+/**
   Procedure..: strcat
   Description..: Concatenate the contents of one string onto another.
   Params..: s1-destination, s2-source

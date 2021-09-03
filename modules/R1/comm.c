@@ -3,6 +3,8 @@
 #include "comm.h"
 #include "getsetdate.h"
 #include "getandsettime.h"
+#include "help.h"
+#include "version.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -26,16 +28,7 @@ void commhand() {
 		memset(dateBuff,'\0',sizeBuff);
 		memset(timeBuff,'\0',sizeBuff);
 		
-		serial_print("Welcome to MPX_core main menu, please choose one of the following options by typing the keyword..\n");
-		// serial_print("-version\n");
-		// serial_print("-help\n");
-		// serial_print("-getdate\n");
-		// serial_print("-setdate\n");
-		// serial_print("-gettime\n");
-		// serial_print("-settime\n");
-		// serial_print("-clear\n");
-		// serial_print("-shutdown\n");
-		// possibly adding more commands if needed
+		serial_print("Welcome to MPX_core main menu..\n");
 		
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		
@@ -45,11 +38,11 @@ void commhand() {
 		
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
 		
-		if (strcmp(token,"getdate") == 0) {		// for testing purposes
+		if (strcmp(token,"getdate") == 0) {		// Get current date
 			
-			getdate((int*)dateBuff);
+			getdate((int*)dateBuff);		// call the function and store the data in the date buffer
 			
-			serial_print("Current date: ");
+			serial_print("Current date: ");		
 			int i = 0;
 			while (i < sizeBuff-1) {
 				sys_req(WRITE,DEFAULT_DEVICE,(char *)&dateBuff[i],&sizeBuff);
@@ -61,7 +54,7 @@ void commhand() {
 			
 		}
 		
-		else if (strcmp(token,"setdate") == 0) { // testing
+		else if (strcmp(token,"setdate") == 0) { // Set current date
 			
 			token = strtok(NULL,split);
 			
@@ -106,13 +99,13 @@ void commhand() {
 		
 		else if (strcmp(token,"version") == 0) {		// version command
 			
-			serial_print("version() in progress.. check back later\n");
+			version();
 		}
 		
 		
 		else if (strcmp(token,"help") == 0) {			// help command
 			
-			serial_print("help() in progress.. check back later\n");
+			help();
 		}
 		
 		else if (strcmp(token,"gettime") == 0) {		// print current time
@@ -210,14 +203,7 @@ void commhand() {
 			input = ' ';		// reset input
 			
 		}
-		
-		
-		// else if (strcmp(token,"end") == 0) {	// if user entered "end"
-			
-			// serial_print("Ending commhand()...\n");	// leave commhand() and begin shutdown
-			// break;
-			
-		// }
+	
 		
 		else if (strcmp(token,"clear") == 0) {		// clearing the screen
 			

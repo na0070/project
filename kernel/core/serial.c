@@ -1,4 +1,4 @@
-/*
+/**
   ----- serial.c -----
 
   Description..: Contains methods and variables used for
@@ -19,7 +19,7 @@
 int serial_port_out = 0;
 int serial_port_in = 0;
 
-/*
+/**
   Procedure..: init_serial
   Description..: Initializes devices for user interaction, logging, ...
 */
@@ -36,7 +36,7 @@ int init_serial(int device)
   return NO_ERROR;
 }
 
-/*
+/**
   Procedure..: serial_println
   Description..: Writes a message to the active serial output device.
     Appends a newline character.
@@ -52,7 +52,7 @@ int serial_println(const char *msg)
   return NO_ERROR;
 }
 
-/*
+/**
   Procedure..: serial_print
   Description..: Writes a message to the active serial output device.
 */
@@ -105,15 +105,11 @@ int *polling(char *buffer, int *count){
 			if (inb(COM1+5)&1) {	//if data is available in COM1
 			
 				char letter = inb(COM1);	// store the data into the variable
-			
-				//buffer[i] = inb(COM1);	// store the data (character) in the next empty space in buffer
 					
-			
 			
 					if (letter == '\r') {	// if enter key is pressed
 						buffer[*count-1] = '\0';		// end the buffer
 						serial_print("\n");
-						//buffer[i+1] = '\0';		// add the terminating character to indicate end of string
 												
 						break; 					// good bye
 					}
@@ -121,14 +117,13 @@ int *polling(char *buffer, int *count){
 					
 					else if (letter == '\x7F' || letter == '\b') { // if DEL or backspace is entered
 						
-						//serial_print("\b \b");	// "visually" remove the character left of cursor & move left
 						
 						if (i > 0)  i = i-1;	// point one character to the left in buffer
 						if (counter < *count) counter = counter + 1;	// indicate therer is one more free space
 						
-						int j = i;	//secondary index indicating where we are deleting from
+						int j = i;	//temporarily save current index location
 						
-						serial_print("\b");			// bring cursor one character back
+						serial_print("\b");			// bring cursor one character back (to the left)
 						serial_print("\x1B[s");		// save the current cursor location
 						serial_print("\x1B[2K");	// visually delete the entire line in terminal
 						serial_print("\x1B[0E");	// move cursor to beginning of bottom line
@@ -177,13 +172,13 @@ int *polling(char *buffer, int *count){
 							
 						}
 						
-						inb(COM1);	//flush out any remainig garbage from arrow keys (reset COM1)
+						inb(COM1);	//flush out any COM1
 						
 					}
 					
 					else {	// other keys (printable), will need to push everything to the right if writing from middle
 					
-					int j = i;	//secondary index indicating where to place new character
+					int j = i;	//temporarily save current index location
 					
 					
 					i = *count-1;	// start from the end of the buffer
@@ -203,10 +198,6 @@ int *polling(char *buffer, int *count){
 						serial_print("\x1B[0E");	// move cursor to beginning of bottom line
 						serial_print("\x1B[A");		// go up a line (to begin at original line)
 					
-					
-					
-					//buffer[i] = letter; // store the character
-					
 						
 						serial_print(buffer);		// visually print the newly editted buffer
 						serial_print("\x1B[u");		// bring cursor back to saved location
@@ -216,24 +207,10 @@ int *polling(char *buffer, int *count){
 						
 					}
 					
-					
-					
-					//if (letter == '\b') {		// this is here for testing only
-						
-						//serial_print("\x1B[0E");
-					//	serial_print("\x1B[A");
-						
-						
-					//}
 			
 			}
 		}
 		
-	
-	
-// remove the following line after implementing your module, this is present
-// just to allow the program to compile before R1 is complete
-strlen(buffer);
 
 return count;
 }
