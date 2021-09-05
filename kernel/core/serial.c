@@ -1,4 +1,4 @@
-/**
+/*!
   ----- serial.c -----
 
   Description..: Contains methods and variables used for
@@ -19,7 +19,7 @@
 int serial_port_out = 0;
 int serial_port_in = 0;
 
-/**
+/*!
   Procedure..: init_serial
   Description..: Initializes devices for user interaction, logging, ...
 */
@@ -36,7 +36,7 @@ int init_serial(int device)
   return NO_ERROR;
 }
 
-/**
+/*!
   Procedure..: serial_println
   Description..: Writes a message to the active serial output device.
     Appends a newline character.
@@ -52,7 +52,7 @@ int serial_println(const char *msg)
   return NO_ERROR;
 }
 
-/**
+/*!
   Procedure..: serial_print
   Description..: Writes a message to the active serial output device.
 */
@@ -78,7 +78,7 @@ int set_serial_out(int device)
   return NO_ERROR;
 }
 
-/*
+/*!
   Procedure..: set_serial_in
   Description..: Sets serial_port_in to the given device address.
     All serial input, such as console input via a virtual machine,
@@ -90,6 +90,17 @@ int set_serial_in(int device)
   return NO_ERROR;
 }
 
+/*!
+  \brief main function invoked by sys_req(READ,...) to collect data from the serial port
+  
+  Polling goes on a semi-infinite loop and continuously check the status register of the serial port for available data.
+  Once any data is found, it is stored in the buffer while also printing the data to the terminal one character at a time.
+  This function also takes care of special characters like the enter, DEL, backspace, and arrow keys accordignly, based on their
+  escape codes/ character sequence found.
+  @param *buffer a pointer to the buffer to be filed with the command(s)
+  @param *count a pointer to the location holding the size of the maximum size of the buffer
+  @return The buffer's size (not necessarily useful)
+*/
 int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validate each key and handle special keys such as delete, back space, and

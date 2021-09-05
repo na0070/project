@@ -1,0 +1,103 @@
+\hypertarget{getandsettime_8c}{}\doxysection{getandsettime.\+c File Reference}
+\label{getandsettime_8c}\index{getandsettime.c@{getandsettime.c}}
+{\ttfamily \#include \char`\"{}../mpx\+\_\+supt.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}getandsettime.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$core/io.\+h$>$}\newline
+{\ttfamily \#include $<$core/serial.\+h$>$}\newline
+Include dependency graph for getandsettime.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{getandsettime_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{getandsettime_8c_aa7248b589fc560ae9af570ea480a6df6}{Sec}}~0x00
+\begin{DoxyCompactList}\small\item\em The R\+TC register corresponding to seconds. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{getandsettime_8c_a86d632fa0bef69c8cc19f84f1683de9e}{Min}}~0x02
+\begin{DoxyCompactList}\small\item\em The R\+TC register corresponding to minutes. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{getandsettime_8c_af5fd50443510f2fdfc14f2596c7c8b7e}{Hr}}~0x04
+\begin{DoxyCompactList}\small\item\em The R\+TC register corresponding to hours. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{getandsettime_8c_a4f821eef55a5f74434d73fbb9757150e}{get\+\_\+\+Time}} (int $\ast$pointer)
+\begin{DoxyCompactList}\small\item\em Grabs the hours, minutes, and seconds values of the time it is invoked and fills a buffer with that information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{getandsettime_8c_aa3a30722d3d38f5970320b8c92a3ab1b}{set\+\_\+\+Time}} (int hour, int minutes, int seconds)
+\begin{DoxyCompactList}\small\item\em Changes the current time of the machine to the provided values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{getandsettime_8c_af5fd50443510f2fdfc14f2596c7c8b7e}\label{getandsettime_8c_af5fd50443510f2fdfc14f2596c7c8b7e}} 
+\index{getandsettime.c@{getandsettime.c}!Hr@{Hr}}
+\index{Hr@{Hr}!getandsettime.c@{getandsettime.c}}
+\doxysubsubsection{\texorpdfstring{Hr}{Hr}}
+{\footnotesize\ttfamily \#define Hr~0x04}
+
+
+
+The R\+TC register corresponding to hours. 
+
+\mbox{\Hypertarget{getandsettime_8c_a86d632fa0bef69c8cc19f84f1683de9e}\label{getandsettime_8c_a86d632fa0bef69c8cc19f84f1683de9e}} 
+\index{getandsettime.c@{getandsettime.c}!Min@{Min}}
+\index{Min@{Min}!getandsettime.c@{getandsettime.c}}
+\doxysubsubsection{\texorpdfstring{Min}{Min}}
+{\footnotesize\ttfamily \#define Min~0x02}
+
+
+
+The R\+TC register corresponding to minutes. 
+
+\mbox{\Hypertarget{getandsettime_8c_aa7248b589fc560ae9af570ea480a6df6}\label{getandsettime_8c_aa7248b589fc560ae9af570ea480a6df6}} 
+\index{getandsettime.c@{getandsettime.c}!Sec@{Sec}}
+\index{Sec@{Sec}!getandsettime.c@{getandsettime.c}}
+\doxysubsubsection{\texorpdfstring{Sec}{Sec}}
+{\footnotesize\ttfamily \#define Sec~0x00}
+
+
+
+The R\+TC register corresponding to seconds. 
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{getandsettime_8c_a4f821eef55a5f74434d73fbb9757150e}\label{getandsettime_8c_a4f821eef55a5f74434d73fbb9757150e}} 
+\index{getandsettime.c@{getandsettime.c}!get\_Time@{get\_Time}}
+\index{get\_Time@{get\_Time}!getandsettime.c@{getandsettime.c}}
+\doxysubsubsection{\texorpdfstring{get\_Time()}{get\_Time()}}
+{\footnotesize\ttfamily void get\+\_\+\+Time (\begin{DoxyParamCaption}\item[{int $\ast$}]{pointer }\end{DoxyParamCaption})}
+
+
+
+Grabs the hours, minutes, and seconds values of the time it is invoked and fills a buffer with that information. 
+
+Since the information in the R\+TC registers are stored in B\+CD form, they will need to be converted back to regular binary. Two copies of the hour value are stored in two int\textquotesingle{}s, one to represent the \char`\"{}tens\char`\"{} location and the other for the \char`\"{}ones\char`\"{} location. With binary operations, the tens int will correctly represent the binary code for its number, and the same for the ones int. The process is repeated again for minutes and seconds after the two digits are stored in the buffer and the pointer is moved forward by two locations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$ptr} & A pointer to the buffer to be filled with time information \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{getandsettime_8c_aa3a30722d3d38f5970320b8c92a3ab1b}\label{getandsettime_8c_aa3a30722d3d38f5970320b8c92a3ab1b}} 
+\index{getandsettime.c@{getandsettime.c}!set\_Time@{set\_Time}}
+\index{set\_Time@{set\_Time}!getandsettime.c@{getandsettime.c}}
+\doxysubsubsection{\texorpdfstring{set\_Time()}{set\_Time()}}
+{\footnotesize\ttfamily void set\+\_\+\+Time (\begin{DoxyParamCaption}\item[{int}]{hour,  }\item[{int}]{minutes,  }\item[{int}]{seconds }\end{DoxyParamCaption})}
+
+
+
+Changes the current time of the machine to the provided values. 
+
+To change the time, similarly to date, the interrupts are first disabled, then the given int values are converted to their respective B\+CD form. Once this is done, each int is then written to its corresponding register. Finally, the interrupts are enabled again.
+
+
+\begin{DoxyParams}{Parameters}
+{\em hour} & int value of the hour \\
+\hline
+{\em minutes} & int value of the minutes \\
+\hline
+{\em seconds} & int value of the seconds \\
+\hline
+\end{DoxyParams}

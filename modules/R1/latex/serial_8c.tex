@@ -1,0 +1,119 @@
+\hypertarget{serial_8c}{}\doxysection{/home/ma0192/\+Desktop/project/project/kernel/core/serial.c File Reference}
+\label{serial_8c}\index{/home/ma0192/Desktop/project/project/kernel/core/serial.c@{/home/ma0192/Desktop/project/project/kernel/core/serial.c}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$core/io.\+h$>$}\newline
+{\ttfamily \#include $<$core/serial.\+h$>$}\newline
+Include dependency graph for serial.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serial_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{serial_8c_a258bb72419ef143530a2f8f55e7d57af}{N\+O\+\_\+\+E\+R\+R\+OR}}~0
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{serial_8c_a7078c07ff8b2c48780558549a8f7cf90}{init\+\_\+serial}} (int device)
+\item 
+int \mbox{\hyperlink{serial_8c_a3514f7abff236a4e00a6c46021ce5e22}{serial\+\_\+println}} (const char $\ast$msg)
+\item 
+int \mbox{\hyperlink{serial_8c_a995827efcd4dcfb780c9fbb9645410a4}{serial\+\_\+print}} (const char $\ast$msg)
+\item 
+int \mbox{\hyperlink{serial_8c_ae97b87ee1f57c687e7fca6f9958e03ef}{set\+\_\+serial\+\_\+out}} (int device)
+\item 
+int \mbox{\hyperlink{serial_8c_a3f4008da5feabfb7e086f6673a81104b}{set\+\_\+serial\+\_\+in}} (int device)
+\item 
+int $\ast$ \mbox{\hyperlink{serial_8c_ab1d1d36bd91339352f5b66f809b34d8c}{polling}} (char $\ast$\mbox{\hyperlink{comm_8c_aebbdea4de91d7c97c8149364bfeaa8af}{buffer}}, int $\ast$count)
+\begin{DoxyCompactList}\small\item\em main function invoked by sys\+\_\+req(\+R\+E\+A\+D,...) to collect data from the serial port \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{serial_8c_adbb2c18b0aaab5c1927a6f674768a710}{serial\+\_\+port\+\_\+out}} = 0
+\item 
+int \mbox{\hyperlink{serial_8c_a1a756238531fc5bf1096f89dc18e835e}{serial\+\_\+port\+\_\+in}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{serial_8c_a258bb72419ef143530a2f8f55e7d57af}\label{serial_8c_a258bb72419ef143530a2f8f55e7d57af}} 
+\index{serial.c@{serial.c}!NO\_ERROR@{NO\_ERROR}}
+\index{NO\_ERROR@{NO\_ERROR}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{NO\_ERROR}{NO\_ERROR}}
+{\footnotesize\ttfamily \#define N\+O\+\_\+\+E\+R\+R\+OR~0}
+
+-\/-\/--- \mbox{\hyperlink{serial_8c}{serial.\+c}} -\/-\/---
+
+Description..\+: Contains methods and variables used for serial input and output. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{serial_8c_a7078c07ff8b2c48780558549a8f7cf90}\label{serial_8c_a7078c07ff8b2c48780558549a8f7cf90}} 
+\index{serial.c@{serial.c}!init\_serial@{init\_serial}}
+\index{init\_serial@{init\_serial}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{init\_serial()}{init\_serial()}}
+{\footnotesize\ttfamily int init\+\_\+serial (\begin{DoxyParamCaption}\item[{int}]{device }\end{DoxyParamCaption})}
+
+Procedure..\+: init\+\_\+serial Description..\+: Initializes devices for user interaction, logging, ... \mbox{\Hypertarget{serial_8c_ab1d1d36bd91339352f5b66f809b34d8c}\label{serial_8c_ab1d1d36bd91339352f5b66f809b34d8c}} 
+\index{serial.c@{serial.c}!polling@{polling}}
+\index{polling@{polling}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{polling()}{polling()}}
+{\footnotesize\ttfamily int$\ast$ polling (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{int $\ast$}]{count }\end{DoxyParamCaption})}
+
+
+
+main function invoked by sys\+\_\+req(\+R\+E\+A\+D,...) to collect data from the serial port 
+
+Polling goes on a semi-\/infinite loop and continuously check the status register of the serial port for available data. Once any data is found, it is stored in the buffer while also printing the data to the terminal one character at a time. This function also takes care of special characters like the enter, D\+EL, backspace, and arrow keys accordignly, based on their escape codes/ character sequence found. 
+\begin{DoxyParams}{Parameters}
+{\em $\ast$buffer} & a pointer to the buffer to be filed with the command(s) \\
+\hline
+{\em $\ast$count} & a pointer to the location holding the size of the maximum size of the buffer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The buffer\textquotesingle{}s size (not necessarily useful) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{serial_8c_a995827efcd4dcfb780c9fbb9645410a4}\label{serial_8c_a995827efcd4dcfb780c9fbb9645410a4}} 
+\index{serial.c@{serial.c}!serial\_print@{serial\_print}}
+\index{serial\_print@{serial\_print}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{serial\_print()}{serial\_print()}}
+{\footnotesize\ttfamily int serial\+\_\+print (\begin{DoxyParamCaption}\item[{const char $\ast$}]{msg }\end{DoxyParamCaption})}
+
+Procedure..\+: serial\+\_\+print Description..\+: Writes a message to the active serial output device. \mbox{\Hypertarget{serial_8c_a3514f7abff236a4e00a6c46021ce5e22}\label{serial_8c_a3514f7abff236a4e00a6c46021ce5e22}} 
+\index{serial.c@{serial.c}!serial\_println@{serial\_println}}
+\index{serial\_println@{serial\_println}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{serial\_println()}{serial\_println()}}
+{\footnotesize\ttfamily int serial\+\_\+println (\begin{DoxyParamCaption}\item[{const char $\ast$}]{msg }\end{DoxyParamCaption})}
+
+Procedure..\+: serial\+\_\+println Description..\+: Writes a message to the active serial output device. Appends a newline character. \mbox{\Hypertarget{serial_8c_a3f4008da5feabfb7e086f6673a81104b}\label{serial_8c_a3f4008da5feabfb7e086f6673a81104b}} 
+\index{serial.c@{serial.c}!set\_serial\_in@{set\_serial\_in}}
+\index{set\_serial\_in@{set\_serial\_in}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{set\_serial\_in()}{set\_serial\_in()}}
+{\footnotesize\ttfamily int set\+\_\+serial\+\_\+in (\begin{DoxyParamCaption}\item[{int}]{device }\end{DoxyParamCaption})}
+
+Procedure..\+: set\+\_\+serial\+\_\+in Description..\+: Sets serial\+\_\+port\+\_\+in to the given device address. All serial input, such as console input via a virtual machine, Q\+E\+M\+U/\+Bochs/etc, will be directed to this device. \mbox{\Hypertarget{serial_8c_ae97b87ee1f57c687e7fca6f9958e03ef}\label{serial_8c_ae97b87ee1f57c687e7fca6f9958e03ef}} 
+\index{serial.c@{serial.c}!set\_serial\_out@{set\_serial\_out}}
+\index{set\_serial\_out@{set\_serial\_out}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{set\_serial\_out()}{set\_serial\_out()}}
+{\footnotesize\ttfamily int set\+\_\+serial\+\_\+out (\begin{DoxyParamCaption}\item[{int}]{device }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{serial_8c_a1a756238531fc5bf1096f89dc18e835e}\label{serial_8c_a1a756238531fc5bf1096f89dc18e835e}} 
+\index{serial.c@{serial.c}!serial\_port\_in@{serial\_port\_in}}
+\index{serial\_port\_in@{serial\_port\_in}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{serial\_port\_in}{serial\_port\_in}}
+{\footnotesize\ttfamily int serial\+\_\+port\+\_\+in = 0}
+
+\mbox{\Hypertarget{serial_8c_adbb2c18b0aaab5c1927a6f674768a710}\label{serial_8c_adbb2c18b0aaab5c1927a6f674768a710}} 
+\index{serial.c@{serial.c}!serial\_port\_out@{serial\_port\_out}}
+\index{serial\_port\_out@{serial\_port\_out}!serial.c@{serial.c}}
+\doxysubsubsection{\texorpdfstring{serial\_port\_out}{serial\_port\_out}}
+{\footnotesize\ttfamily int serial\+\_\+port\+\_\+out = 0}
+

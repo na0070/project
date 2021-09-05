@@ -1,0 +1,57 @@
+\hypertarget{getsetdate_8h}{}\doxysection{getsetdate.\+h File Reference}
+\label{getsetdate_8h}\index{getsetdate.h@{getsetdate.h}}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{getsetdate_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{getsetdate_8h_a229391ff33f4aa3216e1197547f55cf2}{getdate}} (int $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em Grabs the year, month, and day values of the time it is invoked and fills a buffer with that information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{getsetdate_8h_ade721e63da5349263ccd4fecf469a78e}{setdate}} (int year, int month, int day)
+\begin{DoxyCompactList}\small\item\em Changes the current date of the machine to the provided values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{getsetdate_8h_a229391ff33f4aa3216e1197547f55cf2}\label{getsetdate_8h_a229391ff33f4aa3216e1197547f55cf2}} 
+\index{getsetdate.h@{getsetdate.h}!getdate@{getdate}}
+\index{getdate@{getdate}!getsetdate.h@{getsetdate.h}}
+\doxysubsubsection{\texorpdfstring{getdate()}{getdate()}}
+{\footnotesize\ttfamily void getdate (\begin{DoxyParamCaption}\item[{int $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Grabs the year, month, and day values of the time it is invoked and fills a buffer with that information. 
+
+Since the information in the R\+TC registers are stored in B\+CD form, they will need to be converted back to regular binary. Two copies of the year value are stored in two int\textquotesingle{}s, one to represent the \char`\"{}tens\char`\"{} location and the other for the \char`\"{}ones\char`\"{} location. With binary operations, the tens int will correctly represent the binary code for its number, and the same for the ones int. The process is repeated again for month and day after the two digits are stored in the buffer and the pointer is moved forward by two locations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$ptr} & A pointer to the buffer to be filled with date information \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{getsetdate_8h_ade721e63da5349263ccd4fecf469a78e}\label{getsetdate_8h_ade721e63da5349263ccd4fecf469a78e}} 
+\index{getsetdate.h@{getsetdate.h}!setdate@{setdate}}
+\index{setdate@{setdate}!getsetdate.h@{getsetdate.h}}
+\doxysubsubsection{\texorpdfstring{setdate()}{setdate()}}
+{\footnotesize\ttfamily void setdate (\begin{DoxyParamCaption}\item[{int}]{year,  }\item[{int}]{month,  }\item[{int}]{day }\end{DoxyParamCaption})}
+
+
+
+Changes the current date of the machine to the provided values. 
+
+To change the date, the interrupts are first disabled, then the given int values are converted to their respective B\+CD form. Once this is done, each int is then written to its corresponding register. Finally, the interrupts are enabled again.
+
+
+\begin{DoxyParams}{Parameters}
+{\em year} & int value of the year \\
+\hline
+{\em month} & int value of the month \\
+\hline
+{\em day} & int value of the day \\
+\hline
+\end{DoxyParams}
