@@ -17,6 +17,8 @@ R1/getsetdate.o\
 R1/getandsettime.o\
 R1/help.o\
 R1/version.o\
+R2/structures.o\
+
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<

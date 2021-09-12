@@ -126,7 +126,7 @@ int *polling(char *buffer, int *count){
 					}
 					
 					
-					else if (letter == '\x7F' || letter == '\b') { // if DEL or backspace is entered
+					else if (letter == '\x7F' || letter == '\b') { // if backspace (of any kind) is pressed
 						
 						
 						if (i > 0)  i = i-1;	// point one character to the left in buffer
@@ -157,7 +157,9 @@ int *polling(char *buffer, int *count){
 						
 					}
 					
-					else if (letter == '\x1B') { // if arrow keys are pressed
+					
+					else if (letter == '\x1B') { // if arrow or delete keys are pressed
+					
 						
 						letter = inb(COM1);		//read whats after the ESC code
 						
@@ -169,8 +171,8 @@ int *polling(char *buffer, int *count){
 								if (i > 0)  i = i-1; //point index one character to the left in the buffer
 								serial_print("\x1B[D");	//move the curser itself on the terminal left
 								
-								
 							}
+							
 							else if (letter == 'C') {	//right arrow is pressed "\x1B[C"
 								
 								if (buffer[i] != '\0' && i < *count-1)  { //don't move right if cursor reached the very edge
@@ -179,11 +181,39 @@ int *polling(char *buffer, int *count){
 									serial_print("\x1B[C");	//move the curser itself on the terminal right
 								}
 							}
+							
+							else if (letter == '3') {	// delete key is pressed "\x1B[3~"
+							
+								if (counter < *count) counter = counter + 1;	// indicate there is one more free space
+						
+								int j = i;	//temporarily save current index location
+								
+								serial_print("\x1B[s");		// save the current cursor location
+								serial_print("\x1B[2K");	// visually delete the entire line in terminal
+								serial_print("\x1B[0E");	// move cursor to beginning of bottom line
+								serial_print("\x1B[A");		// go up a line (to begin at original line)
+								
+								while (i < *count-1) {		//loop through the buffer from where we want to delete
+						
+									buffer[i] = buffer[i+1];	// move every character after deletion point one space left
+									i = i+1;
+								}
+						
+								buffer[i] = '\0';	// for safety, set last character to NULL
+								i = j;		// return index to original location
+						
+								inb(COM1);	// flush out COM1
+						
+								serial_print(buffer);		// print the newly editted buffer
+								serial_print("\x1B[u");		// bring cursor back to saved position
+							}
+							
+							
 							else {} //dont do anything if its up/down arrows (for now)
 							
 						}
 						
-						inb(COM1);	//flush out any COM1
+						inb(COM1);	//flush out COM1
 						
 					}
 					

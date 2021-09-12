@@ -5,6 +5,8 @@
 #include "getandsettime.h"
 #include "help.h"
 #include "version.h"
+//#include "../R2/structures.c"
+#include "../R2/func.c"
 
 #include <stdint.h>
 #include <string.h>
@@ -23,6 +25,10 @@
 	
 	char *token;				//!< Pointer to the first "word" before the space in the main command buffer
 	const char split[] = " ";	//!< the character to indicate splitting of the tokens, which is a space
+	
+	
+	
+	pcb *task;
 	
 
 /*!
@@ -110,20 +116,20 @@ void commhand() {
 		}
 		
 		
-		else if (strcmp(token,"version") == 0) {		// version command
+		else if (strcmp(token,"version") == 0) {						// version command
 			
 			version();
 		}
 		
 		
-		else if (strcmp(token,"help") == 0) {			// help command
+		else if (strcmp(token,"help") == 0) {							// help command
 			
 			help();
 		}
 		
-		else if (strcmp(token,"gettime") == 0) {		// print current time
+		else if (strcmp(token,"gettime") == 0) {						// print current time
 			
-			get_Time((int*)timeBuff);					// fill time buffer with current time info
+			get_Time((int*)timeBuff);				// fill time buffer with current time info
 			
 			serial_print("Current time: ");
 			int i = 0;
@@ -138,7 +144,7 @@ void commhand() {
 			
 		}
 		
-		else if (strcmp(token,"settime") == 0) {		// change current time
+		else if (strcmp(token,"settime") == 0) {						// change current time
 		
 			token = strtok(NULL,split);
 			
@@ -186,7 +192,7 @@ void commhand() {
 		
 		}	// end settime
 		
-		else if (strcmp(token,"shutdown") == 0) {		// shutdown command
+		else if (strcmp(token,"shutdown") == 0) {						// shutdown command
 			
 			char input;
 			int size = 1;
@@ -220,12 +226,64 @@ void commhand() {
 		}
 	
 		
-		else if (strcmp(token,"clear") == 0) {		// clearing the screen
+		else if (strcmp(token,"clear") == 0) {						// clearing the screen
 			
 			serial_print("\x1B[2J"); // clear screen
 			serial_print("\x1B[H"); // send cursor back to (0,0) position (top left corner) before printing main menu
 			
 		}
+		
+		
+		//testing
+		
+		
+		
+		// else if (strcmp(token,"make") == 0) {
+			
+			
+			// strcpy(task->name, "PCB #1");
+			// task->class = 1;
+			// task->prio = 99;
+			// task->state = -4;
+			// memset(task->stack,'\0',1024);
+			// task->next = NULL;
+			
+			
+			
+		// }
+		
+		// else if (strcmp(token,"print") == 0) {
+			
+			// char num[3];
+			// serial_println(task->name);
+			
+			// if (task->class == 0) serial_println("class: system");
+			// else serial_println("class: application");
+			// serial_print("Priority: "); serial_println(itoa(task->prio,num));
+			// serial_print("State: "); serial_println(itoa(task->state,num));
+			
+			
+			
+		// }
+		// printing numbers: ASCII of numbers are from 48-57
+		// before printing, can add +48 to prio's value for printing's sake, then subtract it
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		else {		// an unknown command
 			
@@ -233,10 +291,11 @@ void commhand() {
 			
 		}
 		
-		if (strcmp(token,"clear") != 0) serial_print("\n\n");	// new lines if we didn't clear the screen yet
+		if (strcmp(token,"clear") != 0) serial_print("\n");	// new lines if we didn't clear the screen yet
 	
 	} // leaving commhand
 	
 	return;
 
 }
+
