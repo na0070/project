@@ -19,3 +19,9 @@ struct PCB {
 	struct PCB* next;						// pointer to next PCB
 };
 typedef struct PCB pcb;						// shortcut name of "struct PCB" to be "pcb"
+
+struct queue{
+int count; 
+pcb *head; // dequeue this 
+pcb *tail; // enquue affter this this 
+};
