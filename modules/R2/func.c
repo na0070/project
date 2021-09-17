@@ -129,3 +129,62 @@ char* FreePCB( pcb* name ){
 return sys_free_mem(name );// return free memmory function
 }// free pcb end 
 
+void InsertPCB( pcb* pntr) {
+
+	if (FindPCB(pntr->name)  == NULL) {				// checking if PCB exist 
+	
+		int state = pntr->state; 										// taking the pointer state 
+			int priorty = pntr->prio; 									// taking the pointer priorty 
+				int sus = pntr->susp;									// taking the pointer suspend status 
+				
+				if ( state == READY){
+					
+					if (sus == SUSPENDED){
+						
+						struct queue* Qpntr = sus_ready.head; 
+						
+						while (Qpntr != NULL) {
+							
+							if (priorty <= Qpntr->prio){
+								
+								Qpntr = Qpntr->next;
+							}
+							else  {
+								pntr->next=Qpntr; 
+							}
+							
+						}
+					}
+					else {
+						
+						struct queue* Qpntr = ready.head; 
+						
+						while (Qpntr != NULL) {
+							
+							if (priorty <= Qpntr->prio){
+								
+								Qpntr = Qpntr->next;
+							}
+							else  {
+								pntr->next=Qpntr; 
+							}
+							
+						}
+						
+					}
+				} else {
+								if (sus == SUSPENDED){
+										
+										sus_blocked.tail = pntr;
+											pntr->next = NULL;
+									} else {
+										
+										blocked.tail = pntr;
+											pntr->next = NULL;
+									}
+				}
+	} 
+	
+}
+
+
