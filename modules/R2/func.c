@@ -124,3 +124,8 @@ char* itoa(int number, char *str ) {
 	return flip(str,strlen(str));
 	
 }
+char* FreePCB( pcb* name ){
+
+return sys_free_mem(name );// return free memmory function
+}// free pcb end 
+
