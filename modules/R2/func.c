@@ -1,5 +1,6 @@
 
 #include "structures.h"
+#include "../mpx_supt.h"
 #include <string.h>
 
 
@@ -32,6 +33,17 @@ When it does, returns a pointer to the PCB with the same name
 	
 	
 // }
+
+
+pcb* allocatePCB() {
+	pcb* alloc = (pcb*)sys_alloc_mem(sizeof(pcb)); // initialized a pcb pointer, allowing pointer to point at a specific location of memory (memory is the zie of pcb)
+	alloc->prio=5;
+	alloc->susp=0;
+	return alloc;
+}
+
+
+
 
 
 

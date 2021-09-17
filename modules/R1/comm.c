@@ -238,33 +238,33 @@ void commhand() {
 		
 		
 		
-		// else if (strcmp(token,"make") == 0) {
+		else if (strcmp(token,"make") == 0) {
 			
 			
-			// strcpy(task->name, "PCB #1");
-			// task->class = 1;
-			// task->prio = 99;
-			// task->state = -4;
-			// memset(task->stack,'\0',1024);
-			// task->next = NULL;
+			strcpy(task->name, "PCB #1");
+			task->class = 1;
+			task->prio = 99;
+			task->state = -4;
+			memset(task->stack,'\0',1024);
+			task->next = NULL;
 			
 			
 			
-		// }
+		}
 		
-		// else if (strcmp(token,"print") == 0) {
+		else if (strcmp(token,"print") == 0) {
 			
-			// char num[3];
-			// serial_println(task->name);
+			char num[3];
+			serial_println(task->name);
 			
-			// if (task->class == 0) serial_println("class: system");
-			// else serial_println("class: application");
-			// serial_print("Priority: "); serial_println(itoa(task->prio,num));
-			// serial_print("State: "); serial_println(itoa(task->state,num));
+			if (task->class == 0) serial_println("class: system");
+			else serial_println("class: application");
+			serial_print("Priority: "); serial_println(itoa(task->prio,num));
+			serial_print("State: "); serial_println(itoa(task->state,num));
 			
 			
 			
-		// }
+		}
 		// printing numbers: ASCII of numbers are from 48-57
 		// before printing, can add +48 to prio's value for printing's sake, then subtract it
 		

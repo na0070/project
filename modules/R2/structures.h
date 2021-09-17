@@ -8,14 +8,14 @@
 
 struct PCB {
 	
-	char name[30];			// name of PCB
-	unsigned char class;	// class pf PCB
-	int prio;				// Priority level of PCB
-	int state;				// Current state of PCB
-	int susp;				// suspend state of PCB
-	unsigned char stack[1024];		// The stack of the PCB
+	char name[30];			// array/name of PCB
+	unsigned char class;	// class (digit/letter indicating whether system or app) of PCB
+	int prio;				// priority level (0-9) of PCB
+	int state;				// current state (ready/running/blocked) of PCB
+	int susp;				// suspend (suspended/not suspended) state of PCB
+	unsigned char stack[1024];		// the stack (contains all info process needs) of the PCB
 	// unsigned char *stackTop = stack[0];// pointer to top of stack
 	// unsigned char *stackBot = stack[1023];	// pointer to bottom of stack
-	struct PCB* next;						// pointer to next PCB
+	struct PCB* next;						// pointer to next PCB/linked list
 };
 typedef struct PCB pcb;						// shortcut name of "struct PCB" to be "pcb"
