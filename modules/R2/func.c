@@ -187,4 +187,23 @@ void InsertPCB( pcb* pntr) {
 	
 }
 
+int removePCB (pcb* pntr) {
+	
+	if (pntr == NULL) {
+		
+		return -1; 												// Error code
+		
+	} else 
+			{
+	
+		pntr->prev->next = pntr->next;            // instead of A pointing to B, A pointing to C
+			pntr->next->prev = pntr->prev; 		// instead of C pointing to B, C pointing to A
+			
+			pntr->next = NULL; 							// unlink next pointer of B "C"
+		pntr->prev = NULL;								// unlink previous pointer of B "A"
+		
+	}  return 0; 												// success
+			
+}
+
 
