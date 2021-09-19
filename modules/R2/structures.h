@@ -17,11 +17,12 @@ struct PCB {
 	// unsigned char *stackTop = stack[0];// pointer to top of stack
 	// unsigned char *stackBot = stack[1023];	// pointer to bottom of stack
 	struct PCB* next;						// pointer to next PCB/linked list
+	struct PCB* prev;						// pointer to previous PCB/linked list				
 };
 typedef struct PCB pcb;						// shortcut name of "struct PCB" to be "pcb"
 
 struct queue{
 int count; 
 pcb *head; // dequeue this 
-pcb *tail; // enquue affter this this 
+pcb *tail; // enquue affter this 
 };

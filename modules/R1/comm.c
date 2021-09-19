@@ -61,7 +61,7 @@ void commhand() {
 			
 			getdate((int*)dateBuff);		// call the function and store the data in the date buffer
 			
-			serial_print("Current date: ");		
+			serial_print("Current date: ");
 			int i = 0;
 			while (i < SIZEBUFF-1) {
 				sys_req(WRITE,DEFAULT_DEVICE,(char *)&dateBuff[i],&sizeBuff);
