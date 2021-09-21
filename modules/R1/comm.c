@@ -265,23 +265,296 @@ void commhand() {
 			
 			
 		}
-		// printing numbers: ASCII of numbers are from 48-57
-		// before printing, can add +48 to prio's value for printing's sake, then subtract it
 		
 		
+		//=================================================================================================================================================================================================
 		
 		
+		// R2 commands
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		else if (strcmp(token,"pcb") == 0) {				// all R2 commands will start with keyword "pcb" followed by the actual command word
+			
+			token = strtok(NULL,split);						// token now is the word after "pcb"
+			
+			if (token == NULL)								// if nothing is entered after "pcb"
+				serial_println("ERROR: no command entered after pcb.");
+				
+				
+				
+				
+				
+				
+				
+			else if (strcmp(token,"suspend") == 0) {		//suspend command
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// suspendPCB code here (use "name")
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				}
+				
+			}
+			
+			else if (strcmp(token,"resume") == 0) {			// resume command
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// resumePCB code here (use "name")
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				}
+			}
+			
+			else if (strcmp(token,"priority") == 0) {		// set priority command
+				char* name;
+				int priority;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					token = strtok(NULL,split);				// token = <priority>
+					
+					if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+					else {
+						priority = atoi(token);				// stored pcb's priority
+						
+						
+						// set priority code here (use "name", "priority")
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+					}
+				
+				
+				}
+			}
+			
+			else if (strcmp(token,"show") == 0) {			// show pcb/all/ready/blocked commands
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// show code here (use "name")
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				}
+				
+			}
+			
+			else if (strcmp(token,"create") == 0) {			// create pcb command -> pcb create <name> <class> <priority>
+				char* name;
+				int class, priority;
+				token = strtok(NULL,split);					// token = <name>
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else
+					strcpy(name,token);						// store pcb's name in pointer
+				
+				token = strtok(NULL,split);					// token = <class>
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else 
+					class = atoi(token);					// store pcb's class
+				
+				token = strtok(NULL,split);					// token = <priority>
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else
+					priority = atoi(token);					// store pcb's priority
+				
+				
+				// createPCB code goes here (use "name", "class", "priority")
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+			
+			else if (strcmp(token,"delete") == 0) {			// delete pcb command
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// deletePCB code here (use "name")
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+				
+				
+			}
+				
+			else if (strcmp(token,"block") == 0) {			// block pcb command
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// blockPCB code here (use "name")
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				}
+			}
+			
+			else if (strcmp(token,"unblock") == 0) {		// unblock pcb command
+				char* name;
+				token = strtok(NULL,split);					// token = <name>
+				
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				
+				else {
+					strcpy(name,token);						// stored pcb's name
+					
+					// unblockPCB code here (use "name")
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				}
+				
+			}
+			
+			// invalid command issued
+			else
+				serial_println("ERROR: Unknown pcb command entered.");
+		}	// end pcb commands
 		
 		
 		
