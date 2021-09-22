@@ -4,6 +4,17 @@
 #include <string.h>
 
 
+// constants to be used throughout functions
+#define READY 0
+#define BLOCKED 1
+
+#define NOT_SUSPENDED 0
+#define SUSPENDED 1
+
+#define SYSTEM = 0
+#define APPLICATION 1
+
+
 // where all the functions of R2 would be (along with itoa())
 //also where all the queues are initialized for function use
 
@@ -95,7 +106,38 @@ pcb* allocatePCB() {
 	pcb* alloc = (pcb*)sys_alloc_mem(sizeof(pcb)); // initialized a pcb pointer, allowing pointer to point at a specific location of memory (memory is the size of pcb)
 	alloc->prio=5;
 	alloc->susp=0;
+	// alloc->stackTop = alloc->stack[1023];
+	// alloc->stackBase = alloc->stack[0];
 	return alloc;
+}
+
+
+
+pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {		
+	// setupPCB takes 3 parameters: name, class and priority of the new PCB to be created. Either returns the new pcb pointer if successful, or NULL if there is an error
+	// perform error checking first (are given values valid?)
+	
+	if (strlen(newName) > 20)		// is the given name larger than 20 characters? (max allowed is 20)
+		return NULL;
+	
+	if (newClass != SYSTEM && newClass != APPLICATION)			// is the given class not "system" or "application"? (we defined system as 0 and application as 1)
+		return NULL;
+	
+	if (newPriority < 0 || newPriority > 9)		// is the given priority not between 0-9? (anything outside that range is invalid)
+		return NULL;
+	
+	// if we reached this line, then there are no errors
+	
+	pcb* newPCB = allocatePCB();									// use allocatePCB() to create space for a new PCB and assign it to the pointer "newPCB"
+	
+	strcpy(newPCB->name, newName);									// store the given name to the newPCB's name (string copy)
+	newPCB->class = newClass;										// store the given class to the newPCB's class
+	newPCB->prio = newPriority;										// store the given priority to the newPCB's priority
+	
+	newPCB->state = READY;											// initially set the PCB's state to ready
+	newPCB->susp = NOT_SUSPENDED;									// initially set the PCB's status to not suspended
+	
+	return newPCB;													// after all the initialization is complete, return the new pcb pointer to wherever this function was used
 }
 
 

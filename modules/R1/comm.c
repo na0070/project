@@ -281,11 +281,6 @@ void commhand() {
 				serial_println("ERROR: no command entered after pcb.");
 				
 				
-				
-				
-				
-				
-				
 			else if (strcmp(token,"suspend") == 0) {		//suspend command
 				char* name;
 				token = strtok(NULL,split);					// token = <name>
@@ -319,29 +314,34 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.\n",24);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
 					// resumePCB code here (use "name")
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+					
+					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
+					
+					if (ptr == NULL)						// if PCB was not found
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not find PCB.\n",27);
+					
+					else {
+						
+						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
+					
+						if (code == -1)							// error
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not remove PCB.\n",30);
+						
+						else {
+							
+							ptr->susp = NOT_SUSPENDED;			// change status of pointer to not suspended
+							
+							insertPCB(ptr);						// insert the PCB based on its internal info
+						}
+						
+					}
+					
 				}
 			}
 			
@@ -389,8 +389,8 @@ void commhand() {
 						
 						
 					}
-				
-				
+					
+					
 				}
 			}
 			
@@ -401,27 +401,99 @@ void commhand() {
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
 				
-				else {
-					strcpy(name,token);						// stored pcb's name
+				else if (strcmp(token,"all")) {
+					// "show all" code here
 					
-					// show code here (use "name")
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+				else if (strcmp(token,"ready")) {
+					//"show ready" code here
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+				else if (strcmp(token,"blocked")) {
+					//"show blocked" code here
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+				else {
+					strcpy(name,token);						// stores pcb's name
+					// "show" code here
+					
+					pcb* ptr = findPCB(name);				// search for the pcb using the name. This will = NULL if it couldn't find it
+					
+					if (ptr == NULL) {
+						
+						sys_req(WRITE,DEFAULT_DEVICE,"PCB not found using provided name.\n",36);	// PCB not found
+					}
+					else {
+						sys_req(WRITE,DEFAULT_DEVICE,"\nName: ",8);
+						sys_req(WRITE,DEFAULT_DEVICE,ptr->name,20);									// print the name
+						
+						
+						sys_req(WRITE,DEFAULT_DEVICE,"\nClass: ",9);
+						
+						if (ptr->class == SYSTEM)													// print the class (based on value)
+							sys_req(WRITE,DEFAULT_DEVICE,"SYSTEM",7);
+						
+						else
+							sys_req(WRITE,DEFAULT_DEVICE,"APPLICATION",12);
+						
+						
+						sys_req(WRITE,DEFAULT_DEVICE,"\nState: ",9);
+						
+						if (ptr->state == READY)													// print the state (based on value)
+							sys_req(WRITE,DEFAULT_DEVICE,"READY",7);
+						
+						else
+							sys_req(WRITE,DEFAULT_DEVICE,"BLOCKED",8);
+						
+						
+						
+						sys_req(WRITE,DEFAULT_DEVICE,"\nStatus: ",10);
+						
+						if (ptr->susp == NOT_SUSPENDED)													// print the status (based on value)
+							sys_req(WRITE,DEFAULT_DEVICE,"NOT SUSPENDED",14);
+						
+						else
+							sys_req(WRITE,DEFAULT_DEVICE,"SUSPENDED",10);
+						
+						
+						
+						sys_req(WRITE,DEFAULT_DEVICE,"\nPriority: ",12);
+						
+						char prioNum[2] = {'\0','\0'};
+						itoa(ptr->prio,prioNum);
+						
+						sys_req(WRITE,DEFAULT_DEVICE,prioNum,strlen(prioNum));							// print the priority (based on value)
+						
+						
+					}
+					
 				}
 				
 			}
@@ -452,6 +524,15 @@ void commhand() {
 				
 				
 				// createPCB code goes here (use "name", "class", "priority")
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				
 				
