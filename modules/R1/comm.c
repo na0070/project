@@ -48,7 +48,7 @@ void commhand() {
 		memset(dateBuff,'\0',SIZEBUFF);
 		memset(timeBuff,'\0',SIZEBUFF);
 		
-		serial_print("Welcome to MPX_core main menu..\n");
+		serial_print("Welcome to MPX_core main menu..\n"); // sys req 
 		
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		
@@ -78,7 +78,7 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
-				serial_print("ERROR: invalid number of parameters (too few).\n");
+				serial_print("ERROR: invalid number of parameters (too few).\n");  // sys req 
 			
 			else {
 				int yr = atoi(token);
@@ -86,7 +86,7 @@ void commhand() {
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
-					serial_print("ERROR: invalid number of parameters (too few).\n");
+					serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
 				
 				else {
 					int mth = atoi(token);
@@ -94,21 +94,21 @@ void commhand() {
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
-						serial_print("ERROR: invalid number of parameters (too few).\n");
+						serial_print("ERROR: invalid number of parameters (too few).\n");  // sys req 
 				
 					else {
 						int day = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
-							serial_print("ERROR: invalid number of parameters (too many).\n");
+							serial_print("ERROR: invalid number of parameters (too many).\n"); //sys req 
 						
 						else if (yr > 30 || yr < 0 || mth > 12 || mth < 1 || day > 31 || day < 1)
-							serial_print("ERROR: invalid date setting.\n");
+							serial_print("ERROR: invalid date setting.\n"); // sys req 
 						
 						else {
 							setdate(yr,mth,day);
-							serial_print("Date adjusted.\n");
+							serial_print("Date adjusted.\n"); //sys req 
 						}
 					}
 				}
@@ -149,7 +149,7 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
-				serial_print("ERROR: invalid number of parameters (too few).\n");
+				serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
 			
 			else {
 				int hr = atoi(token);
@@ -157,7 +157,7 @@ void commhand() {
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
-					serial_print("ERROR: invalid number of parameters (too few).\n");
+					serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
 				
 				else {
 					int min = atoi(token);
@@ -165,21 +165,21 @@ void commhand() {
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
-						serial_print("ERROR: invalid number of parameters (too few).\n");
+						serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
 				
 					else {
 						int sec = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
-							serial_print("ERROR: invalid number of parameters (too many).\n");
+							serial_print("ERROR: invalid number of parameters (too many).\n");  // sys req 
 						
 						else if (hr > 23 || hr < 0 || min > 59 || min < 0 || sec > 59 || sec < 0)
-							serial_print("ERROR: invalid time setting.\n");
+							serial_print("ERROR: invalid time setting.\n");  // sys req 
 						
 						else {
 							set_Time(hr,min,sec);
-							serial_print("Time adjusted.\n");
+							serial_print("Time adjusted.\n"); // sys req 
 						}
 						
 					}
@@ -197,7 +197,7 @@ void commhand() {
 			char input;
 			int size = 1;
 			
-			serial_print("Do you want to shutdown if yes enter y if no enter n please \n");
+			serial_print("Do you want to shutdown if yes enter y if no enter n please \n");  //sys req 
 			
 			do {
 				
@@ -258,7 +258,7 @@ void commhand() {
 			serial_println(task->name);
 			
 			if (task->class == 0) serial_println("class: system");
-			else serial_println("class: application");
+			else serial_println("class: application");  //sys req 
 			serial_print("Priority: "); serial_println(itoa(task->prio,num));
 			serial_print("State: "); serial_println(itoa(task->state,num));
 			
@@ -608,7 +608,7 @@ void commhand() {
 		
 		else {		// an unknown command
 			
-			serial_print("unknown command entered. Please check spelling and/or syntax..");
+			serial_print("unknown command entered. Please check spelling and/or syntax.."); //sys req 
 			
 		}
 		
