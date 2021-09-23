@@ -402,7 +402,10 @@ void commhand() {
 					serial_println("ERROR: too few inputs.");
 				
 				else if (strcmp(token,"all")) {
-					// "show all" code here
+					showqueue(ready);				//prints information of the entire ready queue
+					showqueue(sus_ready);			//prints information of the suspended ready queue
+					showqueue(blocked);				//prints information of the entire blocked queue
+					showqueue(sus_blocked);			//prints information of the suspended blocked queue
 					
 					
 					
@@ -416,7 +419,8 @@ void commhand() {
 				}
 				else if (strcmp(token,"ready")) {
 					//"show ready" code here
-					
+					showqueue(ready);				//prints information of the entire ready queue
+					showqueue(sus_ready);			//prints information of the suspended ready queue
 					
 					
 					
@@ -430,7 +434,8 @@ void commhand() {
 				}
 				else if (strcmp(token,"blocked")) {
 					//"show blocked" code here
-					
+					showqueue(blocked);				//prints information of the entire blocked queue
+					showqueue(sus_blocked);			//prints information of the suspended blocked queue
 					
 					
 					
@@ -451,46 +456,8 @@ void commhand() {
 						sys_req(WRITE,DEFAULT_DEVICE,"PCB not found using provided name.\n",36);	// PCB not found
 					}
 					else {
-						sys_req(WRITE,DEFAULT_DEVICE,"\nName: ",8);
-						sys_req(WRITE,DEFAULT_DEVICE,ptr->name,20);									// print the name
 						
-						
-						sys_req(WRITE,DEFAULT_DEVICE,"\nClass: ",9);
-						
-						if (ptr->class == SYSTEM)													// print the class (based on value)
-							sys_req(WRITE,DEFAULT_DEVICE,"SYSTEM",7);
-						
-						else
-							sys_req(WRITE,DEFAULT_DEVICE,"APPLICATION",12);
-						
-						
-						sys_req(WRITE,DEFAULT_DEVICE,"\nState: ",9);
-						
-						if (ptr->state == READY)													// print the state (based on value)
-							sys_req(WRITE,DEFAULT_DEVICE,"READY",7);
-						
-						else
-							sys_req(WRITE,DEFAULT_DEVICE,"BLOCKED",8);
-						
-						
-						
-						sys_req(WRITE,DEFAULT_DEVICE,"\nStatus: ",10);
-						
-						if (ptr->susp == NOT_SUSPENDED)													// print the status (based on value)
-							sys_req(WRITE,DEFAULT_DEVICE,"NOT SUSPENDED",14);
-						
-						else
-							sys_req(WRITE,DEFAULT_DEVICE,"SUSPENDED",10);
-						
-						
-						
-						sys_req(WRITE,DEFAULT_DEVICE,"\nPriority: ",12);
-						
-						char prioNum[2] = {'\0','\0'};
-						itoa(ptr->prio,prioNum);
-						
-						sys_req(WRITE,DEFAULT_DEVICE,prioNum,strlen(prioNum));							// print the priority (based on value)
-						
+						showPCB(ptr);						// call the function to print all the PCB's information
 						
 					}
 					

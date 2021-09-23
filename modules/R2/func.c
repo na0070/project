@@ -227,6 +227,67 @@ int removePCB (pcb* pntr) {
 }
 
 
+
+// showPCB prints information for a single pcb (using the pointer)
+void showPCB(pcb* ptr) {
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"\nName: ",8);
+	sys_req(WRITE,DEFAULT_DEVICE,ptr->name,20);									// print the name
+	
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"\nClass: ",9);
+	
+	if (ptr->class == SYSTEM)													// print the class (based on value)
+		sys_req(WRITE,DEFAULT_DEVICE,"SYSTEM",7);
+	
+	else
+		sys_req(WRITE,DEFAULT_DEVICE,"APPLICATION",12);
+	
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"\nState: ",9);
+	
+	if (ptr->state == READY)													// print the state (based on value)
+		sys_req(WRITE,DEFAULT_DEVICE,"READY",7);
+	
+	else
+		sys_req(WRITE,DEFAULT_DEVICE,"BLOCKED",8);
+	
+	
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"\nStatus: ",10);
+	
+	if (ptr->susp == NOT_SUSPENDED)													// print the status (based on value)
+		sys_req(WRITE,DEFAULT_DEVICE,"NOT SUSPENDED",14);
+	
+	else
+		sys_req(WRITE,DEFAULT_DEVICE,"SUSPENDED",10);
+	
+	
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"\nPriority: ",12);
+	
+	char prioNum[1];
+	itoa(ptr->prio,prioNum);
+	
+	sys_req(WRITE,DEFAULT_DEVICE,prioNum,strlen(prioNum));							// print the priority (based on value)
+
+	
+}
+void showqueue(struct queue allpcbs){						 //function used to print an entire queue using the function showpcb
+	pcb* ptr=allpcbs->head; 								//set a pcb pointer to the head of a given queue
+	while(ptr!=NULL){										 //while still not reaching end of the queue
+		showPCB(ptr); 										//print the current pcb's info
+		ptr=ptr->next;									 //go to next pcb in queue
+		
+	}
+}
+
+
+
+
+
+
+
 //==============================================================================================================
 
 
