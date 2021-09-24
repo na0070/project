@@ -367,7 +367,20 @@ void commhand() {
 						
 						// set priority code here (use "name", "priority")
 						
-						
+						if (FindPCB(pntr->name)  != NULL) { // check if the pcb valid 
+					if( priority < 0 || priority > 9 ) { // check priority 
+					sys_req(WRITE,DEFAULT_DEVICE,"\npriority gotta be between 0 and 9 ", 35);
+					
+					}
+					else {
+					
+					}
+					
+					else{
+					sys_req(WRITE,DEFAULT_DEVICE,"\nUnvalid PCB",12);
+					
+					} 
+					
 						
 						
 						
@@ -430,10 +443,6 @@ void commhand() {
 				}
 				else if (strcmp(token,"blocked")) {
 					//"show blocked" code here
-					
-					
-					
-					
 					
 					
 					
@@ -586,16 +595,16 @@ void commhand() {
 					
 					// blockPCB code here (use "name")
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+					if (FindPCB(pntr->name)  != NULL) { // check if the pcb valid 
+					removePCB (name); // remove the pcb
+					InsertPCB( name);
+					
+					}
+					else{
+					sys_req(WRITE,DEFAULT_DEVICE,"\nUnvalid PCB",12);
+					
+					} 
+					
 				
 				}
 			}
