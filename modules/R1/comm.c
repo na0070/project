@@ -293,18 +293,28 @@ void commhand() {
 					
 					// suspendPCB code here (use "name")
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
+					
+					if (ptr == NULL)						// if PCB was not found
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not find PCB.\n",27);
+					
+					else {
+						
+						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
+					
+						if (code == -1)							// error
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not remove PCB.\n",30);
+						
+						else {
+							
+							ptr->susp = SUSPENDED;				// change status of pointer to suspended
+							
+							insertPCB(ptr);						// insert the PCB based on its internal info
+						}
+						
+					}
+					
+					
 				}
 				
 			}
