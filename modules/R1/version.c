@@ -10,7 +10,6 @@
 @param none
 */
 void version(){
-serial_print(" R1 published 09/04/2021 \n");
-
+sys_req(WRITE,DEFAULT_DEVICE," R2 published 09/26/2021 \n",27);
 
 }
