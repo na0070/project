@@ -301,18 +301,28 @@ void commhand() {
 					
 					// suspendPCB code here (use "name")
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
+					
+					if (ptr == NULL)						// if PCB was not found
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not find PCB.\n",27);
+					
+					else {
+						
+						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
+					
+						if (code == -1)							// error
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: could not remove PCB.\n",30);
+						
+						else {
+							
+							ptr->susp = SUSPENDED;				// change status of pointer to suspended
+							
+							insertPCB(ptr);						// insert the PCB based on its internal info
+						}
+						
+					}
+					
+					
 				}
 				
 			}
@@ -494,22 +504,37 @@ void commhand() {
 				
 				// createPCB code goes here (use "name", "class", "priority")
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+				if (findPCB(name) != NULL) {																// Checking if the name used or not 
+					
+					serial_println("Name already used.");
+					
+				}	else { 
+								
+								if (class != SYSTEM && class != APPLICATION) {			// Checking if the class is valid 
+									
+									serial_println("Class not valid.");
+								} else{
+									
+									if (priority < 0 || priority > 9 ) {											// Checking if the priority number is valid 
+										
+										serial_println("Priority not valid.");
+									} else {
+										
+										pcb* pntr = setupPCB(name, class, priority); 				// assigning the SetupPCB result to pointer
+										
+										if (pntr == NULL) {													    	// Checking if the PCB created succsefully  
+											
+											serial_println("Couldn't setup PCB");
+										} else {
+											
+											insertPCB(pntr);															// inserting the new PCB in the right place 			
+										}
+									}
+								}
+					
+				}
+
+
 			}
 			
 			else if (strcmp(token,"delete") == 0) {			// delete pcb command
@@ -524,20 +549,27 @@ void commhand() {
 					
 					// deletePCB code here (use "name")
 					
+					pcb* pntr = FindPCB(name);												// Assigning findPCB results topointer 
 					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+					if (pntr == NULL) {																// Checking if the PCB is unavalibale 
+						
+						serial_println("PCB couldn't be found");
+						
+					} else {
+						
+						int error_Check = removePCB(pntr);								// Removing the PCB and saves the error code
+						
+						if (error_Check == -1) {
+							
+							serial_println("PCB couldn't be removed");
+							
+						} else { 
+							
+							freePCB(pntr);															// Delete PCB 
+							serial_println("PCB has been deleted succesfully!");
+						}
+					}
+	
 				}
 				
 				
