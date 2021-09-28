@@ -147,7 +147,7 @@ return (char*)sys_free_mem(name );// return free memmory function
 
 
 void insertPCB( pcb* pntr) {
-
+s
 	print("inside insert\n",16);
 	if (findPCB(pntr->name)  == NULL) {				// checking if PCB exist 
 		print("after if\n",10);
