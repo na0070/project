@@ -9,10 +9,10 @@
 @param none
 */
 void help(){
-serial_print("commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [clear] [help] \n");
+sys_req(WRITE,DEFAULT_DEVICE,"commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [clear] [help] \n",87);
+sys_req(WRITE,DEFAULT_DEVICE,"setdate [setdate year month day] \n",34);
+sys_req(WRITE,DEFAULT_DEVICE,"settime [settime hour minute second] \n",37);
 
-serial_print("setdate [setdate year month day] \n");
-serial_print("settime [settime hour minute second] \n");
 
 
 }

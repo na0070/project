@@ -50,8 +50,13 @@ void commhand() {
 		memset(dateBuff,'\0',SIZEBUFF);
 		memset(timeBuff,'\0',SIZEBUFF);
 		
+<<<<<<< HEAD
 		//serial_print("Welcome to MPX_core main menu..\n"); // sys req 
 		
+=======
+		serial_print("Welcome to MPX_core main menu..\n"); // sys req 
+		sys_req(WRITE,DEFAULT_DEVICE,"Welcome to MPX_core main menu..\n",33);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 		
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		
@@ -82,29 +87,45 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
+<<<<<<< HEAD
 				print("ERROR: invalid number of parameters (too few).\n",48);  // sys req 
 			
+=======
+				serial_print("ERROR: invalid number of parameters (too few).\n");  // sys req 
+			sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",46);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 			else {
 				int yr = atoi(token);
 				
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
+<<<<<<< HEAD
 					print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
 				
+=======
+					serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",46);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 				else {
 					int mth = atoi(token);
 					
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
+<<<<<<< HEAD
 						print("ERROR: invalid number of parameters (too few).\n",48);  // sys req 
 				
+=======
+						serial_print("ERROR: invalid number of parameters (too few).\n");  // sys req 
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",46);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 					else {
 						int day = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
+<<<<<<< HEAD
 							print("ERROR: invalid number of parameters (too many).\n",49); //sys req 
 						
 						else if (yr > 30 || yr < 0 || mth > 12 || mth < 1 || day > 31 || day < 1)
@@ -113,6 +134,17 @@ void commhand() {
 						else {
 							setdate(yr,mth,day);
 							print("Date adjusted.\n",16); //sys req 
+=======
+							serial_print("ERROR: invalid number of parameters (too many).\n"); //sys req 
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",46);
+						else if (yr > 30 || yr < 0 || mth > 12 || mth < 1 || day > 31 || day < 1)
+							serial_print("ERROR: invalid date setting.\n"); // sys req 
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid date setting.\n",30);
+						else {
+							setdate(yr,mth,day);
+							serial_print("Date adjusted.\n"); //sys req 
+							sys_req(WRITE,DEFAULT_DEVICE,"Date adjusted.\n",15);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 						}
 					}
 				}
@@ -135,7 +167,13 @@ void commhand() {
 			
 			get_Time((int*)timeBuff);				// fill time buffer with current time info
 			
+<<<<<<< HEAD
 			print("Current time: ",17);
+=======
+			serial_print("Current time: ");
+			sys_req(WRITE,DEFAULT_DEVICE,"Current time: ",14);
+			
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 			int i = 0;
 			while (i < SIZEBUFF-1) {					// loop the array to print the current time
 				sys_req(WRITE,DEFAULT_DEVICE,(char *)&timeBuff[i],&sizeBuff);
@@ -153,29 +191,45 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
+<<<<<<< HEAD
 				print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
 			
+=======
+				serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
+			sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",49);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 			else {
 				int hr = atoi(token);
 				
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
+<<<<<<< HEAD
 					print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
 				
+=======
+					serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",49);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 				else {
 					int min = atoi(token);
 					
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
+<<<<<<< HEAD
 						print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
 				
+=======
+						serial_print("ERROR: invalid number of parameters (too few).\n"); // sys req 
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",49);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 					else {
 						int sec = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
+<<<<<<< HEAD
 							print("ERROR: invalid number of parameters (too many).\n",49);  // sys req 
 						
 						else if (hr > 23 || hr < 0 || min > 59 || min < 0 || sec > 59 || sec < 0)
@@ -184,6 +238,17 @@ void commhand() {
 						else {
 							set_Time(hr,min,sec);
 							print("Time adjusted.\n",16); // sys req 
+=======
+							serial_print("ERROR: invalid number of parameters (too many).\n");  // sys req 
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid number of parameters (too few).\n",49);
+						else if (hr > 23 || hr < 0 || min > 59 || min < 0 || sec > 59 || sec < 0)
+							serial_print("ERROR: invalid time setting.\n");  // sys req 
+						sys_req(WRITE,DEFAULT_DEVICE,"ERROR: invalid time setting.\n",30);
+						else {
+							set_Time(hr,min,sec);
+							serial_print("Time adjusted.\n"); // sys req 
+							sys_req(WRITE,DEFAULT_DEVICE,"Time adjusted.\n",15);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 						}
 						
 					}
@@ -202,7 +267,7 @@ void commhand() {
 			int size = 1;
 			
 			serial_print("Do you want to shutdown if yes enter y if no enter n please \n");  //sys req 
-			
+			sys_req(WRITE,DEFAULT_DEVICE,"Do you want to shutdown if yes enter y if no enter n please \n",60);
 			do {
 				
 				if (input == 'y' || input == 'n') {		// if yes/no will exit
@@ -262,11 +327,14 @@ void commhand() {
 			serial_println(task->name);
 			
 			if (task->class == 0) serial_println("class: system");
+			sys_req(WRITE,DEFAULT_DEVICE,"class: system",14);
+			
 			else serial_println("class: application");  //sys req 
-			serial_print("Priority: "); serial_println(itoa(task->prio,num));
-			serial_print("State: "); serial_println(itoa(task->state,num));
-			
-			
+			sys_req(WRITE,DEFAULT_DEVICE,"class: application",18);
+			serial_print("Priority: "); serial_println(itoa(task->prio,num)); 
+			sys_req(WRITE,DEFAULT_DEVICE,"Priority: ",10);
+			serial_print("State: "); serial_println(itoa(task->state,num)); 		
+			sys_req(WRITE,DEFAULT_DEVICE,"State: ",10);
 			
 		}
 		
@@ -282,8 +350,13 @@ void commhand() {
 			token = strtok(NULL,split);						// token now is the word after "pcb"
 			
 			if (token == NULL)								// if nothing is entered after "pcb"
+<<<<<<< HEAD
 				print("ERROR: no command entered after pcb.\n",40);
 				
+=======
+				serial_println("ERROR: no command entered after pcb.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: no command entered after pcb.",37);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 				
 			else if (strcmp(token,"suspend") == 0) {		//suspend command
 				char* name = " ";							// initialize a name
@@ -291,7 +364,7 @@ void commhand() {
 				
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
-				
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
@@ -364,16 +437,26 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
+<<<<<<< HEAD
 					print("ERROR: too few inputs.",23);
 				
+=======
+					serial_println("ERROR: too few inputs.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
 					token = strtok(NULL,split);				// token = <priority>
 					
 					if (token == NULL)
+<<<<<<< HEAD
 						print("ERROR: too few inputs.",23);
 				
+=======
+					serial_println("ERROR: too few inputs.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 					else {
 						priority = atoi(token);				// stored pcb's priority
 						
@@ -409,9 +492,15 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
+<<<<<<< HEAD
 					print("ERROR: too few inputs.\n",24);
 				
 				else if (strcmp(token,"all") == 0) {
+=======
+					serial_println("ERROR: too few inputs.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+				else if (strcmp(token,"all")) {
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 					showqueue(ready);				//prints information of the entire ready queue
 					showqueue(sus_ready);			//prints information of the suspended ready queue
 					showqueue(blocked);				//prints information of the entire blocked queue
@@ -477,6 +566,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
+<<<<<<< HEAD
 				
 				else {
 					strcpy(name,token);						// store pcb's name in pointer
@@ -484,6 +574,30 @@ void commhand() {
 					token = strtok(NULL,split);					// token = <class>
 					if (token == NULL)
 						serial_println("ERROR: too few inputs.");
+=======
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+				else
+					strcpy(name,token);						// store pcb's name in pointer
+				
+				token = strtok(NULL,split);					// token = <class>
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+				else 
+					class = atoi(token);					// store pcb's class
+				
+				token = strtok(NULL,split);					// token = <priority>
+				if (token == NULL)
+					serial_println("ERROR: too few inputs.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
+				else
+					priority = atoi(token);					// store pcb's priority
+				
+				
+				// createPCB code goes here (use "name", "class", "priority")
+				
+				if (findPCB(name) != NULL) {																// Checking if the name used or not 
+>>>>>>> b069a66bd46a5b5ab8c0a7cf2ff58bed55086c2f
 					
 					else {
 						class = atoi(token);					// store pcb's class
@@ -538,7 +652,7 @@ void commhand() {
 				
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
-				
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
@@ -576,7 +690,7 @@ void commhand() {
 				
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
-				
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
@@ -604,7 +718,7 @@ void commhand() {
 				
 				if (token == NULL)
 					serial_println("ERROR: too few inputs.");
-				
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: too few inputs.",23);
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
@@ -630,6 +744,7 @@ void commhand() {
 			// invalid command issued
 			else
 				serial_println("ERROR: Unknown pcb command entered.");
+				sys_req(WRITE,DEFAULT_DEVICE,"ERROR: Unknown pcb command entered.",34);
 		}	// end pcb commands
 		
 		
@@ -637,7 +752,7 @@ void commhand() {
 		else {		// an unknown command
 			
 			serial_print("unknown command entered. Please check spelling and/or syntax.."); //sys req 
-			
+			sys_req(WRITE,DEFAULT_DEVICE,"unknown command entered. Please check spelling and/or syntax..",64);
 		}
 		
 		if (strcmp(token,"clear") != 0) serial_print("\n");	// new lines if we didn't clear the screen yet
