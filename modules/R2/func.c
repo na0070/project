@@ -1,39 +1,33 @@
 
-#include "structures.h"
-#include "../mpx_supt.h"
-#include <string.h>
+// #include "structures.h"
+// #include "../mpx_supt.h"
+// #include <string.h>
 
 
 // constants to be used throughout functions
-#define READY 0
-#define BLOCKED 1
+// #define READY 0
+// #define BLOCKED 1
 
-#define NOT_SUSPENDED 0
-#define SUSPENDED 1
+// #define NOT_SUSPENDED 0
+// #define SUSPENDED 1
 
-#define SYSTEM = 0
-#define APPLICATION 1
+// #define SYSTEM 0
+// #define APPLICATION 1
 
 
 // where all the functions of R2 would be (along with itoa())
 //also where all the queues are initialized for function use
 
+#include "func.h"
+struct queue ready = {.head = NULL, .tail = NULL};					// initializing the ready queue
 
-struct queue ready;					// initializing the ready queue
-ready.head = NULL;
-ready.tail = NULL;
 
-struct queue blocked;				// initializing the blocked queue
-blocked.head = NULL;
-blocked.tail = NULL;
+struct queue blocked = {.head = NULL, .tail = NULL};				// initializing the blocked queue
 
-struct queue sus_ready;				// initializing the suspended ready queue
-sus_ready.head = NULL;
-sus_ready.tail = NULL;
 
-struct queue sus_blocked;			// initializing the suspended blocked queue
-sus_blocked.head = NULL;
-sus_blocked.tail = NULL;
+struct queue sus_ready = {.head = NULL, .tail = NULL};				// initializing the suspended ready queue
+
+struct queue sus_blocked = {.head = NULL, .tail = NULL};			// initializing the suspended blocked queue
 
 
 
@@ -41,40 +35,41 @@ sus_blocked.tail = NULL;
 FindPCB() is given a name of a PCB. Searches all queues until it finds a match.
 When it does, returns a pointer to the PCB of the same name. If no match is found, return NULL
 */
-pcb* FindPCB(char* name) {
+pcb* findPCB(char* name) {
 	
 	pcb* ptr = ready.head;					// the indexing pointer (used for traversing each queue, starting with ready queue)
 	
 	while (ptr != NULL) {					// loop through ready queue
-		
-		if (strcmp(name, ptr->name) == 0) 	// if given name matches current PCB's name
+		print("looking in ready\n",20);
+		if (strcmp(name, ptr->name) == 0){	// if given name matches current PCB's name
+			print("found in ready\n", 20);
 			return ptr;						// return the pointer (i.e PCB found)
 		
-		
+		}
 		ptr = ptr->next;					// go to next PCB in queue
 	}
 	
-	
+	print("not in ready\n",14);
 	// not found in ready, try in blocked
 	
 	ptr = blocked.head;						
 	
 	while (ptr != NULL) {					// loop through blocked queue
-		
+		print("looking in block\n",20);
 		if (strcmp(name, ptr->name) == 0) 	// if given name matches current PCB's name
 			return ptr;						// return the pointer (i.e PCB found)
 		
 		
 		ptr = ptr->next;					// go to next PCB in queue
 	}
-	
+	print("not in blocked\n",16);
 	
 	// not found in blocked, try in suspended ready
 	
-	pcb* ptr = sus_ready.head;				// the indexing pointer
+	ptr = sus_ready.head;				// the indexing pointer
 	
 	while (ptr != NULL) {					// loop through sus_ready queue
-		
+		print("looking in Sready\n",20);
 		if (strcmp(name, ptr->name) == 0) 	// if given name matches current PCB's name
 			return ptr;						// return the pointer (i.e PCB found)
 		
@@ -82,13 +77,13 @@ pcb* FindPCB(char* name) {
 		ptr = ptr->next;					// go to next PCB in queue
 	}
 	
-	
+	print("not in s_ready\n",16);
 	// not found in suspended ready, try in suspended blocked
 	
-	pcb* ptr = sus_blocked.head;				// the indexing pointer
+	ptr = sus_blocked.head;				// the indexing pointer
 	
 	while (ptr != NULL) {					// loop through sus_ready queue
-		
+		print("looking in Sblock\n",20);
 		if (strcmp(name, ptr->name) == 0) 	// if given name matches current PCB's name
 			return ptr;						// return the pointer (i.e PCB found)
 		
@@ -96,7 +91,7 @@ pcb* FindPCB(char* name) {
 		ptr = ptr->next;					// go to next PCB in queue
 	}
 	
-	
+	print("not in s_blocked\n",20);
 	// not found in any queue, then PCB doesn't exist, return null
 	return NULL;
 }
@@ -113,7 +108,8 @@ pcb* allocatePCB() {
 
 
 
-pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {		
+pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {	
+print("inside setUp\n",15);	
 	// setupPCB takes 3 parameters: name, class and priority of the new PCB to be created. Either returns the new pcb pointer if successful, or NULL if there is an error
 	// perform error checking first (are given values valid?)
 	
@@ -136,74 +132,145 @@ pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {
 	
 	newPCB->state = READY;											// initially set the PCB's state to ready
 	newPCB->susp = NOT_SUSPENDED;									// initially set the PCB's status to not suspended
-	
+	if (newPCB == NULL) print("newPCB is null\n",16);
+	else print("new pcb not null\n",19);
 	return newPCB;													// after all the initialization is complete, return the new pcb pointer to wherever this function was used
 }
 
 
 
-char* FreePCB( pcb* name ){
+char* freePCB( pcb* name ){
 
-return sys_free_mem(name );// return free memmory function
+return (char*)sys_free_mem(name );// return free memmory function
 }// free pcb end 
 
 
 
-void InsertPCB( pcb* pntr) {
+void insertPCB( pcb* pntr) {
 
-	if (FindPCB(pntr->name)  == NULL) {				// checking if PCB exist 
-	
+	print("inside insert\n",16);
+	if (findPCB(pntr->name)  == NULL) {				// checking if PCB exist 
+		print("after if\n",10);
 		int state = pntr->state; 										// taking the pointer state 
 			int priorty = pntr->prio; 									// taking the pointer priorty 
 				int sus = pntr->susp;									// taking the pointer suspend status 
 				
+				struct queue* Q;
+				
 				if ( state == READY){
 					
-					if (sus == SUSPENDED){
+					//if (sus == SUSPENDED){
 						
-						struct queue* Qpntr = sus_ready.head; 
+					if (sus == SUSPENDED)
+						Q = &sus_ready;								// also tried without '&' 
+					else
+						Q = &ready;
+					
+					
+						pcb* Qpntr = Q->head;
 						
-						while (Qpntr != NULL) {
-							
-							if (priorty <= Qpntr->prio){
-								
-								Qpntr = Qpntr->next;
-							}
-							else  {
-								pntr->next=Qpntr; 
-							}
-							
-						}
-					}
-					else {
-						
-						struct queue* Qpntr = ready.head; 
-						
-						while (Qpntr != NULL) {
-							
-							if (priorty <= Qpntr->prio){
-								
-								Qpntr = Qpntr->next;
-							}
-							else  {
-								pntr->next=Qpntr; 
-							}
+						if (Q->head == NULL) {	// if queue is empty
+							// Q->head = pntr;
+							// Q->tail = pntr;
+							ready.head = pntr;
+							ready.tail = pntr;
+							pntr->next = NULL;
+							pntr->prev = NULL;
+							// sus_ready.head == pntr;
+							// sus_ready.tail == pntr;
+							print("inserted in empty ready.",24);
 							
 						}
+							else {
 						
-					}
-				} else {
-								if (sus == SUSPENDED){
+								//pcb* Qpntr = sus_ready.head; 
+								
+								while (Qpntr != NULL) {
+									
+									if (priorty <= Qpntr->prio){
 										
-										sus_blocked.tail = pntr;
-											pntr->next = NULL;
-									} else {
-										
-										blocked.tail = pntr;
-											pntr->next = NULL;
+										Qpntr = Qpntr->next;
 									}
+									else  {
+										pntr->next = Qpntr;
+										pntr->prev = Qpntr->prev;
+										
+										Qpntr->prev->next = pntr;
+										Qpntr->prev = pntr;
+										print("inserted in non_empty ready.",29);
+										break;
+									}
+									
+								}
+							}
+					//}
+					// else {
+						
+						// Q = ready;
+						
+						// pcb* Qpntr = ready.head; 
+						
+						// while (Qpntr != NULL) {
+							
+							// if (priorty <= Qpntr->prio){
+								
+								// Qpntr = Qpntr->next;
+							// }
+							// else  {
+								// pntr->next=Qpntr; 
+							// }
+							
+						// }
+						
+					// }
+				} else {									// in blocked (FIFO)
+				
+				
+						if (state == SUSPENDED)
+							Q = &sus_blocked;
+						else
+							Q = &blocked;
+						
+						//pcb* Qpntr = NULL;
+						
+						
+						if (Q->head == NULL) {
+							
+							Q->head = pntr;
+							Q->tail = pntr;
+							pntr->next = NULL;
+							pntr->prev = NULL;
+							print("inserted in empty blocked.",27);
+							
+						}
+						else {
+							
+							pntr->prev = Q->tail;
+							pntr->prev->next = pntr;
+							Q->tail = pntr;
+							pntr->next = NULL;
+							print("inserted in non_empty blocked.",32);
+							
+						}
+						
+						
+							
+								// if (sus == SUSPENDED){
+										
+										// sus_blocked.tail = pntr;
+											// pntr->next = NULL;
+									// } else {
+										
+										// blocked.tail = pntr;
+											// pntr->next = NULL;
+									// }
 				}
+				
+				Q->count = Q->count+1;
+				print("end of insert\n",16);
 	} 
+	else
+		print("ERROR: PCB already exists.",27);
 	
 }
 
@@ -231,50 +298,59 @@ int removePCB (pcb* pntr) {
 // showPCB prints information for a single pcb (using the pointer)
 void showPCB(pcb* ptr) {
 	
-	sys_req(WRITE,DEFAULT_DEVICE,"\nName: ",8);
-	sys_req(WRITE,DEFAULT_DEVICE,ptr->name,20);									// print the name
+	//sys_req(WRITE,DEFAULT_DEVICE,"\nName: ",sizeof("\nName: "));
+	print("\nName: ",8);
+	//sys_req(WRITE,DEFAULT_DEVICE,ptr->name,20);									// print the name
+	print(ptr->name,20);
 	
-	
-	sys_req(WRITE,DEFAULT_DEVICE,"\nClass: ",9);
+	//sys_req(WRITE,DEFAULT_DEVICE,"\nClass: ",9);
+	print("\nClass: ",9);
 	
 	if (ptr->class == SYSTEM)													// print the class (based on value)
-		sys_req(WRITE,DEFAULT_DEVICE,"SYSTEM",7);
+		//sys_req(WRITE,DEFAULT_DEVICE,"SYSTEM",7);
+		print("SYSTEM",7);
 	
 	else
-		sys_req(WRITE,DEFAULT_DEVICE,"APPLICATION",12);
+		//sys_req(WRITE,DEFAULT_DEVICE,"APPLICATION",12);
+		print("APPLICATION",12);
 	
 	
-	sys_req(WRITE,DEFAULT_DEVICE,"\nState: ",9);
+	//sys_req(WRITE,DEFAULT_DEVICE,"\nState: ",9);
+	print("\nState: ",9);
 	
 	if (ptr->state == READY)													// print the state (based on value)
-		sys_req(WRITE,DEFAULT_DEVICE,"READY",7);
+		//sys_req(WRITE,DEFAULT_DEVICE,"READY",7);
+	print("READY",7);
 	
 	else
-		sys_req(WRITE,DEFAULT_DEVICE,"BLOCKED",8);
+		//sys_req(WRITE,DEFAULT_DEVICE,"BLOCKED",8);
+		print("BLOCKED",8);
 	
 	
-	
-	sys_req(WRITE,DEFAULT_DEVICE,"\nStatus: ",10);
+	//sys_req(WRITE,DEFAULT_DEVICE,"\nStatus: ",10);
+	print("\nStatus: ",10);
 	
 	if (ptr->susp == NOT_SUSPENDED)													// print the status (based on value)
-		sys_req(WRITE,DEFAULT_DEVICE,"NOT SUSPENDED",14);
-	
+		//sys_req(WRITE,DEFAULT_DEVICE,"NOT SUSPENDED",14);
+		print("NOT SUSPENDED",14);
+		
 	else
-		sys_req(WRITE,DEFAULT_DEVICE,"SUSPENDED",10);
+		//sys_req(WRITE,DEFAULT_DEVICE,"SUSPENDED",10);
+		print("SUSPENDED",10);
 	
 	
-	
-	sys_req(WRITE,DEFAULT_DEVICE,"\nPriority: ",12);
+	//sys_req(WRITE,DEFAULT_DEVICE,"\nPriority: ",12);
+	print("\nPriority: ",12);
 	
 	char prioNum[1];
 	itoa(ptr->prio,prioNum);
 	
-	sys_req(WRITE,DEFAULT_DEVICE,prioNum,strlen(prioNum));							// print the priority (based on value)
-
+	//sys_req(WRITE,DEFAULT_DEVICE,prioNum,strlen(prioNum));							// print the priority (based on value)
+	print(prioNum,strlen(prioNum));
 	
 }
 void showqueue(struct queue allpcbs){						 //function used to print an entire queue using the function showpcb
-	pcb* ptr=allpcbs->head; 								//set a pcb pointer to the head of a given queue
+	pcb* ptr=allpcbs.head; 									//set a pcb pointer to the head of a given queue
 	while(ptr!=NULL){										 //while still not reaching end of the queue
 		showPCB(ptr); 										//print the current pcb's info
 		ptr=ptr->next;									 //go to next pcb in queue

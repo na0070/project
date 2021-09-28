@@ -87,4 +87,6 @@ int sys_free_mem(void *ptr);
 */
 void idle();
 
+void print(char* ptr, int size);
+
 #endif

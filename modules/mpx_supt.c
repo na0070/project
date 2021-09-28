@@ -184,3 +184,13 @@ void idle()
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }
 }
+
+
+
+
+
+// custom print function (uses sys_req WRITE)
+
+void print(char* str, int size) {
+	sys_req(WRITE,DEFAULT_DEVICE,str,&size);
+}
