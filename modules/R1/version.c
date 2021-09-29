@@ -1,5 +1,6 @@
 
 #include "version.h"
+#include "../mpx_supt.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -10,6 +11,6 @@
 @param none
 */
 void version(){
-sys_req(WRITE,DEFAULT_DEVICE," R2 published 09/26/2021 \n",27);
+print("R2 published 09/26/2021 \n",27);
 
 }

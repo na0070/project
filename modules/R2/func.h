@@ -35,4 +35,4 @@ int removePCB (pcb* pntr);
 
 void showPCB(pcb* ptr);
 
-void showqueue(struct queue allpcbs);
+void showqueue(char* queue);

@@ -4,8 +4,8 @@
 #include "getandsettime.h"
 #include "help.h"
 #include "version.h"
-//#include "../R2/structures.c"
-#include "../R2/func.c"
+// #include "../R2/structures.h"
+#include "../R2/func.h"
 
 
 #include <stdint.h>
@@ -16,6 +16,8 @@
 
 #define SIZE 80		//!< The size of the main command buffer
 #define SIZEBUFF 7	//!< The size of both time/date buffers
+
+
 
 	int size = SIZE; 			
 	int sizeBuff = SIZEBUFF;		
@@ -410,10 +412,10 @@ void commhand() {
 					print("ERROR: too few inputs.\n",24);
 				
 				else if (strcmp(token,"all") == 0) {
-					showqueue(ready);				//prints information of the entire ready queue
-					showqueue(sus_ready);			//prints information of the suspended ready queue
-					showqueue(blocked);				//prints information of the entire blocked queue
-					showqueue(sus_blocked);			//prints information of the suspended blocked queue
+					showqueue("ready");				//prints information of the entire ready queue
+					showqueue("sus_ready");			//prints information of the suspended ready queue
+					showqueue("blocked");				//prints information of the entire blocked queue
+					showqueue("sus_blocked");			//prints information of the suspended blocked queue
 					
 					
 					
@@ -427,8 +429,8 @@ void commhand() {
 				}
 				else if (strcmp(token,"ready") == 0) {
 					//"show ready" code here
-					showqueue(ready);				//prints information of the entire ready queue
-					showqueue(sus_ready);			//prints information of the suspended ready queue
+					showqueue("ready");				//prints information of the entire ready queue
+					showqueue("sus_ready");			//prints information of the suspended ready queue
 					
 					
 					
@@ -442,8 +444,8 @@ void commhand() {
 				}
 				else if (strcmp(token,"blocked") == 0) {
 					//"show blocked" code here
-					showqueue(blocked);				//prints information of the entire blocked queue
-					showqueue(sus_blocked);			//prints information of the suspended blocked queue
+					showqueue("blocked");				//prints information of the entire blocked queue
+					showqueue("sus_blocked");			//prints information of the suspended blocked queue
 					
 					
 					

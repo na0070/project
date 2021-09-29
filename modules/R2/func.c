@@ -109,7 +109,7 @@ pcb* allocatePCB() {
 
 
 pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {	
-print("inside setUp\n",15);	
+// print("inside setUp\n",15);	
 	// setupPCB takes 3 parameters: name, class and priority of the new PCB to be created. Either returns the new pcb pointer if successful, or NULL if there is an error
 	// perform error checking first (are given values valid?)
 	
@@ -132,8 +132,8 @@ print("inside setUp\n",15);
 	
 	newPCB->state = READY;											// initially set the PCB's state to ready
 	newPCB->susp = NOT_SUSPENDED;									// initially set the PCB's status to not suspended
-	if (newPCB == NULL) print("newPCB is null\n",16);
-	else print("new pcb not null\n",19);
+	// if (newPCB == NULL) print("newPCB is null\n",16);
+	// else print("new pcb not null\n",19);
 	return newPCB;													// after all the initialization is complete, return the new pcb pointer to wherever this function was used
 }
 
@@ -147,10 +147,10 @@ return (char*)sys_free_mem(name );// return free memmory function
 
 
 void insertPCB( pcb* pntr) {
-s
+
 	print("inside insert\n",16);
 	if (findPCB(pntr->name)  == NULL) {				// checking if PCB exist 
-		print("after if\n",10);
+		// print("after if\n",10);
 		int state = pntr->state; 										// taking the pointer state 
 			int priorty = pntr->prio; 									// taking the pointer priorty 
 				int sus = pntr->susp;									// taking the pointer suspend status 
@@ -170,10 +170,10 @@ s
 						pcb* Qpntr = Q->head;
 						
 						if (Q->head == NULL) {	// if queue is empty
-							// Q->head = pntr;
-							// Q->tail = pntr;
-							ready.head = pntr;
-							ready.tail = pntr;
+							Q->head = pntr;
+							Q->tail = pntr;
+							// ready.head = pntr;
+							// ready.tail = pntr;
 							pntr->next = NULL;
 							pntr->prev = NULL;
 							// sus_ready.head == pntr;
@@ -190,6 +190,12 @@ s
 									if (priorty <= Qpntr->prio){
 										
 										Qpntr = Qpntr->next;
+										
+										// if(Qpntr == NULL) {
+											
+											
+											
+										// }
 									}
 									else  {
 										pntr->next = Qpntr;
@@ -274,7 +280,7 @@ s
 	
 }
 
-int removePCB (pcb* pntr) {
+int removePCB(pcb* pntr) {
 	
 	if (pntr == NULL) {
 		
@@ -349,8 +355,18 @@ void showPCB(pcb* ptr) {
 	print(prioNum,strlen(prioNum));
 	
 }
-void showqueue(struct queue allpcbs){						 //function used to print an entire queue using the function showpcb
-	pcb* ptr=allpcbs.head; 									//set a pcb pointer to the head of a given queue
+void showqueue(char* queue){						 //function used to print an entire queue using the function showpcb
+
+	pcb* ptr;
+	if(strcmp(queue,"ready") == 0)					//set a pcb pointer to the head of a given queue
+		ptr=ready.head; 
+	else if(strcmp(queue,"sus ready") == 0) 
+		ptr=sus_ready.head;
+	else if(strcmp(queue,"blocked") == 0) 
+		ptr=blocked.head; 
+	else
+		ptr=sus_blocked.head;
+	
 	while(ptr!=NULL){										 //while still not reaching end of the queue
 		showPCB(ptr); 										//print the current pcb's info
 		ptr=ptr->next;									 //go to next pcb in queue
