@@ -182,22 +182,49 @@ void insertPCB( pcb* pntr) {
 							
 						}
 							else {
+								
+								if(priorty > Q->head->prio) {				// trying to replace queue's head with new pcb (when new priority is strictly greater than head's priority)
+											
+										pntr->next = Q->head;
+										pntr->prev = NULL;
+										
+										Q->head->prev = pntr;
+										Q->head = pntr;
+											
+											print("inserted as new head\n",23);
+											
+										}	
 						
 								//pcb* Qpntr = sus_ready.head; 
-								
+								else
 								while (Qpntr != NULL) {
 									
 									if (priorty <= Qpntr->prio){
 										
+										if(Qpntr->next == NULL) {
+											
+											Qpntr->next = pntr;
+											Q->tail = pntr;
+											pntr->prev = Qpntr;
+											pntr->next = NULL;
+											print("inserted at end of queue\n",28);
+											break;
+											
+											
+										}
+										
+										
+										print("next\n",6);
 										Qpntr = Qpntr->next;
 										
-										// if(Qpntr == NULL) {
-											
-											
-											
-										// }
+										
 									}
 									else  {
+												
+										
+										
+										
+										
 										pntr->next = Qpntr;
 										pntr->prev = Qpntr->prev;
 										
@@ -232,7 +259,7 @@ void insertPCB( pcb* pntr) {
 				} else {									// in blocked (FIFO)
 				
 				
-						if (state == SUSPENDED)
+						if (sus == SUSPENDED)
 							Q = &sus_blocked;
 						else
 							Q = &blocked;
@@ -282,18 +309,60 @@ void insertPCB( pcb* pntr) {
 
 int removePCB(pcb* pntr) {
 	
+	int susp = pntr->susp;
+	int state = pntr->state;
+	
+	struct queue* Q;
+	
+	
 	if (pntr == NULL) {
 		
 		return -1; 												// Error code
 		
-	} else 
-			{
+	} else {
+		
+		if (state == READY)
+			if (susp == SUSPENDED)
+				Q = &sus_ready;								
+			else
+				Q = &ready;
+		else
+			if (susp == SUSPENDED)
+				Q = &sus_blocked;
+			else
+				Q = &blocked;
+		
+		// trying to remove head
+		if (pntr == Q->head) {
+			Q->head = pntr->next;
+			pntr->next->prev = NULL;
+			pntr->next = NULL;
+			print("removed head\n",15);
+			Q->count = Q->count-1;
+			return 0;
+		}
+		
+		//trying to remove tail
+		if (pntr == Q->tail) {
+			
+			Q->tail = pntr->prev;
+			pntr->prev->next = NULL;
+			pntr->prev = NULL;
+			pntr->next = NULL;
+			print("removed the tail\n", 19);
+			Q->count = Q->count-1;
+			return 0;
+			
+		}
+		
 	
 		pntr->prev->next = pntr->next;            // instead of A pointing to B, A pointing to C
 			pntr->next->prev = pntr->prev; 		// instead of C pointing to B, C pointing to A
 			
 			pntr->next = NULL; 							// unlink next pointer of B "C"
 		pntr->prev = NULL;								// unlink previous pointer of B "A"
+		
+		Q->count = Q->count-1;
 		
 	}  return 0; 												// success
 			

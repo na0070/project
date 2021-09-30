@@ -548,7 +548,7 @@ void commhand() {
 					
 					if (pntr == NULL) {																// Checking if the PCB is unavalibale 
 						
-						serial_println("PCB couldn't be found");
+						serial_println("ERROR: PCB couldn't be found");
 						
 					} else {
 						
@@ -556,7 +556,7 @@ void commhand() {
 						
 						if (error_Check == -1) {
 							
-							serial_println("PCB couldn't be removed");
+							serial_println("ERROR: PCB couldn't be removed (pcb may not be found)");
 							
 						} else { 
 							
