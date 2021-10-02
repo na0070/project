@@ -429,7 +429,7 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 	pcb* ptr;
 	if(strcmp(queue,"ready") == 0)					//set a pcb pointer to the head of a given queue
 		ptr=ready.head; 
-	else if(strcmp(queue,"sus ready") == 0) 
+	else if(strcmp(queue,"sus_ready") == 0) 
 		ptr=sus_ready.head;
 	else if(strcmp(queue,"blocked") == 0) 
 		ptr=blocked.head; 
