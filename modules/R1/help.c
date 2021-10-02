@@ -11,7 +11,7 @@
 @param none
 */
 void help(){
-print("commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [create PCB] [delete PCB] [block PCB] [unblock PCB] [suspend PCB] [resume PCB] [set PCB priority] [show PCB] [show ready] [show blocked] [show all] [clear] [help] \n",150);
+print("commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [create PCB] [delete PCB] [block PCB] [unblock PCB] \n[suspend PCB] [resume PCB] [set PCB priority] [show PCB] [show ready] [show blocked] [show all] [clear] [help] \n",151);
 
 print("setdate [setdate year month day] \n",35);
 print("settime [settime hour minute second] \n",39);

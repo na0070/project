@@ -4,7 +4,6 @@
 #include "getandsettime.h"
 #include "help.h"
 #include "version.h"
-// #include "../R2/structures.h"
 #include "../R2/func.h"
 
 
@@ -30,7 +29,7 @@
 	
 	
 	
-	pcb *task;
+	//pcb *task;
 	
 
 /*!
@@ -49,22 +48,19 @@ void commhand() {
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
 		memset(timeBuff,'\0',SIZEBUFF);
-		
-		//serial_print("Welcome to MPX_core main menu..\n"); // sys req 
-		
-		
+
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		
-		
-		
-		
+
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
 		
+		// beginning of commands
+
+
 		if (strcmp(token,"getdate") == 0) {		// Get current date
 			
 			getdate((int*)dateBuff);		// call the function and store the data in the date buffer
 			
-			// serial_print("Current date: ");
 			print("Current date: ", 15);
 			int i = 0;
 			while (i < SIZEBUFF-1) {
@@ -140,7 +136,7 @@ void commhand() {
 			while (i < SIZEBUFF-1) {					// loop the array to print the current time
 				sys_req(WRITE,DEFAULT_DEVICE,(char *)&timeBuff[i],&sizeBuff);
 				sys_req(WRITE,DEFAULT_DEVICE,(char *)&timeBuff[i+1],&sizeBuff);
-				if (i+2 < SIZEBUFF-1) serial_print(":");
+				if (i+2 < SIZEBUFF-1) print(":",1);
 				i = i+2;
 				
 			}
@@ -201,7 +197,7 @@ void commhand() {
 			char input;
 			int size = 1;
 			
-			serial_print("Do you want to shutdown if yes enter y if no enter n please \n");  //sys req 
+			print("Do you want to shutdown if yes enter y if no enter n please \n",63);  //sys req 
 			
 			do {
 				
@@ -213,8 +209,8 @@ void commhand() {
 				
 				
 				sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
-				serial_print("\x1B[2K");	// delete what is printed
-				serial_print("\b");
+				print("\x1B[2K",6);	// delete what is printed
+				print("\b",1);
 				
 
 			} while (input != 'y' || input != 'n');	// make sure the user enter either y or n
@@ -232,44 +228,10 @@ void commhand() {
 		
 		else if (strcmp(token,"clear") == 0) {						// clearing the screen
 			
-			serial_print("\x1B[2J"); // clear screen
-			serial_print("\x1B[H"); // send cursor back to (0,0) position (top left corner) before printing main menu
+			print("\x1B[2J",6); // clear screen
+			print("\x1B[H",6); // send cursor back to (0,0) position (top left corner) before printing main menu
 			
 		}
-		
-		
-		//testing
-		
-		
-		
-		else if (strcmp(token,"make") == 0) {
-			
-			
-			strcpy(task->name, "PCB #1");
-			task->class = 1;
-			task->prio = 99;
-			task->state = -4;
-			memset(task->stack,'\0',1024);
-			task->next = NULL;
-			
-			
-			
-		}
-		
-		else if (strcmp(token,"print") == 0) {
-			
-			char num[3];
-			serial_println(task->name);
-			
-			if (task->class == 0) serial_println("class: system");
-			else serial_println("class: application");  //sys req 
-			serial_print("Priority: "); serial_println(itoa(task->prio,num));
-			serial_print("State: "); serial_println(itoa(task->state,num));
-			
-			
-			
-		}
-		
 		
 		//=================================================================================================================================================================================================
 		
@@ -290,7 +252,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					print("ERROR: too few inputs.\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -396,7 +358,7 @@ void commhand() {
 						}
 					
 						else
-							print("\nUnvalid PCB",12);
+							print("\nInvalid PCB",12);
 						
 					}
 					
@@ -412,48 +374,45 @@ void commhand() {
 					print("ERROR: too few inputs.\n",24);
 				
 				else if (strcmp(token,"all") == 0) {
+					
+					print("\nREADY QUEUE:",16);
 					showqueue("ready");				//prints information of the entire ready queue
+					
+					print("\n\nSUSPENDED READY QUEUE:",26);
 					showqueue("sus_ready");			//prints information of the suspended ready queue
+					
+					print("\n\nBLOCKED QUEUE:",17);
 					showqueue("blocked");				//prints information of the entire blocked queue
+					
+					print("\n\nSUSPENDED BLOCKED QUEUE:",27);
 					showqueue("sus_blocked");			//prints information of the suspended blocked queue
-					
-					
-					
-					
-					
-					
-					
-					
 					
 					
 				}
 				else if (strcmp(token,"ready") == 0) {
 					//"show ready" code here
+					print("\nREADY QUEUE:",16);
 					showqueue("ready");				//prints information of the entire ready queue
+					
+					print("\n\nSUSPENDED READY QUEUE:",26);
 					showqueue("sus_ready");			//prints information of the suspended ready queue
-					
-					
-					
-					
-					
-					
-					
 					
 					
 					
 				}
 				else if (strcmp(token,"blocked") == 0) {
 					//"show blocked" code here
+					print("\n\nBLOCKED QUEUE:",17);
 					showqueue("blocked");				//prints information of the entire blocked queue
+					
+					print("\n\nSUSPENDED BLOCKED QUEUE:",27);
 					showqueue("sus_blocked");			//prints information of the suspended blocked queue
-					
-					
 					
 					
 				}
 				else {
 					strcpy(name,token);						// stores pcb's name
-					// "show" code here
+					// "show PCB" code here
 					
 					pcb* ptr = findPCB(name);				// search for the pcb using the name. This will = NULL if it couldn't find it
 
@@ -462,7 +421,6 @@ void commhand() {
 						print("PCB not found using provided name.\n",36);	// PCB not found
 					}
 					else {
-						print("found pcb, will show/n",23);
 						showPCB(ptr);						// call the function to print all the PCB's information
 						
 					}
@@ -476,21 +434,21 @@ void commhand() {
 				int class, priority;
 				token = strtok(NULL,split);					// token = <name>
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					print("ERROR: too few inputs.\n",25);
 				
 				else {
 					strcpy(name,token);						// store pcb's name in pointer
 				
 					token = strtok(NULL,split);					// token = <class>
 					if (token == NULL)
-						serial_println("ERROR: too few inputs.");
+						print("ERROR: too few inputs.\n",25);
 					
 					else {
 						class = atoi(token);					// store pcb's class
 					
 						token = strtok(NULL,split);					// token = <priority>
 						if (token == NULL)
-							serial_println("ERROR: too few inputs.");
+							print("ERROR: too few inputs.\n",25);
 						
 						else {
 							priority = atoi(token);					// store pcb's priority
@@ -499,28 +457,28 @@ void commhand() {
 							// createPCB code goes here (use "name", "class", "priority")
 							
 							if (findPCB(name) != NULL) 																// Checking if the name used or not 
-								serial_println("Name already used.");
+								print("Name already used.\n",21);
 								
-							else { 
-								print("can make new pcb\n",20);			
+							else { 			
 								if (class != SYSTEM && class != APPLICATION) {			// Checking if the class is valid 
-									serial_println("Class not valid.");
+									print("Class not valid.\n",17);
 									
 								} else{
 									
 									if (priority < 0 || priority > 9 ) {											// Checking if the priority number is valid 
 										
-										serial_println("Priority not valid.");
+										print("Priority not valid.\n",22);
 									} else {
 										
 										pcb* pntr = setupPCB(name, class, priority); 				// assigning the SetupPCB result to pointer
 										
 										if (pntr == NULL) {													    	// Checking if the PCB created succsefully  
 											
-											serial_println("Couldn't setup PCB.");
+											print("Couldn't setup PCB.\n",22);
 										} else {
-											print("setUp successful\n",19);
-											insertPCB(pntr);															// inserting the new PCB in the right place 			
+											
+											insertPCB(pntr);															// inserting the new PCB in the right place 	
+											print("setUp successful\n",19);		
 										}
 									}
 								}
@@ -537,7 +495,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					print("ERROR: too few inputs.\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -548,7 +506,7 @@ void commhand() {
 					
 					if (pntr == NULL) {																// Checking if the PCB is unavalibale 
 						
-						serial_println("ERROR: PCB couldn't be found");
+						print("ERROR: PCB couldn't be found.\n",31);
 						
 					} else {
 						
@@ -556,12 +514,12 @@ void commhand() {
 						
 						if (error_Check == -1) {
 							
-							serial_println("ERROR: PCB couldn't be removed (pcb may not be found)");
+							print("ERROR: PCB couldn't be removed (pcb may not be found)\n",56);
 							
 						} else { 
 							
 							freePCB(pntr);															// Delete PCB 
-							serial_println("PCB has been deleted succesfully!");
+							print("PCB has been deleted succesfully!\n",36);
 						}
 					}
 	
@@ -575,7 +533,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					print("ERROR: too few inputs.\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -590,7 +548,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nUnvalid PCB\n",13); // error massage
+					print("\nInvalid PCB\n",13); // error massage
 					
 					} 
 					
@@ -603,7 +561,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					serial_println("ERROR: too few inputs.");
+					print("ERROR: too few inputs.\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -618,7 +576,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nUnvalid PCB\n",13); // error massage
+					print("\nInvalid PCB\n",13); // error massage
 					
 					} 
 				
@@ -629,18 +587,18 @@ void commhand() {
 			
 			// invalid command issued
 			else
-				serial_println("ERROR: Unknown pcb command entered.");
+				print("ERROR: Unknown pcb command entered.",36);
 		}	// end pcb commands
 		
 		
 		
 		else {		// an unknown command
 			
-			serial_print("unknown command entered. Please check spelling and/or syntax.."); //sys req 
+			print("unknown command entered. Please check spelling and/or syntax..",63); //sys req 
 			
 		}
 		
-		if (strcmp(token,"clear") != 0) serial_print("\n");	// new lines if we didn't clear the screen yet
+		if (strcmp(token,"clear") != 0) print("\n",1);	// new lines if we didn't clear the screen yet
 	
 	} // leaving commhand
 	
