@@ -87,7 +87,7 @@ pcb* allocatePCB() {
 	// perform error checking first (are given values valid?)
 pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {	
 	
-	if (strlen(newName) > 20)		// is the given name larger than 20 characters? (max allowed is 20)
+	if (strlen(newName) > 20 || strlen(newName) < 8)		// is the given name larger between 8 and 20 characters? (max allowed is 20)
 		return NULL;
 	
 	if (newClass != SYSTEM && newClass != APPLICATION)			// is the given class not "system" or "application"? (we defined system as 0 and application as 1)
