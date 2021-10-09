@@ -4,7 +4,11 @@
 
 //Structures
 
-//A PCB must contain name,class,prio,state,stack,pointer to next PCB
+struct context {
+	u32int gs, fs, es, ds;
+	u32int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+	u32int eip, cs, eflags;
+};
 
 struct PCB {
 	
@@ -22,12 +26,10 @@ struct PCB {
 typedef struct PCB pcb;						// shortcut name of "struct PCB" to be "pcb"
 
 struct queue{
-int count; 
-pcb *head; // dequeue this 
-pcb *tail; // enquue affter this 
+	int count; 
+	pcb *head; // dequeue this 
+	pcb *tail; // enquue affter this 
 };
-
-
 
 
 // constants to be used throughout functions

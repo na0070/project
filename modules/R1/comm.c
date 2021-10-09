@@ -584,6 +584,41 @@ void commhand() {
 				}
 				
 			}
+
+
+//=================================================================================================================================
+						//R3/4 commands
+
+
+			else if (strcmp(token,"yield") == 0) {
+
+				// yield code here
+
+
+
+
+
+
+
+			}
+
+			else if (strcmp(token,"loadr3") == 0) {
+
+
+
+				// loadr3 code here
+
+
+
+
+
+
+
+
+
+			}
+
+
 			
 			// invalid command issued
 			else
