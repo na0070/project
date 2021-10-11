@@ -35,6 +35,7 @@ struct queue{
 // constants to be used throughout functions
 #define READY 0
 #define BLOCKED 1
+#define RUNNING 2
 
 #define NOT_SUSPENDED 0
 #define SUSPENDED 1

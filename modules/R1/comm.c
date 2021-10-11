@@ -594,7 +594,7 @@ void commhand() {
 
 				// yield code here
 
-
+				asm volatile ("int $60");
 
 
 
