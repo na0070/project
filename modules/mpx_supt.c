@@ -14,6 +14,8 @@
 // system calls via sys_req
 param params;   
 
+pcb* cop;
+context* old_Context;
 // global for the current module
 int current_module = -1;  
 static int io_module_active = 0;
@@ -193,4 +195,46 @@ void idle()
 
 void print(char* str, int size) {
 	sys_req(WRITE,DEFAULT_DEVICE,str,&size);
+}
+
+//sys_call 
+
+u32int* sys_call(context* registers){
+	
+	if (cop != NULL){
+		
+		if (params.op_code == IDLE){
+			
+			cop->stackTop = registers;
+		}
+		
+		else {
+			
+			free(cop);
+		}
+		
+	}
+	
+	else {
+		
+		old_Context = registers;
+	}
+	
+	if (ready->head != NULL) {
+		
+		pcb* temp = ready->head;
+		
+			remove(temp); 
+		
+				temp->state = RUNNING;
+		
+			cop = temp; 
+		
+		return cop->stackTop;
+	}
+	
+	else {
+		
+		return registers; 
+	}
 }
