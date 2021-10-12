@@ -608,14 +608,7 @@ void commhand() {
 
 				// loadr3 code here
 
-
-
-
-
-
-
-
-
+  loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
 			}
 
 
