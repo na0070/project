@@ -77,8 +77,6 @@ pcb* allocatePCB() {
 	pcb* alloc = (pcb*)sys_alloc_mem(sizeof(pcb)); // initialized a pcb pointer, allowing pointer to point at a specific location of memory (memory is the size of pcb)
 	alloc->prio=5;
 	alloc->susp=0;
-	alloc->stackBase = alloc->stack;
-	alloc->stackTop = alloc->stackBase + 1024;
 	return alloc;
 }
 
@@ -106,6 +104,11 @@ pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {
 	
 	newPCB->state = READY;											// initially set the PCB's state to ready
 	newPCB->susp = NOT_SUSPENDED;									// initially set the PCB's status to not suspended
+
+	newPCB->stackBase = newPCB->stack;
+	newPCB->stackTop = newPCB->stackBase + 1024 - sizeof(struct context);
+
+
 	return newPCB;													// after all the initialization is complete, return the new pcb pointer to wherever this function was used
 }
 
