@@ -197,6 +197,10 @@ void print(char* str, int size) {
 	sys_req(WRITE,DEFAULT_DEVICE,str,&size);
 }
 
+
+
+
+
 //sys_call 
 
 u32int* sys_call(context* registers){
@@ -208,9 +212,9 @@ u32int* sys_call(context* registers){
 			cop->stackTop = registers;
 		}
 		
-		else {
+		if (params.op_code == EXIT) {
 			
-			free(cop);
+			freePCB(cop);
 		}
 		
 	}
@@ -224,7 +228,7 @@ u32int* sys_call(context* registers){
 		
 		pcb* temp = ready->head;
 		
-			remove(temp); 
+			removePCB(temp); 
 		
 				temp->state = RUNNING;
 		

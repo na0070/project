@@ -22,7 +22,7 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
-
+#include "modules/R2/func.h"
 
 
 
@@ -49,7 +49,7 @@ void kmain(void)
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
    
-   mpx_init(MODULE_R2);
+   mpx_init(MODULE_R3);
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
@@ -91,7 +91,26 @@ void kmain(void)
 
    // 6) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-	commhand();
+
+
+
+/*
+  testing R3 and R4
+  commhand() is commented for purposes of R4
+*/
+
+	// commhand();
+
+// the 3 lines below should be commented if only testing R3. Uncomment the above line instead
+   loadr_pcb("commhand handler", SYSTEM, READY, 5, "commhand");     // loads commhand as a process
+   loadr_pcb("idle process", SYSTEM, READY, 5, "idle");     // loads idle as a process
+   asm volatile("int $60");
+
+
+
+
+
+
 
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");

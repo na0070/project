@@ -5,6 +5,7 @@
 #include "help.h"
 #include "version.h"
 #include "../R2/func.h"
+#include "../procsr3.c"
 
 
 #include <stdint.h>
@@ -26,10 +27,7 @@
 	
 	char *token;				//!< Pointer to the first "word" before the space in the main command buffer
 	const char split[] = " ";	//!< the character to indicate splitting of the tokens, which is a space
-	
-	
-	
-	//pcb *task;
+
 	
 
 /*!
@@ -597,9 +595,6 @@ void commhand() {
 				asm volatile ("int $60");
 
 
-
-
-
 			}
 
 			else if (strcmp(token,"loadr3") == 0) {
@@ -608,7 +603,7 @@ void commhand() {
 
 				// loadr3 code here
 
-  loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
+  				loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
 			}
 
 
