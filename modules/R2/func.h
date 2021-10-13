@@ -66,3 +66,6 @@ int removePCB (pcb* pntr);
 void showPCB(pcb* ptr);
 
 void showqueue(char* queue);
+
+void loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
+

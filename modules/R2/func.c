@@ -357,6 +357,22 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 	}
 }
 
+void loadr_pcb(char* name, unsigned char class,int status, int priority, char* func ){
+   pcb * new_pcb = setup_pcb ( name , class , priority , stack_size );
+   new_pcb -> stat = status
+    context * cp = ( context *)( new_pcb -> stack_top );
+     memset ( cp , 0, sizeof ( context ));
+      cp - > fs = 0 x10 ; 
+      cp - > gs = 0 x10 ;
+      cp - > ds = 0 x10 ;
+      cp - > es = 0 x10 ;
+      cp - > cs = 0 x8 ;
+      cp - > ebp = ( u32int )( new_pcb -> stack );
+      cp - > esp = ( u32int )( new_pcb -> stack_top ); 
+      cp - > eip = ( u32int ) func ;// The function correlating to the process , ie. Proc1cp - > eflags = 0 x202 ;return new_pcb ;
+   }
+
+
 
 //==============================================================================================================
 
