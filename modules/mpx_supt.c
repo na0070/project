@@ -10,12 +10,17 @@
 #include <string.h>
 #include <core/serial.h>
 
+#include "R2/func.h"
+
 // global variable containing parameter used when making 
 // system calls via sys_req
 param params;   
 
 pcb* cop;
 context* old_Context;
+extern u32int* sys_call();
+
+
 // global for the current module
 int current_module = -1;  
 static int io_module_active = 0;
@@ -209,7 +214,7 @@ u32int* sys_call(context* registers){
 		
 		if (params.op_code == IDLE){
 			
-			cop->stackTop = registers;
+			cop->stackTop = (unsigned char*)registers;
 		}
 		
 		if (params.op_code == EXIT) {

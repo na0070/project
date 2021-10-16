@@ -4,11 +4,11 @@
 
 //Structures
 
-struct context {
+typedef struct context {
 	u32int gs, fs, es, ds;
 	u32int edi, esi, ebp, esp, ebx, edx, ecx, eax;
 	u32int eip, cs, eflags;
-};
+} context;
 
 struct PCB {
 	
@@ -67,5 +67,5 @@ void showPCB(pcb* ptr);
 
 void showqueue(char* queue);
 
-void loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
+void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int func );
 

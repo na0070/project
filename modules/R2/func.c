@@ -357,7 +357,7 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 	}
 }
 
-void loadr_pcb(char* name, unsigned char class,int status, int priority, char* func ){
+void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int* func ){
    pcb * new_pcb = setupPCB ( name , class , priority );
    new_pcb -> state = status;
    new_pcb -> susp = SUSPENDED;

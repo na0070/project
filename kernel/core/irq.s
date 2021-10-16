@@ -25,6 +25,8 @@
 [GLOBAL coprocessor]
 [GLOBAL rtc_isr]
 
+[GLOBAL sys_call_isr] ;; to link sys_call from interrupts.c with this file here
+
 ;; Names of the C handlers
 extern do_divide_error
 extern do_debug
@@ -43,6 +45,8 @@ extern do_general_protection
 extern do_page_fault
 extern do_reserved
 extern do_coprocessor
+
+extern sys_call
 
 ; RTC interrupt handler
 ; Tells the slave PIC to ignore
@@ -126,7 +130,7 @@ sys_call_isr:
 	push fs
 	push gs
 	push esp
-	;;;call sys_call
+	call sys_call
 	mov esp, eax
 	pop gs
 	pop fs

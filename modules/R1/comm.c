@@ -215,7 +215,8 @@ void commhand() {
 			
 			if (input == 'y') {		// if yes will shutdown
 					input = ' ';	// reset input
-					break;
+					//break;
+					sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 				
 				}
 				
@@ -625,6 +626,8 @@ void commhand() {
 	
 	} // leaving commhand
 	
-	return;
+	//return;
+
+	sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 
 }
