@@ -209,12 +209,17 @@ void print(char* str, int size) {
 //sys_call 
 
 u32int* sys_call(context* registers){
+
+	struct queue* ready  = returnQueue();
 	
 	if (cop != NULL){
 		
 		if (params.op_code == IDLE){
 			
 			cop->stackTop = (unsigned char*)registers;
+
+			cop->state = READY;
+			insertPCB(cop);
 		}
 		
 		if (params.op_code == EXIT) {
@@ -232,6 +237,10 @@ u32int* sys_call(context* registers){
 	if (ready->head != NULL) {
 		
 		pcb* temp = ready->head;
+
+		if (temp == cop) 
+				temp = temp-> next;
+		
 		
 			removePCB(temp); 
 		
@@ -239,11 +248,11 @@ u32int* sys_call(context* registers){
 		
 			cop = temp; 
 		
-		return cop->stackTop;
+		return (u32int*)cop->stackTop;
 	}
 	
 	else {
 		
-		return registers; 
+		return (u32int*)old_Context; 
 	}
 }

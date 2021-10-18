@@ -69,3 +69,5 @@ void showqueue(char* queue);
 
 void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int func );
 
+struct queue* returnQueue();
+

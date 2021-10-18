@@ -5,7 +5,7 @@
 #include "help.h"
 #include "version.h"
 #include "../R2/func.h"
-#include "../procsr3.c"
+#include "../procsr3.h"
 
 
 #include <stdint.h>
@@ -584,38 +584,38 @@ void commhand() {
 				
 			}
 
-
-//=================================================================================================================================
-						//R3/4 commands
-
-
-			else if (strcmp(token,"yield") == 0) {
-
-				// yield code here
-
-				asm volatile ("int $60");
-
-
-			}
-
-			else if (strcmp(token,"loadr3") == 0) {
-
-
-
-				// loadr3 code here
-
-  				loadr_pcb(char* name, unsigned char class,int status, int priority, char* func );
-			}
-
-
-			
 			// invalid command issued
 			else
 				print("ERROR: Unknown pcb command entered.",36);
 		}	// end pcb commands
 		
+		//=================================================================================================================================
+						//R3/4 commands
 		
-		
+		else if (strcmp(token,"yield") == 0) {
+
+			// yield code here
+
+			// asm volatile ("int $60");
+			print("yield\n", 6);
+
+
+		}
+
+		else if (strcmp(token,"loadr3") == 0) {
+
+
+
+			// loadr3 code here
+
+			loadr_pcb("proc1", APPLICATION, SUSPENDED, 5, (u32int)proc1 );
+			loadr_pcb("proc2", APPLICATION, SUSPENDED, 5, (u32int)proc2 );
+			loadr_pcb("proc3", APPLICATION, SUSPENDED, 5, (u32int)proc3 );
+			loadr_pcb("proc4", APPLICATION, SUSPENDED, 5, (u32int)proc4 );
+			loadr_pcb("proc5", APPLICATION, SUSPENDED, 5, (u32int)proc5 );
+		}
+
+
 		else {		// an unknown command
 			
 			print("unknown command entered. Please check spelling and/or syntax..",63); //sys req 
@@ -624,10 +624,12 @@ void commhand() {
 		
 		if (strcmp(token,"clear") != 0) print("\n",1);	// new lines if we didn't clear the screen yet
 	
-	} // leaving commhand
-	
-	//return;
 
-	sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+
+	} // leaving commhand
+
+
+	
 
 }

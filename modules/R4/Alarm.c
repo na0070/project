@@ -23,9 +23,9 @@ void createAlarm (char* message, int time) {
 						
 					insertPCB (pointer);
 			
+					// stop here
 					
-					
-			
+			// should be moved to ch
 			while (1) {
 				
 				char* new_currentTime = getTime();

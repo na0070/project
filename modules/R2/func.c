@@ -15,7 +15,10 @@ struct queue sus_ready = {.head = NULL, .tail = NULL};				// initializing the su
 
 struct queue sus_blocked = {.head = NULL, .tail = NULL};			// initializing the suspended blocked queue
 
+struct queue* returnQueue() {
 
+	return &ready;
+}
 /*
 FindPCB() is given a name of a PCB. Searches all queues until it finds a match.
 When it does, returns a pointer to the PCB of the same name. If no match is found, return NULL
@@ -357,23 +360,23 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 	}
 }
 
-void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int* func ){
+void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int func ){
    pcb * new_pcb = setupPCB ( name , class , priority );
-   new_pcb -> state = status;
-   new_pcb -> susp = SUSPENDED;
+   new_pcb -> state = READY;
+   new_pcb -> susp = status;
 
     context * cp = ( context *)( new_pcb -> stackTop );
      memset ( cp , 0, sizeof ( context ));
-      cp - > fs = 0x10 ; 
-      cp - > gs = 0x10 ;
-      cp - > ds = 0x10 ;
-      cp - > es = 0x10 ;
-      cp - > cs = 0x8 ;
-      cp - > ebp = ( u32int )( new_pcb -> stack );
-      cp - > esp = ( u32int )( new_pcb -> stackTop ); 
-      cp - > eip = ( u32int ) func ;// The function correlating to the process , ie. Proc1
-      cp - > eflags = 0x202 ;
-      //return new_pcb ;
+      cp -> fs = 0x10 ; 
+      cp -> gs = 0x10 ;
+      cp -> ds = 0x10 ;
+      cp -> es = 0x10 ;
+      cp -> cs = 0x8 ;
+      cp -> ebp = ( u32int )( new_pcb -> stack );
+      cp -> esp = ( u32int )( new_pcb -> stackTop ); 
+      cp -> eip = ( u32int ) func ;// The function correlating to the process , ie. Proc1
+      cp -> eflags = 0x202 ;
+      insertPCB(new_pcb);
    }
 
 
