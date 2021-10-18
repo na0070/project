@@ -355,6 +355,7 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 	
 	while(ptr!=NULL){										 //while still not reaching end of the queue
 		showPCB(ptr); 										//print the current pcb's info
+		print("\n***",5);
 		ptr=ptr->next;									 	//go to next pcb in queue
 		
 	}

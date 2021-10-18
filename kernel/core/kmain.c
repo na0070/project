@@ -102,7 +102,7 @@ void kmain(void)
 	// commhand();
 
 // the 3 lines below should be commented if only testing R3. Uncomment the above line instead
-   loadr_pcb("commhand handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process
+   loadr_pcb("command handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process
    loadr_pcb("idle process", SYSTEM, NOT_SUSPENDED, 1, (u32int)idle);     // loads idle as a process
    asm volatile("int $60");
 

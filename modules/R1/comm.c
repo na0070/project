@@ -197,7 +197,11 @@ void commhand() {
 			
 			print("Do you want to shutdown if yes enter y if no enter n please \n",63);  //sys req 
 			
-			do {
+			while (1) {
+
+				sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
+				print("\x1B[2K",6);	// delete what is printed
+				print("\b",1);
 				
 				if (input == 'y' || input == 'n') {		// if yes/no will exit
 				
@@ -206,16 +210,19 @@ void commhand() {
 				}
 				
 				
-				sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
-				print("\x1B[2K",6);	// delete what is printed
-				print("\b",1);
+				// sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
+				// print("\x1B[2K",6);	// delete what is printed
+				// print("\b",1);
 				
 
-			} while (input != 'y' || input != 'n');	// make sure the user enter either y or n
+			} 
+			//while (input != 'y' || input != 'n');	// make sure the user enter either y or n
 			
 			if (input == 'y') {		// if yes will shutdown
 					input = ' ';	// reset input
 					//break;
+					pcb* end = findPCB("idle process");
+					removePCB(end);
 					sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 				
 				}
