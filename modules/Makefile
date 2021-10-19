@@ -19,6 +19,7 @@ R1/help.o\
 R1/version.o\
 R2/func.o\
 procsr3.o\
+R4/Alarm.o\
 
 
 .c.s:

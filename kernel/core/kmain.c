@@ -23,8 +23,9 @@
 
 #include "modules/mpx_supt.h"
 #include "modules/R2/func.h"
+#include "modules/R4/Alarm.h"
 
-
+void infinite();
 
 void kmain(void)
 {
@@ -102,9 +103,10 @@ void kmain(void)
 	// commhand();
 
 // the 3 lines below should be commented if only testing R3. Uncomment the above line instead
-   loadr_pcb("command handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process
-   loadr_pcb("idle process", SYSTEM, NOT_SUSPENDED, 1, (u32int)idle);     // loads idle as a process
-    loadr_pcb("infinite process", SYSTEM, NOT_SUSPENDED, 2, (u32int)infinite);
+   loadr_pcb("command_handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process
+   loadr_pcb("idle_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)idle);            // loads idle as a process
+   loadr_pcb("alarm_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)checkTime);      // loads alarm checking process
+   loadr_pcb("infinite_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)infinite);   // loads infinite command
    
    asm volatile("int $60");
 
@@ -121,10 +123,10 @@ void kmain(void)
    klogv("Shutdown complete. You may now turn off the machine. (QEMU: C-a x)");
    hlt();
 }
-void infinite{
+void infinite(){
 while(1){
 sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
-print("infinte command massage ",24);
+print("infinte command massage\n",25);
 
 }// end of the loop 
 

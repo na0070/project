@@ -6,6 +6,7 @@
 #include "version.h"
 #include "../R2/func.h"
 #include "../procsr3.h"
+#include "../R4/Alarm.h"
 
 
 #include <stdint.h>
@@ -221,7 +222,13 @@ void commhand() {
 			if (input == 'y') {		// if yes will shutdown
 					input = ' ';	// reset input
 					//break;
-					pcb* end = findPCB("idle process");
+					pcb* end = findPCB("idle_process");
+					removePCB(end);
+
+					end = findPCB("alarm_process");
+					removePCB(end);
+
+					end = findPCB("infinite_process");
 					removePCB(end);
 					sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 				
@@ -263,28 +270,39 @@ void commhand() {
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
-					// suspendPCB code here (use "name")
-				
-					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
-					
-					if (ptr == NULL)						// if PCB was not found
-						print("ERROR: could not find PCB.\n",27);
+					if (strcmp(name,"command_handler") == 0)
+						print("ERROR: cannot suspend this process\n",37);
+						
+					else if(strcmp(name,"idle_process") == 0)
+						print("ERROR: cannot suspend this process\n",37);
+
+					else if (strcmp(name,"alarm_process") == 0)
+						print("ERROR: cannot suspend this process\n",37);
+
 					else {
-						
-						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
+						// suspendPCB code here (use "name")
 					
-						if (code == -1)							// error
-						print("ERROR: could not remove PCB.\n",30);
+						pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
 						
+						if (ptr == NULL)						// if PCB was not found
+							print("ERROR: could not find PCB.\n",27);
 						else {
 							
-							ptr->susp = SUSPENDED;				// change status of pointer to suspended
-							
-							insertPCB(ptr);						// insert the PCB based on its internal info
-						}
+							int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
 						
+							if (code == -1)							// error
+							print("ERROR: could not remove PCB.\n",30);
+							
+							else {
+								
+								ptr->susp = SUSPENDED;				// change status of pointer to suspended
+								
+								insertPCB(ptr);						// insert the PCB based on its internal info
+							}
+							
+						}
+
 					}
-					
 					
 				}
 				
@@ -435,66 +453,66 @@ void commhand() {
 				
 			}
 			
-			else if (strcmp(token,"create") == 0) {			// create pcb command -> pcb create <name> <class> <priority>
-				char* name = " ";
-				int class, priority;
-				token = strtok(NULL,split);					// token = <name>
-				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+			// else if (strcmp(token,"create") == 0) {			// create pcb command -> pcb create <name> <class> <priority>
+			// 	char* name = " ";
+			// 	int class, priority;
+			// 	token = strtok(NULL,split);					// token = <name>
+			// 	if (token == NULL)
+			// 		print("ERROR: too few inputs.\n",25);
 				
-				else {
-					strcpy(name,token);						// store pcb's name in pointer
+			// 	else {
+			// 		strcpy(name,token);						// store pcb's name in pointer
 				
-					token = strtok(NULL,split);					// token = <class>
-					if (token == NULL)
-						print("ERROR: too few inputs.\n",25);
+			// 		token = strtok(NULL,split);					// token = <class>
+			// 		if (token == NULL)
+			// 			print("ERROR: too few inputs.\n",25);
 					
-					else {
-						class = atoi(token);					// store pcb's class
+			// 		else {
+			// 			class = atoi(token);					// store pcb's class
 					
-						token = strtok(NULL,split);					// token = <priority>
-						if (token == NULL)
-							print("ERROR: too few inputs.\n",25);
+			// 			token = strtok(NULL,split);					// token = <priority>
+			// 			if (token == NULL)
+			// 				print("ERROR: too few inputs.\n",25);
 						
-						else {
-							priority = atoi(token);					// store pcb's priority
+			// 			else {
+			// 				priority = atoi(token);					// store pcb's priority
 						
 						
-							// createPCB code goes here (use "name", "class", "priority")
+			// 				// createPCB code goes here (use "name", "class", "priority")
 							
-							if (findPCB(name) != NULL) 																// Checking if the name used or not 
-								print("Name already used.\n",21);
+			// 				if (findPCB(name) != NULL) 																// Checking if the name used or not 
+			// 					print("Name already used.\n",21);
 								
-							else { 			
-								if (class != SYSTEM && class != APPLICATION) {			// Checking if the class is valid 
-									print("Class not valid.\n",17);
+			// 				else { 			
+			// 					if (class != SYSTEM && class != APPLICATION) {			// Checking if the class is valid 
+			// 						print("Class not valid.\n",17);
 									
-								} else{
+			// 					} else{
 									
-									if (priority < 0 || priority > 9 ) {											// Checking if the priority number is valid 
+			// 						if (priority < 0 || priority > 9 ) {											// Checking if the priority number is valid 
 										
-										print("Priority not valid.\n",22);
-									} else {
+			// 							print("Priority not valid.\n",22);
+			// 						} else {
 										
-										pcb* pntr = setupPCB(name, class, priority); 				// assigning the SetupPCB result to pointer
+			// 							pcb* pntr = setupPCB(name, class, priority); 				// assigning the SetupPCB result to pointer
 										
-										if (pntr == NULL) {													    	// Checking if the PCB created succsefully  
+			// 							if (pntr == NULL) {													    	// Checking if the PCB created succsefully  
 											
-											print("Couldn't setup PCB.\n",22);
-										} else {
+			// 								print("Couldn't setup PCB.\n",22);
+			// 							} else {
 											
-											insertPCB(pntr);															// inserting the new PCB in the right place 	
-											print("setUp successful\n",19);		
-										}
-									}
-								}
+			// 								insertPCB(pntr);															// inserting the new PCB in the right place 	
+			// 								print("setUp successful\n",19);		
+			// 							}
+			// 						}
+			// 					}
 								
-							}
-						}
-					}// up to here
-				}
+			// 				}
+			// 			}
+			// 		}// up to here
+			// 	}
 				
-			}
+			// }
 			
 			else if (strcmp(token,"delete") == 0) {			// delete pcb command
 				char* name = " ";
@@ -507,26 +525,44 @@ void commhand() {
 					strcpy(name,token);						// stored pcb's name
 					
 					// deletePCB code here (use "name")
-					
-					pcb* pntr = findPCB(name);												// Assigning findPCB results topointer 
-					
-					if (pntr == NULL) {																// Checking if the PCB is unavalibale 
+					if (strcmp(name,"command_handler") == 0)
+						print("ERROR: cannot remove this process\n",36);
 						
-						print("ERROR: PCB couldn't be found.\n",31);
+					else if(strcmp(name,"idle_process") == 0)
+						print("ERROR: cannot remove this process\n",36);
+
+					else if (strcmp(name,"alarm_process") == 0)
+						print("ERROR: cannot remove this process\n",36);
+
+					else {
+
+						pcb* pntr = findPCB(name);												// Assigning findPCB results topointer 
+
 						
-					} else {
-						
-						int error_Check = removePCB(pntr);								// Removing the PCB and saves the error code
-						
-						if (error_Check == -1) {
+						if (pntr == NULL) {																// Checking if the PCB is unavalibale 
 							
-							print("ERROR: PCB couldn't be removed (pcb may not be found)\n",56);
+							print("ERROR: PCB couldn't be found.\n",31);
 							
-						} else { 
+						} 
+
+						else if (strcmp(name,"infinite_process") == 0 && pntr->susp == NOT_SUSPENDED)
+							print("ERROR: Trying to remove infinite process requires it to be suspended first\n",77);
+
+						else {
 							
-							freePCB(pntr);															// Delete PCB 
-							print("PCB has been deleted succesfully!\n",36);
+							int error_Check = removePCB(pntr);								// Removing the PCB and saves the error code
+							
+							if (error_Check == -1) {
+								
+								print("ERROR: PCB couldn't be removed (pcb may not be found)\n",56);
+								
+							} else { 
+								
+								freePCB(pntr);															// Delete PCB 
+								print("PCB has been deleted succesfully!\n",36);
+							}
 						}
+
 					}
 	
 				}
@@ -598,16 +634,17 @@ void commhand() {
 		
 		//=================================================================================================================================
 						//R3/4 commands
-		
-		else if (strcmp(token,"yield") == 0) {
 
-			// yield code here
+		// not used anymore
+		// else if (strcmp(token,"yield") == 0) {
 
-			// asm volatile ("int $60");
-			print("yield\n", 6);
+		// 	// yield code here
+
+		// 	// asm volatile ("int $60");
+		// 	print("yield\n", 6);
 
 
-		}
+		// }
 
 		else if (strcmp(token,"loadr3") == 0) {
 
@@ -620,6 +657,32 @@ void commhand() {
 			loadr_pcb("proc3", APPLICATION, SUSPENDED, 5, (u32int)proc3 );
 			loadr_pcb("proc4", APPLICATION, SUSPENDED, 5, (u32int)proc4 );
 			loadr_pcb("proc5", APPLICATION, SUSPENDED, 5, (u32int)proc5 );
+		}
+
+		else if (strcmp(token,"alarm") == 0) {
+
+			token = strtok(NULL,split);
+			if (token == NULL)
+				print("ERROR: too few inputs\n",23);
+
+			else {
+
+				char* message = token;
+
+				token = strtok(NULL,split);
+
+				if (token == NULL)
+					print("ERROR: too few inputs\n",23);
+
+				else {
+					int time = atoi(token);
+
+					createAlarm(message, time);
+				}
+
+			}
+
+
 		}
 
 
