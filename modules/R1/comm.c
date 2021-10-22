@@ -363,7 +363,8 @@ void commhand() {
 					else {
 						priority = atoi(token);				// stored pcb's priority
 						
-						
+						//if (strcmp(token,"command_handler") == 0)
+
 						// set priority code here (use "name", "priority")
 						pcb* pointer2 = findPCB(name);
 						if (findPCB(name)  != NULL) { // check if the pcb valid 
