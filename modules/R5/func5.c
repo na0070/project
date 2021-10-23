@@ -62,3 +62,69 @@ void allocateMemory(int size) {
   }
   
 }
+
+void freeMemory (CMCB* pntr) {
+	
+	if (pntr -> type == FREE) {
+		
+		print ("The memory already free \n", 26 );
+	}
+	else {
+		
+		pntr -> prev -> next = pntr -> next; 
+		
+			pntr -> next -> perv = pntr -> perv ;
+			
+			pntr -> next = NULL;
+			
+				pntr -> perv = NULL; 
+				
+				pntr -> type = FREE; 
+				
+				CMCB* temp = freeList.head;
+			
+			while (temp != NULL) {
+				
+				if (pntr -> address > temp -> address){
+					
+					pntr -> next = temp -> next; 
+					
+						pntr -> perv = temp;
+						
+					temp -> next = pntr; 
+					
+				pntr -> next -> perv = pntr; 
+				
+				break; 
+				}
+				
+				temp = temp -> next; 
+			}
+			
+			if (pntr -> type == pntr -> prev-> type) {
+				
+				CMCB* newBlock;
+				
+				newBlock -> size = pntr -> size + pntr -> prev -> size + sizeof(CMCB) + sizeof(LMCB);
+				
+				newBlock -> next = pntr -> next; 
+				
+				newBlock -> prev = pntr -> prev -> prev;
+				
+				newBlock -> next -> prev = newBlock; 
+				
+				newBlock -> prev -> next = newBlock; 
+				
+				pntr -> prev -> prev = NULL;
+				
+				pntr -> prev -> next = NULL; 
+				
+				pntr -> prev = NULL; 
+				
+				pntr -> next = NULL; 
+				
+				
+			}
+			
+	}
+}
