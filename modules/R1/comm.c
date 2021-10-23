@@ -686,10 +686,116 @@ void commhand() {
 
 		}
 
+		//=================================================================================================================================
+						//R5 commands
+
+		else if (strcmp(token,"heap") == 0) {		// heap commands
+
+			u32int testSize = 1000;
+
+			token = strtok(NULL,split);						// token now is the word after "heap"
+			
+			if (token == NULL)								// if nothing is entered after "heap"
+				print("ERROR: no command entered after heap.\n",41);
+
+			else if (strcmp(token,"init") == 0) {			// initialize the heap
+
+				//init_heap(testSize);				// testing to initialize heap w/ 1KB
+
+
+			}
+
+			else if (strcmp(token,"allocate") == 0) {
+
+				token = strtok(NULL,split);						// token now is the word after "allocate" which should be size of memory to allocate
+
+
+				if (token == NULL)
+					print("ERROR: size of allocated memory not entered.\n",46);
+
+				else {
+
+					u32int allocSize = atoi(token);
+
+					if (allocSize >= testSize)
+						print("Size is too big.\n",18);
+
+					else {
+
+						// call allocateMemory successfully?
+					}
+				}
+				
+
+
+			}
+
+			else if (strcmp(token,"free") == 0) {
+
+				token = strtok(NULL,split);			// token is now word after "free" which should be name of the block/process?
+
+				if (token == NULL)
+					print("ERROR: name not specified.\n",29);
+
+				else {
+					// code related to free memory here
+
+				}
+
+			}
+
+			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not "isEmpty"
+				// code here
+
+			}
+
+			else if (strcmp(token,"show") == 0) {				// show free or allocated
+
+				token = strtok(NULL,split);						// token is now word after "show" (either free or allocated)
+
+				if (token == NULL)
+					print("ERROR: too few inputs.\n",25);
+
+				else if (strcmp(token,"free") == 0) {
+
+					// show free memory here
+
+
+
+					print("free\n",5);
+
+
+
+
+				}
+
+				else if (strcmp(token,"allocated") == 0) {
+
+					// show allocated memory here
+
+
+					print("allocated\n",10);
+
+
+
+
+				}
+
+				else												// neither free nor allocated (invalid)
+					print("ERROR: invalid input entered.\n",32);
+
+
+
+			}
+
+
+		}	// end of heap commands
+
+
 
 		else {		// an unknown command
 			
-			print("unknown command entered. Please check spelling and/or syntax..",63); //sys req 
+			print("unknown command entered. Please check spelling and/or syntax..",63);
 			
 		}
 		

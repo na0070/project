@@ -10,7 +10,7 @@ struct list allocatedList = {.head = NULL, .tail = NULL};
 struct list freeList = {.head = NULL, .tail = NULL};
 
 // initiallie the heap (that will then be divided into more blocks)
-void init_heap(u322int size) {
+void init_heap(int size) {
   
   start_memory = (void *)kmalloc(size + sizeof(CMCB) + sizeof(LMCB));
   // put CMCB at top, LMCB at bottom
@@ -52,15 +52,12 @@ void allocateMemory(int size) {
 
       if (allocatedList.head == NULL)
         allocatedList.head = ptr;
-      
+
       // reconnect blocks to list correctly
 
       break;
 
     }
-
-
-
     ptr = ptr -> next;
   }
   
