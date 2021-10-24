@@ -43,7 +43,6 @@ to perform.
 void commhand() {
 	
 	print("Welcome to MPX_core..\n",24);
-	print("This is a test\n",17);
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
