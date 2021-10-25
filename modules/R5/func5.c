@@ -2,12 +2,14 @@
 
 
 //global variable: start location of heap
-(unsigned char)* start_memory;    
+unsigned char* start_memory;    
 
 // global list of free/allocated lists
 
 struct list allocatedList = {.head = NULL, .tail = NULL};
 struct list freeList = {.head = NULL, .tail = NULL};
+
+struct list memoryList = {.head = NULL, .tail = NULL};	// if using one joint list approach
 
 // initiallie the heap (that will then be divided into more blocks)
 void init_heap(int size) {
@@ -17,22 +19,26 @@ void init_heap(int size) {
   CMCB* heap_head = (CMCB*)start_memory;
   LMCB* heap_end = (LMCB*)( start_memory + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
 
+
+heap_head -> size = size;	// "size" of the block the CMCB is within, "size" indicates the block's total size, dont include CMCB and LMCB here
+
   // initialize the heap as free at first
   heap_head -> type = FREE;
-  heap_end -> end = FREE;
+  heap_end -> type = FREE;
   
+  // set beginning address of CMCB
+  heap_head -> address = start_memory + sizeof(CMCB);
 
   //initialize the block lists
  freeList.head = heap_head;
- freeList.tail = heap_head;
+ freeList.tail = heap_head;		// no need for a tail
 
 // heap_head is the only one in the list so far, so no other CMCBs exist yet
  heap_head -> next = NULL;
  heap_head -> prev = NULL;
 
+ // allocated head and tail are already NULL
 
- // returns anything?
- return;
 }
   
 void allocateMemory(int size) {
@@ -43,24 +49,52 @@ void allocateMemory(int size) {
   int needed_size = size + sizeof(CMCB) + sizeof(LMCB);
 
   CMCB* ptr = freeList -> head; // index pointer
+  //CMCB* ptr = memoryList.head;	// if using one list approach
 
-  while (ptr != NULL) {
+	while (ptr != NULL) {
 
-    if (ptr -> size >= needed_size) {
-      // found correct size, remove it from list, change it to allocated and make the remainder free
-      ptr -> type = ALLOCATED;
+		if (ptr -> size >= needed_size) {
+			// found correct size, remove it from list, change it to allocated and make the remainder free
+			
+			ptr -> type = ALLOCATED;		// set the block to be allocated
+			
+			// split the block to allocated and free (remainder)
+			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of new block
+			newLMCB -> type = FREE;
 
-      if (allocatedList.head == NULL)
-        allocatedList.head = ptr;
+			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for remainder block
 
-      // reconnect blocks to list correctly
+			newFree -> type = FREE;
+			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
+			newFree -> address = newFree + sizeof(CMCB);		// set new address of remainder
+			
+			// name is not important (for now)
+			ptr -> size = size;		// readjust the allocated block's size
+			// would we need to adjust any old LMCBs?
 
-      break;
+			if (allocatedList.head == NULL) {		// may want to stick with using one list, so may want to remove this if-statement
+				// set the head and tail of the empty list to be the new block to be added
+				allocatedList.head = ptr;
+				allocatedList.tail = ptr;
 
-    }
-    ptr = ptr -> next;
-  }
+			}
+
+			else {
+				// reconnect blocks to list correctly (using one list approach)
+				newFree -> prev = ptr;
+				newFree -> next = ptr->next;
+
+				ptr-> next = newFree;
+
+			}
+
+			break;
+
+		}
+    	ptr = ptr -> next;
+	}
   
+
 }
 
 void freeMemory (CMCB* pntr) {
