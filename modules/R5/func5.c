@@ -106,7 +106,7 @@ void freeMemory (CMCB* pntr) {
 		print ("The memory already free \n", 26 );
 	}
 	else {
-		
+		/*
 		pntr -> prev -> next = pntr -> next; 
 		
 			pntr -> next -> perv = pntr -> perv ;
@@ -117,9 +117,11 @@ void freeMemory (CMCB* pntr) {
 				
 				pntr -> type = FREE; 
 				
-				CMCB* temp = freeList.head;
+				CMCB* temp = freeList.head; */
+				
+				pntr -> type = FREE; 
 			
-			while (temp != NULL) {
+			/* while (temp != NULL) {
 				
 				if (pntr -> address > temp -> address){
 					
@@ -132,14 +134,14 @@ void freeMemory (CMCB* pntr) {
 				pntr -> next -> perv = pntr; 
 				
 				break; 
-				}
+				} 
 				
 				temp = temp -> next; 
-			}
+			}*/
+			
+			CMCB* newBlock;
 			
 			if (pntr -> type == pntr -> prev-> type) {
-				
-				CMCB* newBlock;
 				
 				newBlock -> size = pntr -> size + pntr -> prev -> size + sizeof(CMCB) + sizeof(LMCB);
 				
@@ -159,6 +161,29 @@ void freeMemory (CMCB* pntr) {
 				
 				pntr -> next = NULL; 
 				
+			}
+			
+			pntr = newBlock; 
+			
+			if (pntr -> type == pntr -> next-> type){
+				
+				newBlock -> size = pntr -> next -> size + pntr -> size + sizeof(CMCB) + sizeof(LMCB);
+				
+				newBlock -> next = pntr -> next -> next; 
+				
+				newBlock -> prev = pntr -> prev;
+				
+				newBlock -> next -> prev = newBlock; 
+				
+				newBlock -> prev -> next = newBlock; 
+				
+				pntr -> next -> prev = NULL; 
+				
+				pntr -> next -> next = NULL; 
+				
+				pntr -> prev = NULL;
+				
+				pntr -> next = NULL; 
 				
 			}
 			
