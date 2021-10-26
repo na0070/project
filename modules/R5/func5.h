@@ -11,7 +11,7 @@ typedef struct cmcb{
  char *beginning_address;
  int *Size;
  char *name;  
- CMBC next*;
+ struct cmcb *next;
 }  CMCB;
 
 typedef struct lmcb{
@@ -19,8 +19,10 @@ typedef struct lmcb{
  int *Size;
 }  LMCB;
 
-// function prototypes should go here
+
 struct list {
         CMCB *head; // dequeue this 
 	CMCB *tail; // enquue affter this 
 }
+
+// function prototypes should go here
