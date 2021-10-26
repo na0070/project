@@ -7,22 +7,23 @@
 
 // CMCB and LMCB structs should go here
 typedef struct cmcb{
- char *Type; 
- char *beginning_address;
- int *Size;
+ char *type; 
+ char *address;
+ int *size;
  char *name;  
  struct cmcb *next;
+ struct cmcb *prev;
 }  CMCB;
 
 typedef struct lmcb{
- char *Type; 
- int *Size;
+ char *type; 
+ int *size;
 }  LMCB;
 
 
 struct list {
-        CMCB *head; // dequeue this 
-	CMCB *tail; // enquue affter this 
-}
+        CMCB *head; 
+	CMCB *tail;  
+};
 
 // function prototypes should go here
