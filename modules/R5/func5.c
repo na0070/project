@@ -2,7 +2,7 @@
 
 
 //global variable: start location of heap (better to use u32int* ?)
-unsigned char* heap;    
+u32int* heap;    
 //u32int* heap;
 
 // global list of free/allocated lists
@@ -18,7 +18,7 @@ void init_heap(int size) {
 	heap = (void *)kmalloc(size + sizeof(CMCB) + sizeof(LMCB));
 	// put CMCB at top, LMCB at bottom
 	CMCB* heap_head = (CMCB*) heap;
-	LMCB* heap_end = (LMCB*)( heap + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
+	//LMCB* heap_end = (LMCB*)( heap + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
 
 
 	// "size" of the block the CMCB is within, "size" indicates the block's total size, dont include CMCB and LMCB here
@@ -26,7 +26,7 @@ void init_heap(int size) {
 
 	// initialize the heap as free at first
 	heap_head -> type = FREE;
-	heap_end -> type = FREE;
+	//heap_end -> type = FREE;
 	
 	// set beginning address of CMCB (starting from first addressable location, AKA the heap)
 	heap_head -> address = heap + sizeof(CMCB);
@@ -63,11 +63,13 @@ int allocateMemory(int size) {
 			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of new block
 			newLMCB -> type = FREE;
 
+
+
 			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for remainder block
 
 			newFree -> type = FREE;
 			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
-			newFree -> address = newFree + sizeof(CMCB);		// set new address of remainder
+			newFree -> address = (u32int)newFree + sizeof(CMCB);		// set new address of remainder
 			
 			// name is not important (for now)
 			ptr -> size = size;		// readjust the allocated block's size
@@ -99,93 +101,116 @@ int allocateMemory(int size) {
 
 }
 
-void freeMemory (CMCB* pntr) {
-	
-	if (pntr -> type == FREE) {
+void freeMemory (u32int address) {
+
+	CMCB* pntr = memoryList.head;
+
+	while (pntr != NULL) {
+
 		
-		print ("The memory already free \n", 26 );
-	}
-	else {
-		/*
-		pntr -> prev -> next = pntr -> next; 
+		if (pntr -> address = address) {
+
+			if (pntr -> type == FREE) {
 		
-			pntr -> next -> perv = pntr -> perv ;
+			print ("The memory already free \n", 26 );
+		
+			}
+
+			else {
+				/*
+				pntr -> prev -> next = pntr -> next; 
 			
-			pntr -> next = NULL;
-			
-				pntr -> perv = NULL; 
+				pntr -> next -> perv = pntr -> perv ;
 				
-				pntr -> type = FREE; 
+				pntr -> next = NULL;
 				
-				CMCB* temp = freeList.head; */
-				
-				pntr -> type = FREE; 
-			
-			/* while (temp != NULL) {
-				
-				if (pntr -> address > temp -> address){
+					pntr -> perv = NULL; 
 					
-					pntr -> next = temp -> next; 
+					pntr -> type = FREE; 
 					
-						pntr -> perv = temp;
+					CMCB* temp = freeList.head; */
+					
+					pntr -> type = FREE; 
+				
+				/* while (temp != NULL) {
+					
+					if (pntr -> address > temp -> address){
 						
-					temp -> next = pntr; 
+						pntr -> next = temp -> next; 
+						
+							pntr -> perv = temp;
+							
+						temp -> next = pntr; 
+						
+					pntr -> next -> perv = pntr; 
 					
-				pntr -> next -> perv = pntr; 
+					break; 
+					} 
+					
+					temp = temp -> next; 
+				}*/
 				
-				break; 
-				} 
+				//CMCB* newBlock;
 				
-				temp = temp -> next; 
-			}*/
+				if (pntr -> type == pntr -> next-> type){
+					
+					pntr -> size = pntr -> size  + pntr -> next -> size + sizeof(CMCB) + sizeof(LMCB);
+					
+					//pntr -> next -> next = NULL;
+					pntr -> next -> prev = NULL;
+
+					pntr -> next = pntr -> next -> next;
+
+					pntr -> next -> prev = pntr;
+					
+					//newBlock -> prev = pntr -> prev;
+					
+					// newBlock -> next -> prev = newBlock; 
+					
+					// newBlock -> prev -> next = newBlock; 
+					
+					// pntr -> next -> prev = NULL; 
+					
+					// pntr -> next -> next = NULL; 
+					
+					// pntr -> prev = NULL;
+					
+					// pntr -> next = NULL; 
+					
+				}
+
+
+				if (pntr -> type == pntr -> prev-> type) {
+					
+					pntr -> prev -> size = pntr -> size + pntr -> prev -> size + sizeof(CMCB) + sizeof(LMCB);
+					
+					pntr -> prev -> next = pntr -> next; 
+
+					pntr -> next -> prev = pntr -> prev;
+					
+					// newBlock -> prev = pntr -> prev -> prev;
+					
+					// newBlock -> next -> prev = newBlock; 
+					
+					// newBlock -> prev -> next = newBlock; 
+					
+					// pntr -> prev -> prev = NULL;
+					
+					// pntr -> prev -> next = NULL; 
+					
+					pntr -> prev = NULL; 
+					
+					pntr -> next = NULL; 
+					
+				}
 			
-			CMCB* newBlock;
 			
-			if (pntr -> type == pntr -> prev-> type) {
-				
-				newBlock -> size = pntr -> size + pntr -> prev -> size + sizeof(CMCB) + sizeof(LMCB);
-				
-				newBlock -> next = pntr -> next; 
-				
-				newBlock -> prev = pntr -> prev -> prev;
-				
-				newBlock -> next -> prev = newBlock; 
-				
-				newBlock -> prev -> next = newBlock; 
-				
-				pntr -> prev -> prev = NULL;
-				
-				pntr -> prev -> next = NULL; 
-				
-				pntr -> prev = NULL; 
-				
-				pntr -> next = NULL; 
-				
 			}
-			
-			pntr = newBlock; 
-			
-			if (pntr -> type == pntr -> next-> type){
-				
-				newBlock -> size = pntr -> next -> size + pntr -> size + sizeof(CMCB) + sizeof(LMCB);
-				
-				newBlock -> next = pntr -> next -> next; 
-				
-				newBlock -> prev = pntr -> prev;
-				
-				newBlock -> next -> prev = newBlock; 
-				
-				newBlock -> prev -> next = newBlock; 
-				
-				pntr -> next -> prev = NULL; 
-				
-				pntr -> next -> next = NULL; 
-				
-				pntr -> prev = NULL;
-				
-				pntr -> next = NULL; 
-				
-			}
-			
+			break;
+		}
+
+		pntr = pntr -> next;
 	}
+	
+	
 }

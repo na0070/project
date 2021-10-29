@@ -7,17 +7,17 @@
 
 // CMCB and LMCB structs should go here
 typedef struct cmcb{
- char *type; 
- char *address;
- int *size;
+ int type; 
+ u32int address;
+ int size;
  char *name;  
  struct cmcb *next;
  struct cmcb *prev;
 }  CMCB;
 
 typedef struct lmcb{
- char *type; 
- int *size;
+ int type; 
+ int size;
 }  LMCB;
 
 
