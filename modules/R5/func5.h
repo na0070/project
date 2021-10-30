@@ -1,3 +1,10 @@
+#include "../mpx_supt.h"
+#include <mem/heap.h>
+#include <string.h>
+#include <core/serial.h>
+
+#include "../R2/func.h"
+
 #define FREE 0
 #define ALLOCATED 1
 
@@ -27,3 +34,14 @@ struct list {
 };
 
 // function prototypes should go here
+
+void init_heap(int size);
+
+int allocateMemory(int size);
+
+void freeMemory (u32int address);
+
+int isEmpty();
+
+void showList(int printType);
+

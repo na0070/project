@@ -2,7 +2,7 @@
 
 
 //global variable: start location of heap (better to use u32int* ?)
-u32int* heap;    
+u32int* heap_head;    
 //u32int* heap;
 
 // global list of free/allocated lists
@@ -15,10 +15,10 @@ struct list memoryList = {.head = NULL, .tail = NULL};	// if using one joint lis
 // initiallie the heap (that will then be divided into more blocks)
 void init_heap(int size) {
   
-	heap = (void *)kmalloc(size + sizeof(CMCB) + sizeof(LMCB));
+	heap_head = (void *)kmalloc(size + sizeof(CMCB) + sizeof(LMCB));
 	// put CMCB at top, LMCB at bottom
-	CMCB* heap_head = (CMCB*) heap;
-	//LMCB* heap_end = (LMCB*)( heap + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
+	CMCB* heap_head = (CMCB*) heap_head;
+	//LMCB* heap_end = (LMCB*)( heap_head + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
 
 
 	// "size" of the block the CMCB is within, "size" indicates the block's total size, dont include CMCB and LMCB here
@@ -29,7 +29,7 @@ void init_heap(int size) {
 	//heap_end -> type = FREE;
 	
 	// set beginning address of CMCB (starting from first addressable location, AKA the heap)
-	heap_head -> address = heap + sizeof(CMCB);
+	heap_head -> address = (u32int)heap_head + sizeof(CMCB);
 
 	//initialize the block lists
 	memoryList.head = heap_head;
@@ -39,6 +39,7 @@ void init_heap(int size) {
 	heap_head -> next = NULL;
 	heap_head -> prev = NULL;
 
+  print("heap initialized\n",19);
 
 }
 // return 0 if memory was allocated, and return -1 if not allocated (not enough space found)
@@ -49,7 +50,7 @@ int allocateMemory(int size) {
   
   int needed_size = size + sizeof(CMCB) + sizeof(LMCB);
 
-//   CMCB* ptr = freeList -> head; // index pointer (if using 2 lists approach)
+  //   CMCB* ptr = freeList -> head; // index pointer (if using 2 lists approach)
   CMCB* ptr = memoryList.head;	// if using one list approach
 
 	while (ptr != NULL) {
@@ -108,7 +109,7 @@ void freeMemory (u32int address) {
 	while (pntr != NULL) {
 
 		
-		if (pntr -> address = address) {
+		if (pntr -> address == address) {
 
 			if (pntr -> type == FREE) {
 		
@@ -213,4 +214,56 @@ void freeMemory (u32int address) {
 	}
 	
 	
+}
+
+// check if nothing is allocated from heap
+int isEmpty() {
+
+  CMCB* ptr = memoryList.head;  // index pointer starting at head
+
+  while (ptr != NULL) {   // looping through list 
+
+    if (ptr->type != FREE)  // if this block is not free
+      return FALSE;         // then heap is not empty
+
+    ptr = ptr->next;        // if it is free, check next block
+
+  } // end of list
+
+  return TRUE;            // if could not find allocated blocks, then heap is empty
+
+
+}
+
+// print block information (size and address) in the heap of the chosen type
+void showList(int printType) {
+
+  CMCB* ptr = memoryList.head;    // index pointer starting at head
+  char blockAddress[20];        // string holding block's address value
+  char blockSize[20];           // string holding block's size value
+
+  while (ptr != NULL) {         // looping through list
+
+    if (ptr->type == printType) { // if this block's type is the one to print
+
+      itoa(ptr->address,blockAddress);    // convert address value into a string
+      itoa(ptr->size,blockSize);          // convert size value into a string
+
+      print("Block address: ",16);           // print the address
+      print(blockAddress,sizeof(blockAddress));
+      print("\n",1);
+
+      print("Block size: ",13);              // print the size
+      print(blockSize,sizeof(blockSize));
+      print("\n",1);
+
+      print("****************\n",19);     // to visually distinguish between different block prints
+
+    }
+
+    ptr = ptr->next;            // go to next block in the list
+
+  }
+
+
 }

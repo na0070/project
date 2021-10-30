@@ -4,9 +4,10 @@
 #include "getandsettime.h"
 #include "help.h"
 #include "version.h"
-#include "../R2/func.h"
+// #include "../R2/func.h"
 #include "../procsr3.h"
 #include "../R4/Alarm.h"
+#include "../R5/func5.h"
 
 
 #include <stdint.h>
@@ -700,7 +701,7 @@ void commhand() {
 
 			else if (strcmp(token,"init") == 0) {			// initialize the heap
 
-				//init_heap(testSize);				// testing to initialize heap w/ 1KB
+				init_heap(testSize);				// testing to initialize heap w/ 1KB
 
 
 			}
@@ -717,12 +718,14 @@ void commhand() {
 
 					u32int allocSize = atoi(token);
 
-					if (allocSize >= testSize)
+					if (allocSize + sizeof(CMCB) + sizeof(LMCB) >= testSize)
 						print("Size is too big.\n",18);
 
 					else {
 
-						// call allocateMemory successfully?
+						allocateMemory(allocSize);
+
+
 					}
 				}
 				
@@ -732,7 +735,7 @@ void commhand() {
 
 			else if (strcmp(token,"free") == 0) {
 
-				token = strtok(NULL,split);			// token is now word after "free" which should be name of the block/process?
+				token = strtok(NULL,split);			// token is now word after "free" which should be address of the block
 
 				if (token == NULL)
 					print("ERROR: name not specified.\n",29);
@@ -740,12 +743,30 @@ void commhand() {
 				else {
 					// code related to free memory here
 
+					u32int address = atoi(token);
+
+					freeMemory(address);
+
+
+
+
+
+
+
 				}
 
 			}
 
-			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not "isEmpty"
-				// code here
+			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not, "isEmpty"
+				
+				if (isEmpty()) {
+					print("Heap is empty\n",16);
+					print("\n",1);
+				}
+				else {
+					print("Heap is NOT empty\n",20);
+					print("\n",1);
+				}
 
 			}
 
@@ -760,12 +781,7 @@ void commhand() {
 
 					// show free memory here
 
-
-
-					print("free\n",5);
-
-
-
+					showList(FREE);
 
 				}
 
@@ -773,11 +789,7 @@ void commhand() {
 
 					// show allocated memory here
 
-
-					print("allocated\n",10);
-
-
-
+					showList(ALLOCATED);
 
 				}
 
