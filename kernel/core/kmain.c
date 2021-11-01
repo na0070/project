@@ -24,6 +24,7 @@
 #include "modules/mpx_supt.h"
 #include "modules/R2/func.h"
 #include "modules/R4/Alarm.h"
+#include "modules/R5/func5.h"
 
 void infinite();
 
@@ -50,7 +51,7 @@ void kmain(void)
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
    
-   mpx_init(MODULE_R4);
+   mpx_init(MEM_MODULE);
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
@@ -95,20 +96,24 @@ void kmain(void)
 
 
 
-/*
-  testing R3 and R4
-  commhand() is commented for purposes of R4
-*/
+// R5 phase 2 work
+// sys_set_malloc((u32int)allocateMemory);       // set the allocation function to be our created function
+// sys_set_free((u32int)freeMemory);             // set the free memory function as our created function
 
-	// commhand();
+// init_heap(50000);       // initialize the heap
 
-// the 3 lines below should be commented if only testing R3. Uncomment the above line instead
+
+// comment out whats above for phase 1 testing
+
+
+
+// initializing system processes (R3/R4)
    loadr_pcb("command_handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process
    loadr_pcb("idle_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)idle);            // loads idle as a process
    loadr_pcb("alarm_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)checkTime);      // loads alarm checking process
    loadr_pcb("infinite_process", SYSTEM, NOT_SUSPENDED, 1, (u32int)infinite);   // loads infinite command
    
-   asm volatile("int $60");
+   asm volatile("int $60");       // trigger context switch interrupt
 
 
 
@@ -125,8 +130,8 @@ void kmain(void)
 }
 void infinite(){
 while(1){
-sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 print("infinte command massage\n",25);
+sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 
 }// end of the loop 
 

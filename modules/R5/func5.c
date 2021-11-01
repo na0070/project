@@ -71,7 +71,7 @@ int allocateMemory(int size) {
   			newFree -> type = FREE;
   			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
   			// newFree -> address = (u32int)newFree + sizeof(CMCB);		// set new address of remainder
-        newFree -> address = (u32int)newFree;    // set new address of remainder
+        	newFree -> address = (u32int)newFree + sizeof(CMCB);    // set new address of remainder
         
   			
   			// name is not important (for now)
@@ -89,7 +89,7 @@ int allocateMemory(int size) {
   				// reconnect blocks to list correctly (using one list approach)
   				newFree -> prev = ptr;
   				newFree -> next = ptr->next;
-          newFree -> next -> prev = newFree;
+          		newFree -> next -> prev = newFree;
 
   				ptr-> next = newFree;
 
@@ -101,8 +101,6 @@ int allocateMemory(int size) {
     	ptr = ptr -> next;		// if not enough spcae, go to next block and check
 	}
 
-  print("no\n",3);
-  
   return -1;
 
 }
@@ -229,7 +227,7 @@ int isEmpty() {
   while (ptr != NULL) {   // looping through list 
 
     if (ptr->type != FREE)  // if this block is not free
-      return FALSE;         // then heap is not empty
+      return FALSE;         // then heap is not empty, return false and exit
 
     ptr = ptr->next;        // if it is free, check next block
 
@@ -240,7 +238,7 @@ int isEmpty() {
 
 }
 
-// print block information (size and address) in the heap of the chosen type
+// print block information (size and address) of the chosen type in the heap
 void showList(int printType) {
 
   CMCB* ptr = memoryList.head;    // index pointer starting at head
@@ -251,8 +249,8 @@ void showList(int printType) {
 
     if (ptr->type == printType) { // if this block's type is the one to print
 
-      itoa(ptr->address,blockAddress);    // convert address value into a string
-      itoa(ptr->size,blockSize);          // convert size value into a string
+      itoa((int)ptr->address,blockAddress);    // convert address value into a string
+      itoa(ptr->size,blockSize);          	   // convert size value into a string
 
       print("Block address: ",16);           // print the address
       print(blockAddress,sizeof(blockAddress));
@@ -262,7 +260,7 @@ void showList(int printType) {
       print(blockSize,sizeof(blockSize));
       print("\n",1);
 
-      print("****************\n",19);     // to visually distinguish between different block prints
+      print("********************\n",24);     // to visually distinguish between different block prints
 
     }
 
