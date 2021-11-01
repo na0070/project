@@ -55,48 +55,53 @@ int allocateMemory(int size) {
 
 	while (ptr != NULL) {
 
-		// check if current block is of sufficient size
-		if (ptr -> size >= needed_size) {
-			
-			ptr -> type = ALLOCATED;		// set the block to be allocated
-			
-			// split the block to allocated and free (remainder)
-			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of new block
-			newLMCB -> type = FREE;
+    if (ptr -> type == FREE)                // check if current block is free before checking for the size
+  		if (ptr -> size >= needed_size) {     // check if current block is of sufficient size
+  			
+  			ptr -> type = ALLOCATED;		// set the block to be allocated
+  			
+  			// split the block to allocated and free (remainder)
+  			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of new block
+  			newLMCB -> type = FREE;
 
 
 
-			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for remainder block
+  			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for remainder block
 
-			newFree -> type = FREE;
-			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
-			newFree -> address = (u32int)newFree + sizeof(CMCB);		// set new address of remainder
-			
-			// name is not important (for now)
-			ptr -> size = size;		// readjust the allocated block's size
-			// would we need to adjust any old LMCBs?
+  			newFree -> type = FREE;
+  			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
+  			// newFree -> address = (u32int)newFree + sizeof(CMCB);		// set new address of remainder
+        newFree -> address = (u32int)newFree;    // set new address of remainder
+        
+  			
+  			// name is not important (for now)
+  			ptr -> size = size;		// readjust the allocated block's size
+  			// would we need to adjust any old LMCBs?
 
-			// if (allocatedList.head == NULL) {		// may want to stick with using one list, so may want to remove this if-statement
-			// 	// set the head and tail of the empty list to be the new block to be added
-			// 	allocatedList.head = ptr;
-			// 	allocatedList.tail = ptr;
+  			// if (allocatedList.head == NULL) {		// may want to stick with using one list, so may want to remove this if-statement
+  			// 	// set the head and tail of the empty list to be the new block to be added
+  			// 	allocatedList.head = ptr;
+  			// 	allocatedList.tail = ptr;
 
-			// }
+  			// }
 
-			// else {
-				// reconnect blocks to list correctly (using one list approach)
-				newFree -> prev = ptr;
-				newFree -> next = ptr->next;
+  			// else {
+  				// reconnect blocks to list correctly (using one list approach)
+  				newFree -> prev = ptr;
+  				newFree -> next = ptr->next;
+          newFree -> next -> prev = newFree;
 
-				ptr-> next = newFree;
+  				ptr-> next = newFree;
 
-			// }
+  			// }
 
-			return 0;		// stop searching
+  			return 0;		// stop searching
 
-		}
+  		}
     	ptr = ptr -> next;		// if not enough spcae, go to next block and check
 	}
+
+  print("no\n",3);
   
   return -1;
 

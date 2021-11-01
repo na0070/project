@@ -17,7 +17,7 @@ typedef struct cmcb{
  int type; 
  u32int address;
  int size;
- char *name;  
+ //char *name;  
  struct cmcb *next;
  struct cmcb *prev;
 }  CMCB;
