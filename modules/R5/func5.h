@@ -2,8 +2,9 @@
 #include <mem/heap.h>
 #include <string.h>
 #include <core/serial.h>
-
 #include "../R2/func.h"
+
+
 
 #define FREE 0
 #define ALLOCATED 1
@@ -35,9 +36,9 @@ struct list {
 
 // function prototypes should go here
 
-void init_heap(int size);
+u32int* init_heap(int size);
 
-int allocateMemory(int size);
+u32int allocateMemory(int size);
 
 void freeMemory (u32int address);
 

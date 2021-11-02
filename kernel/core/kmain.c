@@ -22,7 +22,7 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
-#include "modules/R2/func.h"
+// #include "modules/R2/func.h"
 #include "modules/R4/Alarm.h"
 #include "modules/R5/func5.h"
 
@@ -51,7 +51,8 @@ void kmain(void)
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
    
-   mpx_init(MEM_MODULE);
+   // mpx_init(MEM_MODULE);
+   mpx_init(MODULE_R5);
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
@@ -97,15 +98,18 @@ void kmain(void)
 
 
 // R5 phase 2 work
-// sys_set_malloc((u32int)allocateMemory);       // set the allocation function to be our created function
-// sys_set_free((u32int)freeMemory);             // set the free memory function as our created function
+sys_set_malloc((u32int (*)(u32int))allocateMemory);       // set the allocation function to be our created function
+sys_set_free((int (*)(void *))freeMemory);             // set the free memory function as our created function
 
-// init_heap(50000);       // initialize the heap
+// sys_set_malloc(allocateMemory);      
+// sys_set_free(freeMemory);  
+
+init_heap(50000);       // initialize the heap
 
 
 // comment out whats above for phase 1 testing
 
-
+print("hello\n",6);
 
 // initializing system processes (R3/R4)
    loadr_pcb("command_handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process

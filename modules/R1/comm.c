@@ -723,7 +723,8 @@ void commhand() {
 
 					else {
 
-						allocateMemory(allocSize);
+						if (allocateMemory(allocSize) == 0)
+							print("ERROR: unable to allocate\n",27);
 
 
 					}
@@ -780,7 +781,7 @@ void commhand() {
 				else if (strcmp(token,"free") == 0) {
 
 					// show free memory here
-
+					print("free\n",5);
 					showList(FREE);
 
 				}

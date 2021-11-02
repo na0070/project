@@ -13,41 +13,63 @@ u32int* heap_head;
 struct list memoryList = {.head = NULL, .tail = NULL};	// if using one joint list approach
 
 // initiallie the heap (that will then be divided into more blocks)
-void init_heap(int size) {
+u32int* init_heap(int size) {
   
 	heap_head = (void *)kmalloc(size + sizeof(CMCB) + sizeof(LMCB));
 	// put CMCB at top, LMCB at bottom
-	CMCB* heap_head = (CMCB*) heap_head;
+	CMCB* heap_CMCB = (CMCB*) heap_head;
 	//LMCB* heap_end = (LMCB*)( heap_head + size + sizeof(CMCB) ); // size of LMCB already baked in to the memory block, so no need to subtract its size
 
 
 	// "size" of the block the CMCB is within, "size" indicates the block's total size, dont include CMCB and LMCB here
-	heap_head -> size = size;	
+	heap_CMCB -> size = size;	
 
 	// initialize the heap as free at first
-	heap_head -> type = FREE;
+	heap_CMCB -> type = FREE;
 	//heap_end -> type = FREE;
 	
 	// set beginning address of CMCB (starting from first addressable location, AKA the heap)
-	heap_head -> address = (u32int)heap_head + sizeof(CMCB);
+	heap_CMCB -> address = (u32int)heap_CMCB + sizeof(CMCB);
 
 	//initialize the block lists
-	memoryList.head = heap_head;
-	memoryList.tail = heap_head;		// no need for a tail (maybe)
+	memoryList.head = heap_CMCB;
+	memoryList.tail = heap_CMCB;		// no need for a tail (maybe)
 
 	// heap_head is the only one in the list so far, so no other CMCBs exist yet
-	heap_head -> next = NULL;
-	heap_head -> prev = NULL;
+	heap_CMCB -> next = NULL;
+	heap_CMCB -> prev = NULL;
+
+
+char blockAddress[20];
+          char blockSize[20];  
+
+
+
+
+
+
+          itoa((int)heap_CMCB->address,blockAddress);    // convert address value into a string
+      itoa(heap_CMCB->size,blockSize);               // convert size value into a string
+
+      print("Block address: ",16);           // print the address
+      print(blockAddress,sizeof(blockAddress));
+      print("\n",1);
+
+      print("Block size: ",13);              // print the size
+      print(blockSize,sizeof(blockSize));
+      print("\n",1);
+
+  
 
   print("heap initialized\n",19);
+  return heap_head;
 
 }
 // return 0 if memory was allocated, and return -1 if not allocated (not enough space found)
-int allocateMemory(int size) {
+u32int allocateMemory(int size) {
   // allocate memory with size + sizeof(CMCB) + sizeof(LMCB)
   // use first-fit method to look for correct size block
   // divide block if needed to allocated and free (remainder)
-  
   int needed_size = size + sizeof(CMCB) + sizeof(LMCB);
 
   //   CMCB* ptr = freeList -> head; // index pointer (if using 2 lists approach)
@@ -89,28 +111,52 @@ int allocateMemory(int size) {
   				// reconnect blocks to list correctly (using one list approach)
   				newFree -> prev = ptr;
   				newFree -> next = ptr->next;
-          		newFree -> next -> prev = newFree;
+          newFree -> next -> prev = newFree;
 
   				ptr-> next = newFree;
 
   			// }
+          char blockAddress[20];
+          char blockSize[20];  
 
-  			return 0;		// stop searching
+
+
+
+
+
+          itoa((int)ptr->address,blockAddress);    // convert address value into a string
+      itoa(ptr->size,blockSize);               // convert size value into a string
+
+      print("Block address: ",16);           // print the address
+      print(blockAddress,sizeof(blockAddress));
+      print("\n",1);
+
+      print("Block size: ",13);              // print the size
+      print(blockSize,sizeof(blockSize));
+      print("\n",1);
+
+
+
+
+
+
+
+  			return (u32int)ptr;		// stop searching
 
   		}
     	ptr = ptr -> next;		// if not enough spcae, go to next block and check
 	}
-
-  return -1;
+  print("return 0\n",10);
+  return 0;
 
 }
 
 void freeMemory (u32int address) {
-
+print("inside free memory\n",20);
 	CMCB* pntr = memoryList.head;
 
 	while (pntr != NULL) {
-
+print("ptr != NULL\n",20);
 		
 		if (pntr -> address == address) {
 
@@ -240,13 +286,14 @@ int isEmpty() {
 
 // print block information (size and address) of the chosen type in the heap
 void showList(int printType) {
-
+print("inside showList\n",18);
   CMCB* ptr = memoryList.head;    // index pointer starting at head
   char blockAddress[20];        // string holding block's address value
   char blockSize[20];           // string holding block's size value
 
+  print("before while\n",20);
   while (ptr != NULL) {         // looping through list
-
+print("ptr != NULL\n",20);
     if (ptr->type == printType) { // if this block's type is the one to print
 
       itoa((int)ptr->address,blockAddress);    // convert address value into a string
