@@ -18,6 +18,7 @@ struct PCB {
 	int state;				// current state (ready/running/blocked) of PCB
 	int susp;				// suspend (suspended/not suspended) state of PCB
 	unsigned char stack[1024];		// the stack (contains all info process needs) of the PCB
+	// unsigned char stack[2048];
 	unsigned char *stackTop;// pointer to top of stack
 	unsigned char *stackBase;	// pointer to bottom of stack
 	struct PCB* next;						// pointer to next PCB/linked list

@@ -104,12 +104,14 @@ sys_set_free((int (*)(void *))freeMemory);             // set the free memory fu
 // sys_set_malloc(allocateMemory);      
 // sys_set_free(freeMemory);  
 
-init_heap(50000);       // initialize the heap
-
+// init_heap(50000);
+init_heap(61204);       // initialize the heap
+// 61204 -> max size to initialize heap before saying "heap is full!" (testing purpoes)
+// with this, allocating 3252 then using "heap show <type>" twice will restart MPX...
 
 // comment out whats above for phase 1 testing
 
-print("hello\n",6);
+// print("hello\n",6);
 
 // initializing system processes (R3/R4)
    loadr_pcb("command_handler", SYSTEM, NOT_SUSPENDED, 9, (u32int)commhand);     // loads commhand as a process

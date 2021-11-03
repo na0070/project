@@ -40,24 +40,27 @@ u32int* init_heap(int size) {
 	heap_CMCB -> prev = NULL;
 
 
-char blockAddress[20];
-          char blockSize[20];  
 
 
 
+        // testing
 
 
 
-          itoa((int)heap_CMCB->address,blockAddress);    // convert address value into a string
-      itoa(heap_CMCB->size,blockSize);               // convert size value into a string
+      //     char blockAddress[20];
+      //     char blockSize[20];  
 
-      print("Block address: ",16);           // print the address
-      print(blockAddress,sizeof(blockAddress));
-      print("\n",1);
 
-      print("Block size: ",13);              // print the size
-      print(blockSize,sizeof(blockSize));
-      print("\n",1);
+      // itoa((int)heap_CMCB->address,blockAddress);    // convert address value into a string
+      // itoa(heap_CMCB->size,blockSize);               // convert size value into a string
+
+      // print("Block address: ",16);           // print the address
+      // print(blockAddress,sizeof(blockAddress));
+      // print("\n",1);
+
+      // print("Block size: ",13);              // print the size
+      // print(blockSize,sizeof(blockSize));
+      // print("\n",1);
 
   
 
@@ -65,14 +68,13 @@ char blockAddress[20];
   return heap_head;
 
 }
-// return 0 if memory was allocated, and return -1 if not allocated (not enough space found)
+// return address of allocated memory for requesting process
 u32int allocateMemory(int size) {
   // allocate memory with size + sizeof(CMCB) + sizeof(LMCB)
   // use first-fit method to look for correct size block
   // divide block if needed to allocated and free (remainder)
   int needed_size = size + sizeof(CMCB) + sizeof(LMCB);
 
-  //   CMCB* ptr = freeList -> head; // index pointer (if using 2 lists approach)
   CMCB* ptr = memoryList.head;	// if using one list approach
 
 	while (ptr != NULL) {
@@ -82,13 +84,13 @@ u32int allocateMemory(int size) {
   			
   			ptr -> type = ALLOCATED;		// set the block to be allocated
   			
-  			// split the block to allocated and free (remainder)
-  			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of new block
+  			// split the block to allocated and set the remainder to free
+  			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of allocated block
   			newLMCB -> type = FREE;
 
 
 
-  			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for remainder block
+  			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for start of remainder block
 
   			newFree -> type = FREE;
   			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
@@ -96,18 +98,8 @@ u32int allocateMemory(int size) {
         	newFree -> address = (u32int)newFree + sizeof(CMCB);    // set new address of remainder
         
   			
-  			// name is not important (for now)
   			ptr -> size = size;		// readjust the allocated block's size
-  			// would we need to adjust any old LMCBs?
 
-  			// if (allocatedList.head == NULL) {		// may want to stick with using one list, so may want to remove this if-statement
-  			// 	// set the head and tail of the empty list to be the new block to be added
-  			// 	allocatedList.head = ptr;
-  			// 	allocatedList.tail = ptr;
-
-  			// }
-
-  			// else {
   				// reconnect blocks to list correctly (using one list approach)
   				newFree -> prev = ptr;
   				newFree -> next = ptr->next;
@@ -115,25 +107,25 @@ u32int allocateMemory(int size) {
 
   				ptr-> next = newFree;
 
-  			// }
-          char blockAddress[20];
-          char blockSize[20];  
 
 
 
+            // testing
 
 
+      //     char blockAddress[20];
+      //     char blockSize[20];  
 
-          itoa((int)ptr->address,blockAddress);    // convert address value into a string
-      itoa(ptr->size,blockSize);               // convert size value into a string
+      //     itoa((int)ptr->address,blockAddress);    // convert address value into a string
+      // itoa(ptr->size,blockSize);               // convert size value into a string
 
-      print("Block address: ",16);           // print the address
-      print(blockAddress,sizeof(blockAddress));
-      print("\n",1);
+      // print("Block address: ",16);           // print the address
+      // print(blockAddress,sizeof(blockAddress));
+      // print("\n",1);
 
-      print("Block size: ",13);              // print the size
-      print(blockSize,sizeof(blockSize));
-      print("\n",1);
+      // print("Block size: ",13);              // print the size
+      // print(blockSize,sizeof(blockSize));
+      // print("\n",1);
 
 
 

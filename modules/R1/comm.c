@@ -16,7 +16,7 @@
 #include <core/io.h>
 #include <core/serial.h>
 
-#define SIZE 80		//!< The size of the main command buffer
+#define SIZE 50		//!< The size of the main command buffer
 #define SIZEBUFF 7	//!< The size of both time/date buffers
 
 
@@ -692,7 +692,7 @@ void commhand() {
 
 		else if (strcmp(token,"heap") == 0) {		// heap commands
 
-			u32int testSize = 1000;
+			u32int testSize = 50000;
 
 			token = strtok(NULL,split);						// token now is the word after "heap"
 			
