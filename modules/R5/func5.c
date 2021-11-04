@@ -85,12 +85,12 @@ u32int allocateMemory(int size) {
   			ptr -> type = ALLOCATED;		// set the block to be allocated
   			
   			// split the block to allocated and set the remainder to free
-  			LMCB* newLMCB = (LMCB*)(ptr + size + sizeof(CMCB));	// set new LMCB to end of allocated block
+  			LMCB* newLMCB = (LMCB*)((u32int)ptr + size + sizeof(CMCB));	// set new LMCB to end of allocated block
   			newLMCB -> type = FREE;
 
 
 
-  			CMCB* newFree = (CMCB*) (newLMCB + sizeof(LMCB)); // set new CMCB for start of remainder block
+  			CMCB* newFree = (CMCB*) ((u32int)newLMCB + sizeof(LMCB)); // set new CMCB for start of remainder block
 
   			newFree -> type = FREE;
   			newFree -> size = ptr -> size - size - sizeof(CMCB) - sizeof(LMCB);	// set new size of remainder block
@@ -133,22 +133,22 @@ u32int allocateMemory(int size) {
 
 
 
-  			return (u32int)ptr;		// stop searching
+  			return (u32int)ptr -> address;		// stop searching and return the address of memory
 
   		}
     	ptr = ptr -> next;		// if not enough spcae, go to next block and check
 	}
-  print("return 0\n",10);
+  // print("return 0\n",10);
   return 0;
 
 }
 
 void freeMemory (u32int address) {
-print("inside free memory\n",20);
+// print("inside free memory\n",20);
 	CMCB* pntr = memoryList.head;
 
 	while (pntr != NULL) {
-print("ptr != NULL\n",20);
+// print("ptr != NULL\n",20);
 		
 		if (pntr -> address == address) {
 
@@ -278,14 +278,14 @@ int isEmpty() {
 
 // print block information (size and address) of the chosen type in the heap
 void showList(int printType) {
-print("inside showList\n",18);
+// print("inside showList\n",18);
   CMCB* ptr = memoryList.head;    // index pointer starting at head
   char blockAddress[20];        // string holding block's address value
   char blockSize[20];           // string holding block's size value
 
-  print("before while\n",20);
+  // print("before while\n",20);
   while (ptr != NULL) {         // looping through list
-print("ptr != NULL\n",20);
+// print("ptr != NULL\n",20);
     if (ptr->type == printType) { // if this block's type is the one to print
 
       itoa((int)ptr->address,blockAddress);    // convert address value into a string

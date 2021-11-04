@@ -51,8 +51,8 @@ void kmain(void)
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
    
-   // mpx_init(MEM_MODULE);
-   mpx_init(MODULE_R5);
+   mpx_init(MEM_MODULE);
+   // mpx_init(MODULE_R5);
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
@@ -104,8 +104,8 @@ sys_set_free((int (*)(void *))freeMemory);             // set the free memory fu
 // sys_set_malloc(allocateMemory);      
 // sys_set_free(freeMemory);  
 
-// init_heap(50000);
-init_heap(61204);       // initialize the heap
+init_heap(50000);
+// init_heap(61204);       // initialize the heap
 // 61204 -> max size to initialize heap before saying "heap is full!" (testing purpoes)
 // with this, allocating 3252 then using "heap show <type>" twice will restart MPX...
 
