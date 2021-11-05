@@ -706,57 +706,53 @@ void commhand() {
 
 			}
 
-			else if (strcmp(token,"allocate") == 0) {
+			// no longer need to manually allocate / free
 
-				token = strtok(NULL,split);						// token now is the word after "allocate" which should be size of memory to allocate
+			// else if (strcmp(token,"allocate") == 0) {
 
-
-				if (token == NULL)
-					print("ERROR: size of allocated memory not entered.\n",46);
-
-				else {
-
-					u32int allocSize = atoi(token);
-
-					if (allocSize + sizeof(CMCB) + sizeof(LMCB) >= testSize)
-						print("Size is too big.\n",18);
-
-					else {
-
-						if (allocateMemory(allocSize) == 0)
-							print("ERROR: unable to allocate\n",27);
+			// 	token = strtok(NULL,split);						// token now is the word after "allocate" which should be size of memory to allocate
 
 
-					}
-				}
+			// 	if (token == NULL)
+			// 		print("ERROR: size of allocated memory not entered.\n",46);
+
+			// 	else {
+
+			// 		u32int allocSize = atoi(token);
+
+			// 		if (allocSize + sizeof(CMCB) + sizeof(LMCB) >= testSize)
+			// 			print("Size is too big.\n",18);
+
+			// 		else {
+
+			// 			if (allocateMemory(allocSize) == 0)
+			// 				print("ERROR: unable to allocate\n",27);
+
+
+			// 		}
+			// 	}
 				
 
 
-			}
+			// }
 
-			else if (strcmp(token,"free") == 0) {
+			// else if (strcmp(token,"free") == 0) {
 
-				token = strtok(NULL,split);			// token is now word after "free" which should be address of the block
+			// 	token = strtok(NULL,split);			// token is now word after "free" which should be address of the block
 
-				if (token == NULL)
-					print("ERROR: name not specified.\n",29);
+			// 	if (token == NULL)
+			// 		print("ERROR: name not specified.\n",29);
 
-				else {
-					// code related to free memory here
+			// 	else {
+			// 		// code related to free memory here
 
-					u32int address = atoi(token);
+			// 		u32int address = atoi(token);
 
-					freeMemory(address);
+			// 		freeMemory(address);
 
+			// 	}
 
-
-
-
-
-
-				}
-
-			}
+			// }
 
 			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not, "isEmpty"
 				
@@ -801,6 +797,8 @@ void commhand() {
 
 			}
 
+			else
+				print("ERROR: Unknown heap command\n",30);
 
 		}	// end of heap commands
 

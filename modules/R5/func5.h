@@ -13,7 +13,7 @@
 #define TRUE 1
 #define FALSE 0
 
-// CMCB and LMCB structs should go here
+// CMCB and LMCB structs
 typedef struct cmcb{
  int type; 
  u32int address;
@@ -34,7 +34,7 @@ struct list {
 	CMCB *tail;  
 };
 
-// function prototypes should go here
+// function prototypes
 
 u32int* init_heap(int size);
 

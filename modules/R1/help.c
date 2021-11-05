@@ -12,7 +12,7 @@
 */
 void help(){
 print("commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [delete PCB] [block PCB] [unblock PCB] \n[suspend PCB] [resume PCB] [set PCB priority] [show PCB] [show ready] [show blocked] [show all] [clear] [help] \n",151);
-print("[loadr3] [alarm] [show free memory] [show allocated memory]\n",62);
+print("[loadr3] [alarm] [show free memory] [show allocated memory] [check]\n",70);
   
 print("setdate [setdate year month day] \n",35);
 print("settime [settime hour minute second] \n",39);
@@ -31,6 +31,7 @@ print("loadr3 \n",9);
 print("alarm (message) (delay) \n",26);
 print("heap show allocated \n",20);
 print("heap show free \n",16);
+print("heap check \n",13);
 
 
 
