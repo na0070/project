@@ -363,12 +363,18 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 }
 
 void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int func ){
-   pcb * new_pcb = setupPCB ( name , class , priority );
-   new_pcb -> state = READY;
-   new_pcb -> susp = status;
 
-    context * cp = ( context *)( new_pcb -> stackTop );
-     memset ( cp , 0, sizeof ( context ));
+	if (findPCB(name) != NULL)							// if a copy of a process is already in memory, don't load a new one
+		print("process already exists\n",24);
+
+	else {
+
+   	pcb * new_pcb = setupPCB ( name , class , priority );
+   	new_pcb -> state = READY;
+   	new_pcb -> susp = status;
+
+    	context * cp = ( context *)( new_pcb -> stackTop );
+     	memset ( cp , 0, sizeof ( context ));
       cp -> fs = 0x10 ; 
       cp -> gs = 0x10 ;
       cp -> ds = 0x10 ;
@@ -380,6 +386,7 @@ void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int 
       cp -> eflags = 0x202 ;
       insertPCB(new_pcb);
    }
+}
 
 
 
