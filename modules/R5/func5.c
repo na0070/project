@@ -79,7 +79,14 @@ u32int allocateMemory(int size) {
 
 	while (ptr != NULL) {
 
-    if (ptr -> type == FREE)                // check if current block is free before checking for the size
+    if (ptr -> type == FREE) {               // check if current block is free before checking for the size
+
+		//edge case: if a free block can fit a process but not needing to split the block 
+		if (ptr -> size >= size && ptr -> size <= needed_size) {
+			ptr -> type = ALLOCATED;
+			return (u32int)ptr -> address;
+		}
+
   		if (ptr -> size >= needed_size) {     // check if current block is of sufficient size
   			
   			ptr -> type = ALLOCATED;		// set the block to be allocated
@@ -136,6 +143,7 @@ u32int allocateMemory(int size) {
   			return (u32int)ptr -> address;		// stop searching and return the address of memory
 
   		}
+	}
     	ptr = ptr -> next;		// if not enough spcae, go to next block and check
 	}
   // print("return 0\n",10);
