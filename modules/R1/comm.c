@@ -78,7 +78,7 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
-				print("ERROR: invalid number of parameters (too few).\n",48);  // sys req 
+				print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48);  // sys req 
 			
 			else {
 				int yr = atoi(token);
@@ -86,7 +86,7 @@ void commhand() {
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
-					print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
+					print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48); // sys req 
 				
 				else {
 					int mth = atoi(token);
@@ -94,17 +94,17 @@ void commhand() {
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
-						print("ERROR: invalid number of parameters (too few).\n",48);  // sys req 
+						print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48);  // sys req 
 				
 					else {
 						int day = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
-							print("ERROR: invalid number of parameters (too many).\n",49); //sys req 
+							print("[31mERROR: invalid number of parameters (too many).\x1B[39m\n",49); //sys req 
 						
 						else if (yr > 30 || yr < 0 || mth > 12 || mth < 1 || day > 31 || day < 1)
-							print("ERROR: invalid date setting.\n",30); // sys req 
+							print("[31mERROR: invalid date setting.\x1B[39m\n",30); // sys req 
 						
 						else {
 							setdate(yr,mth,day);
@@ -149,7 +149,7 @@ void commhand() {
 			token = strtok(NULL,split);
 			
 			if (token == NULL) 
-				print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
+				print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48); // sys req 
 			
 			else {
 				int hr = atoi(token);
@@ -157,7 +157,7 @@ void commhand() {
 				token = strtok(NULL,split);
 				
 				if (token == NULL) 
-					print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
+					print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48); // sys req 
 				
 				else {
 					int min = atoi(token);
@@ -165,17 +165,17 @@ void commhand() {
 					token = strtok(NULL,split);
 					
 					if (token == NULL) 
-						print("ERROR: invalid number of parameters (too few).\n",48); // sys req 
+						print("[31mERROR: invalid number of parameters (too few).\x1B[39m\n",48); // sys req 
 				
 					else {
 						int sec = atoi(token);
 						
 						
 						if (strtok(NULL,split) != NULL)
-							print("ERROR: invalid number of parameters (too many).\n",49);  // sys req 
+							print("[31mERROR: invalid number of parameters (too many).\x1B[39m\n",49);  // sys req 
 						
 						else if (hr > 23 || hr < 0 || min > 59 || min < 0 || sec > 59 || sec < 0)
-							print("ERROR: invalid time setting.\n",30);  // sys req 
+							print("[31mERROR: invalid time setting.\x1B[39m\n",30);  // sys req 
 						
 						else {
 							set_Time(hr,min,sec);
@@ -258,7 +258,7 @@ void commhand() {
 			token = strtok(NULL,split);						// token now is the word after "pcb"
 			
 			if (token == NULL)								// if nothing is entered after "pcb"
-				print("ERROR: no command entered after pcb.\n",40);
+				print("[31mERROR: no command entered after pcb.\x1B[39m\n",40);
 				
 				
 			else if (strcmp(token,"suspend") == 0) {		//suspend command
@@ -266,19 +266,19 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
 					if (strcmp(name,"command_handler") == 0)
-						print("ERROR: cannot suspend this process\n",37);
+						print("[31mERROR: cannot suspend this process\x1B[39m\n",37);
 						
 					else if(strcmp(name,"idle_process") == 0)
-						print("ERROR: cannot suspend this process\n",37);
+						print("[31mERROR: cannot suspend this process\x1B[39m\n",37);
 
 					else if (strcmp(name,"alarm_process") == 0)
-						print("ERROR: cannot suspend this process\n",37);
+						print("[31mERROR: cannot suspend this process\x1B[39m\n",37);
 
 					else {
 						// suspendPCB code here (use "name")
@@ -286,13 +286,13 @@ void commhand() {
 						pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
 						
 						if (ptr == NULL)						// if PCB was not found
-							print("ERROR: could not find PCB.\n",27);
+							print("[31mERROR: could not find PCB.\x1B[39m\n",27);
 						else {
 							
 							int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
 						
 							if (code == -1)							// error
-							print("ERROR: could not remove PCB.\n",30);
+							print("[31mERROR: could not remove PCB.\x1B[39m\n",30);
 							
 							else {
 								
@@ -314,7 +314,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",24);
+					print("[31mERROR: too few inputs.\x1B[39m\n",24);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -324,14 +324,14 @@ void commhand() {
 					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
 					
 					if (ptr == NULL)						// if PCB was not found
-						print("ERROR: could not find PCB.\n",27);
+						print("[31mERROR: could not find PCB.\x1B[39m\n",27);
 					
 					else {
 						
 						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
 					
 						if (code == -1)							// error
-						print("ERROR: could not remove PCB.\n",30);
+						print("[31mERROR: could not remove PCB.\x1B[39m\n",30);
 						
 						else {
 							
@@ -351,7 +351,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.",23);
+					print("[31mERROR: too few inputs.\x1B[39m",23);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -359,7 +359,7 @@ void commhand() {
 					token = strtok(NULL,split);				// token = <priority>
 					
 					if (token == NULL)
-						print("ERROR: too few inputs.",23);
+						print("[31mERROR: too few inputs.\x1B[39m",23);
 				
 					else {
 						priority = atoi(token);				// stored pcb's priority
@@ -397,7 +397,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",24);
+					print("[31mERROR: too few inputs.\x1B[39m\n",24);
 				
 				else if (strcmp(token,"all") == 0) {
 					
@@ -521,20 +521,20 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+					print("ERROR: too few inputs.\x1B[39m\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
 					// deletePCB code here (use "name")
 					if (strcmp(name,"command_handler") == 0)
-						print("ERROR: cannot remove this process\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
 						
 					else if(strcmp(name,"idle_process") == 0)
-						print("ERROR: cannot remove this process\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
 
 					else if (strcmp(name,"alarm_process") == 0)
-						print("ERROR: cannot remove this process\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
 
 					else {
 
@@ -543,12 +543,12 @@ void commhand() {
 						
 						if (pntr == NULL) {																// Checking if the PCB is unavalibale 
 							
-							print("ERROR: PCB couldn't be found.\n",31);
+							print("[31mERROR: PCB couldn't be found.\x1B[39m\n",31);
 							
 						} 
 
 						else if (strcmp(name,"infinite_process") == 0 && pntr->susp == NOT_SUSPENDED)
-							print("ERROR: Trying to remove infinite process requires it to be suspended first\n",77);
+							print("[31mERROR: Trying to remove infinite process requires it to be suspended first\x1B[39m\n",77);
 
 						else {
 							
@@ -556,7 +556,7 @@ void commhand() {
 							
 							if (error_Check == -1) {
 								
-								print("ERROR: PCB couldn't be removed (pcb may not be found)\n",56);
+								print("[31mERROR: PCB couldn't be removed (pcb may not be found)\x1B[39m\n",56);
 								
 							} else { 
 								
@@ -577,7 +577,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -592,7 +592,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nInvalid PCB\n",13); // error massage
+					print("\nInvalid PCB\x1B[39m\n",13); // error massage
 					
 					} 
 					
@@ -605,7 +605,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",25);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -620,7 +620,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nInvalid PCB\n",13); // error massage
+					print("\nInvalid PCB\x1B[39m\n",13); // error massage
 					
 					} 
 				
@@ -629,9 +629,10 @@ void commhand() {
 				
 			}
 
+
 			// invalid command issued
 			else
-				print("ERROR: Unknown pcb command entered.",36);
+				print("[31mERROR: Unknown pcb command entered.\x1B[39m",36);
 		}	// end pcb commands
 		
 		//=================================================================================================================================
@@ -665,7 +666,7 @@ void commhand() {
 
 			token = strtok(NULL,split);
 			if (token == NULL)
-				print("ERROR: too few inputs\n",23);
+				print("[31mERROR: too few inputs\x1B[39m\n",23);
 
 			else {
 
@@ -674,7 +675,7 @@ void commhand() {
 				token = strtok(NULL,split);
 
 				if (token == NULL)
-					print("ERROR: too few inputs\n",23);
+					print("[31mERROR: too few inputs\x1B[39m\n",23);
 
 				else {
 					int time = atoi(token);
@@ -692,19 +693,19 @@ void commhand() {
 
 		else if (strcmp(token,"heap") == 0) {		// heap commands
 
-			u32int testSize = 50000;
+			// u32int testSize = 50000;
 
 			token = strtok(NULL,split);						// token now is the word after "heap"
 			
 			if (token == NULL)								// if nothing is entered after "heap"
-				print("ERROR: no command entered after heap.\n",41);
+				print("[31mERROR: no command entered after heap.\x1B[39m\n",41);
 
-			else if (strcmp(token,"init") == 0) {			// initialize the heap
+			// else if (strcmp(token,"init") == 0) {			// initialize the heap
 
-				init_heap(testSize);				// testing to initialize heap w/ 1KB
+			// 	init_heap(testSize);				// testing to initialize heap w/ 1KB
 
 
-			}
+			// }
 
 			// no longer need to manually allocate / free
 
@@ -772,7 +773,7 @@ void commhand() {
 				token = strtok(NULL,split);						// token is now word after "show" (either free or allocated)
 
 				if (token == NULL)
-					print("ERROR: too few inputs.\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",25);
 
 				else if (strcmp(token,"free") == 0) {
 
@@ -791,22 +792,56 @@ void commhand() {
 				}
 
 				else												// neither free nor allocated (invalid)
-					print("ERROR: invalid input entered.\n",32);
+					print("[31mERROR: invalid input entered.\x1B[39m\n",32);
 
 
 
 			}
 
 			else
-				print("ERROR: Unknown heap command\n",30);
+				print("[31mERROR: Unknown heap command\x1B[39m\n",30);
 
 		}	// end of heap commands
 
 
 
+
+
+
+
+
+
+
+		// testing
+
+			else if (strcmp(token,"red") == 0) {
+
+				print("\x1B[31mred\x1B[39m\n",14);
+
+
+
+			}
+
+			else if (strcmp(token,"green") == 0) {
+
+				print("\x1B[41m green\n",18);
+
+
+			}
+
+
+
+
+
+
+
+
+
+
+
 		else {		// an unknown command
 			
-			print("unknown command entered. Please check spelling and/or syntax..",63);
+			print("\x1B[91munknown command entered. Please check spelling and/or syntax..\x1B[39m",64);
 			
 		}
 		

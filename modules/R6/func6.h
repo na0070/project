@@ -2,6 +2,13 @@
 #include "../R2/func.h"
 #include "../mpx_supt.h"
 
+// error codes definitions
+#define PORT_NOT_OPEN        -401
+#define INVALID_BUFF_ADDRESS -402
+#define INVALID_COUNT        -403
+#define DEVICE_BUSY          -404
+
+
 
 // DCB struct should go here
 

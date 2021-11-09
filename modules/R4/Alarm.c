@@ -70,7 +70,7 @@ void checkTime() {
 
 		if (pntr == NULL) {
 
-			print("No alarms exist\n",16);
+			print("\x1B[95mNo alarms exist\x1B[39m\n",16);
 		}
 
 		else {

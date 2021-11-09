@@ -11,6 +11,7 @@
 @param none
 */
 void help(){
+	print("\x1B[93m",1);
 print("commands: [version] [settime] [gettime] [setdate] [getdate] [shutdown] [delete PCB] [block PCB] [unblock PCB] \n[suspend PCB] [resume PCB] [set PCB priority] [show PCB] [show ready] [show blocked] [show all] [clear] [help] \n",151);
 print("[loadr3] [alarm] [show free memory] [show allocated memory] [check]\n",70);
   
@@ -33,6 +34,7 @@ print("heap show allocated \n",20);
 print("heap show free \n",16);
 print("heap check \n",13);
 
+print("\x1B[39m",1);
 
 
 }

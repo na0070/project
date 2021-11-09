@@ -188,7 +188,7 @@ void showList(int printType) {
       print(blockSize,sizeof(blockSize));
       print("\n",1);
 
-      print("********************\n",24);     // to visually distinguish between different block prints
+      print("\x1B[92m********************\n\x1B[39m",24);     // to visually distinguish between different block prints
 
     }
 

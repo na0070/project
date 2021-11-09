@@ -136,7 +136,7 @@ init_heap(50000);
 }
 void infinite(){
 while(1){
-print("infinte command massage\n",25);
+print("\x1B[95minfinte command massage\x1B[39m\n",25);
 sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 
 }// end of the loop 
