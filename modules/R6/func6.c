@@ -20,8 +20,8 @@ int com_write (char* buf_p, int* count_p) {
 // note: sys_req WRITE also uses buffer pointer and count pointer
 
 
-    int count = *count_p;       // store value of count into a local variable for future use
-    char* ptr = buf_p;          // create a loop pointer sstarting at buffer's location (may not even use it)
+    // int count = *count_p;       // store value of count into a local variable for future use
+    // char* ptr = buf_p;          // create a loop pointer sstarting at buffer's location (may not even use it)
 
     /* from document
         1-(done) ensure that input parameters  are valid 
@@ -56,28 +56,20 @@ int com_write (char* buf_p, int* count_p) {
     // step 4: clear the caller's event flag
     device.event_flag = 0;                  // clear the device's event flag
 
+
+    // change the count (# of characters to print) before enabling the interrupt
+    device.count = device.count - 1;
+
     // step 5: get first character from requestor's buffer and store in output register
-    for (int i = 1; i <= count; i++) {
-        outb(COM1,*buf_p);
+        outb(COM1,*buf_p); // or buf_p[0] if it not happy
+
+
 
     // step 6: enable write interrupts
         outb(COM1+1, (inb(COM1+1) | 0x02) ) ;   // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
 
-
-        buf_p++;            // point to next character in buffer
-
-    }
-
-
-
-
-
-
-
-
-
-    // modify count's value after transfer
-
-
+    // com_write is called once, and the handler does the worok of printing the remaining characters in the string
+    // based on device.count's value (which is why we decrement before enabling the interrupt)
+    
     return 0;                   // success return code
 }
