@@ -110,7 +110,6 @@ pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {
 
 	newPCB->stackBase = newPCB->stack;
 	newPCB->stackTop = newPCB->stackBase + 1024 - sizeof(struct context);
-		// newPCB->stackTop = newPCB->stackBase + 2048 - sizeof(struct context);
 
 
 	return newPCB;													// after all the initialization is complete, return the new pcb pointer to wherever this function was used

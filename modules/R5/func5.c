@@ -174,6 +174,8 @@ void showList(int printType) {
   char blockAddress[20];        // string holding block's address value
   char blockSize[20];           // string holding block's size value
 
+  print("\x1B[93m",1);          // print in yellow
+
   while (ptr != NULL) {         // looping through list
     if (ptr->type == printType) { // if this block's type is the one to print
 
@@ -188,13 +190,15 @@ void showList(int printType) {
       print(blockSize,sizeof(blockSize));
       print("\n",1);
 
-      print("\x1B[92m********************\n\x1B[39m",24);     // to visually distinguish between different block prints
+      print("\x1B[92m************************\n\x1B[93m",28);     // to visually distinguish between different block prints
 
     }
 
     ptr = ptr->next;            // go to next block in the list
 
   }
+
+  print("\x1B[39m",1);          // default color
 
 
 }

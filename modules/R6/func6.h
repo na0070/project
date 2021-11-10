@@ -10,6 +10,12 @@
 
 
 
+// DCB codes
+#define IDLE    0
+#define WRITING 1
+#define READING 2
+
+
 // DCB struct should go here
 
 

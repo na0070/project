@@ -39,15 +39,14 @@ int com_write (char* buf_p, int* count_p) {
     if (count_p == NULL)                   // checking if count pointer is valid
         return INVALID_COUNT;
 
-    // step 2: check that the port is open and idle
 
-    /*
-    if (port not open)
+    // step 2: check that the port is open and idle    
+    if (device.port == 0)                  // check the device port status (0 = not open, 1 = open)
         return PORT_NOT_OPEN;
 
-    if (device not idle)
+    if (device.curr_op != IDLE)            // check if the device is currently busy (not idle)
         return DEVICE_BUSY;
-    */
+    
 
     // step 3: install pointers to DCB and set status to writing
     device.buffer = buf_p;                  // set the device's buffer pointer
@@ -59,7 +58,7 @@ int com_write (char* buf_p, int* count_p) {
 
     // step 5: get first character from requestor's buffer and store in output register
     for (int i = 1; i <= count; i++) {
-        outb(COM1,buf_p);
+        outb(COM1,*buf_p);
 
     // step 6: enable write interrupts
         outb(COM1+1, (inb(COM1+1) | 0x02) ) ;   // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
