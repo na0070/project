@@ -59,4 +59,6 @@ typedef struct ioqueue {
 
 // function prototypes go here
 
+int com_open(int* eflag_p, int baud_rate);
+
 int com_write (char* buf_p, int* count_p);

@@ -135,7 +135,7 @@ void PIC(int value) {
     cli();  // disable all interrupts
 
     int mask = inb(0x21);
-    mask = mask & !value;
+    mask = mask & ~value;
     outb(0x21,mask);
     outb(0x20,0x20);
 
