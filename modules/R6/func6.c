@@ -5,6 +5,7 @@
 
 DCB* device;
 
+IOqueue IOlist = {.head = NULL, .tail = NULL};
 
 // com open function
 
@@ -14,7 +15,9 @@ int com_open(int* eflag_p, int baud_rate) {
     if (eflag_p == NULL)
         return INVALID_EFLAG;
 
-    if (baud_rate != 110 && baud_rate != 150 && baud_rate != 300 && baud_rate != 600 && baud_rate != 1200 && baud_rate != 2400 && baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
+    if (baud_rate != 110 && baud_rate != 150 && baud_rate != 300 && 
+        baud_rate != 600 && baud_rate != 1200 && baud_rate != 2400 && 
+        baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
         return INVALID_BRD;
 
     if (device.port == OPEN)
@@ -59,9 +62,6 @@ int com_open(int* eflag_p, int baud_rate) {
     //end of function
     return 0;       
 }
-
-
-
 
 
 
@@ -128,6 +128,65 @@ int com_write(char *buf_p, int *count_p)
 }
 
 
+// IO scheduler
+int IOscheduler() {
+
+    IOCB* request = IOlist.head;
+
+    if (device.port != OPEN || device.curr_op != IDLE || request == NULL)
+        return -1;
+
+    if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
+
+        request -> process -> state = READY;       // unblock the prcoess first
+        removePCB(request -> process);             // remove process from current list
+        insertPCB(request -> process);             // reinsert the process back to the correct list
+        request = request -> next;
+        IOlist.head = request;
+
+        if (request -> op == IDLE || request -> op == EXIT)
+            return -1;
+
+        if (request -> buffer == NULL)
+            return -1;
+
+        if (request -> op == READ)
+            //com_read function
+
+        if (request -> op == WRITE)
+            com_write(request -> buffer, request -> count);
+
+    } 
+    // if event flag is still 0, then device still being used
+    // do nothing instead
+    
+    return 0;
+}
+
+// load an IOCB to the queue
+void loadIOCB(pcb* proc, int code, char* buff, int* count) {
+
+    IOqueue* queue = &IOlist;
+
+    IOCB* request = (IOCB*)sys_alloc_mem(sizeof(IOCB));     // initialize the IOCB with given values
+
+    request -> device = device;
+    request -> process = proc;
+    request -> op = code;
+    request -> buffer = buff;
+    request -> count = count;
+
+    if (queue->head == NULL) {           // if queue is empty
+        queue->head = request;
+        queue->tail = request;
+    }
+    else {                              // if queue is not empty
+        queue->tail->next = request;
+        queue->tail = request;
+    }
+
+    request->next = NULL;
+}
 
 // function to change the PIC level
 void PIC(int value) {
@@ -137,10 +196,9 @@ void PIC(int value) {
     int mask = inb(0x21);
     mask = mask & ~value;
     outb(0x21,mask);
-    outb(0x20,0x20);
 
     sti();  // enable all interrupts
 
-
+    outb(0x20,0x20);    // EOI signal
 
 }

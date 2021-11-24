@@ -2,11 +2,14 @@
 #include "../R2/func.h"
 #include "../mpx_supt.h"
 
+#include <core/serial.h>
+#include <string.h>
+
 // error codes definitions
 
-#define INVALID_EFLAG        -101
-#define INVALID_BRD          -102
-#define PORT_AREADY_OPEN     -103
+#define INVALID_EFLAG         -101
+#define INVALID_BRD           -102
+#define PORT_ALREADY_OPEN     -103
 
 
 
@@ -62,3 +65,9 @@ typedef struct ioqueue {
 int com_open(int* eflag_p, int baud_rate);
 
 int com_write (char* buf_p, int* count_p);
+
+int IOscheduler();
+
+void loadIOCB(pcb* proc, int code, char* buff, int* count);
+
+void PIC(int value);

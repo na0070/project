@@ -11,6 +11,7 @@
 #include <core/serial.h>
 
 #include "R2/func.h"
+#include "R6/func6.h"
 
 // global variable containing parameter used when making 
 // system calls via sys_req
@@ -233,6 +234,17 @@ u32int* sys_call(context* registers){
 		
 		old_Context = registers;
 	}
+
+  if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
+
+    cop -> state = BLOCKED;   // block the process
+    removePCB(cop);             // remove process from current list
+    insertPCB(cop);             // reinsert the process back to the correct list
+    loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
+
+  }
+
+  IOscheduler();      // call the IO scheduler 
 	
 	if (ready->head != NULL) {
 		
