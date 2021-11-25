@@ -202,3 +202,70 @@ void PIC(int value) {
     outb(0x20,0x20);    // EOI signal
 
 }
+
+int com_read (char* buf_p, int* count_p) {
+	
+	if (buf_p == NULL){
+		
+		return -302;
+	}
+	
+		if (count_p == NULL){
+		
+		return -303;
+	}
+	
+	if (device.port != OPEN ){
+		
+		return -301;
+	}
+	
+	if (device.curr_op != IDLE) {
+		
+		return -304;
+	}
+	
+	char* buffer; 
+	
+	device.curr_op = READING; 
+	
+	device.event_flag = 0;
+	
+	stpcpy (buffer, device.buffer); 
+	
+	if (count_p != 0){
+		
+		return 0; 
+	}
+	
+		device.curr_op = IDLE; 
+		
+		device.event_flag = 1; 
+		
+		return count_p ;  
+}
+
+int Second_read (char*	buf_p, int *count_p) {
+	
+	char input = inb(COM1); 
+	
+		if (device.curr_op != READING){
+			
+			device.buffer [count_p] = input; 
+			
+				return -1;
+		}
+		
+		buf_p [count_p] = input; 
+		
+		if (count_p	!= 0 && input != '\n\r'){
+			
+			return -1;
+		}
+		
+		device.curr_op = IDLE; 
+		
+			device.event_flag = 1; 
+			
+			return count_p; 
+}
