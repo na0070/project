@@ -73,3 +73,5 @@ int IOscheduler();
 void loadIOCB(pcb* proc, int code, char* buff, int* count);
 
 void PIC(int value);
+
+int com_close (void);
