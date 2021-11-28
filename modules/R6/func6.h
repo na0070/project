@@ -30,16 +30,18 @@
 
 
 // DCB struct should go here
-
-
-
-
-
-
-
-
-
-
+typedef struct dcb {
+ int allocationst; // the current status of the device 0 for avalible 1 for in use 
+  int currentop; // indicate the current opearation 
+  int* eventflag; //  indicate the status of the current operation and knows when the current operation is done so the next can start 
+  char* userbuffer; // pointer to use buffer (call to sys_req)
+  char* internalbuff; // it is array store charecter recieved from device 
+  int currentloc; // current location of the next charecter to transfer 
+  int buffersize; // total numbe of charecter to read and write  
+  int transferred; // number of charecer already transferred 
+   int* address; // number of charcter to transfer the 4th parameter in the call of sys_req  
+    struct dcb* next;  // pointer to next DCB
+} DCB;
 
 
 
