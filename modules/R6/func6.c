@@ -26,11 +26,11 @@ int com_open(int* eflag_p, int baud_rate) {
     //2. initialize the DCB
     device.port = OPEN;                                 // indicate device is open
 
-    device.event_flag = 1;                              // device is not being used
+    device.event_flag = eflag_p;                              // device is not being used
 
-    device.curr_op = IDLE;                              // device status is idle
+    device.current_op = IDLE;                              // device status is idle
 
-    memset(device.buffer,'\0',sizeof(device.buffer));   // initialize and free the DCB's ring buffer
+    memset(device.internal_buff,'\0',sizeof(device.internal_buff));   // initialize and free the DCB's ring buffer
 
 
     //3. getting address of current interrupt handler (not needed)
@@ -62,8 +62,6 @@ int com_open(int* eflag_p, int baud_rate) {
     //end of function
     return 0;       
 }
-
-
 
 // com_write function
 
@@ -101,13 +99,13 @@ int com_write(char *buf_p, int *count_p)
     if (device.port == NOT_OPEN)                  // check the device port status (0 = not open, 1 = open)
         return PORT_NOT_OPEN;
 
-    if (device.curr_op != IDLE) // check if the device is currently busy (not idle)
+    if (device.current_op != IDLE) // check if the device is currently busy (not idle)
         return DEVICE_BUSY;
 
     // step 3: install pointers to DCB and set status to writing
-    device.buffer = buf_p;  // set the device's buffer pointer
+    device.user_buffer = buf_p;  // set the device's buffer pointer
     device.count = count_p; // set the device's count pointer
-    device.curr_op = WRITE; // det the device's current operation
+    device.current_op = WRITE; // det the device's current operation
 
     // step 4: clear the caller's event flag
     device.event_flag = 0; // clear the device's event flag
@@ -119,9 +117,9 @@ int com_write(char *buf_p, int *count_p)
     outb(COM1, *buf_p); // or buf_p[0] if it not happy
 
     // step 6: enable write interrupts
-    outb(COM1 + 1, (inb(COM1 + 1) | 0x02)); // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
+    outb(COM1+1, (inb(COM1+1) | 0x02)); // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
 
-    // com_write is called once, and the handler does the worok of printing the remaining characters in the string
+    // com_write is called once, and the handler does the work of printing the remaining characters in the string
     // based on device.count's value (which is why we decrement before enabling the interrupt)
     
     return 0;                   // success return code
@@ -133,10 +131,10 @@ int IOscheduler() {
 
     IOCB* request = IOlist.head;
 
-    if (device.port != OPEN || device.curr_op != IDLE || request == NULL)
+    if (device.port != OPEN || device.current_op != IDLE || request == NULL)
         return -1;
 
-    if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
+    if (*device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
         request -> process -> state = READY;       // unblock the prcoess first
         removePCB(request -> process);             // remove process from current list
