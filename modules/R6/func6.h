@@ -29,7 +29,7 @@
 #define OPEN     1
 
 
-// DCB struct should go here
+// DCB struct
 typedef struct dcb {
  int allocationst; // the current status of the device 0 for avalible 1 for in use 
   int currentop; // indicate the current opearation 
@@ -74,4 +74,10 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count);
 
 void PIC(int value);
 
+int com_read (char* buf_p, int* count_p);
+
 int com_close (void);
+
+int Second_read (char*	buf_p, int *count_p);
+
+int second_write(char*	userbuffer, int *currentloc, int buffersize);
