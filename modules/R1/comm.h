@@ -1,1 +1,2 @@
 void commhand();
+void logo();
