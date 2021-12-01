@@ -285,42 +285,45 @@ if (device.port != OPEN){
 
     device.currentloc = IDLE;    // device status is idle
 
-    memset(device.userbuffer,'\0',sizeof(device.userbuffer));   // free the DCB user buffer
-    memset(device.internalbuff,'\0',sizeof(device.internalbuff));   // free the DCB internal buffer
+  ///  memset(device.userbuffer,'\0',sizeof(device.userbuffer));   // free the DCB user buffer
+   // memset(device.internalbuff,'\0',sizeof(device.internalbuff));   // free the DCB internal buffer
     //3. Disable the appropriate level in the PIC mask register.
-  PIC(0x11); 
+  PIC(0x01); 
    // 4. Disable all interrupts in the ACC by loading zero values to the Modem Status register and the Interrupt Enable register.
    cli(); 
-   // 5. Restore the original saved interrupt vector. 
+   // 5. Restore the original saved interrupt vector. (not needed)
    
 return 0; } // else 
 }// com close 
 
-int second_write(char*	userbuffer, int *currentloc, int buffersize) {
-   char  output =outb(COM1, data );
+void second_write() {
+  // char  output =outb(COM1, data );
+  char data = device.user_buffer[ device.current_loc];
+
+
   
     //  1. If the current status is not writing, ignore the interrupt and return. 
  
-  if (device.currentop != WRITING){
+  if (device.current_op != WRITING){
 			
-			device.userbuffer [currentloc] = output; 			
-				return 0;}// if 
+			//device.userbuffer [currentloc] = output; 			
+				return Error;}// if 
 				else {
-   int i;
-  
-   for(i=currentloc; i<= buffersize; i++){
-
+ 
     //2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
-    if (currentloc < buffersize ){
-    device.userbuffer [i] = output;
+      outb(COM1,data);
+   
+   
+    if (current_loc < buffersize ){
+      current_loc++;
     }// if 
     else{
     //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
-     device.currentop = IDLE; 
+     device.current_op = IDLE; 
      device.eventflag = 0; 
-     	return currentloc;  
+     	 
  }//else 2     
- }//for 
+
  }// else     
 }// second write 
 
