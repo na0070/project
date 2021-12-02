@@ -3,6 +3,7 @@
 #include "../mpx_supt.h"
 
 #include <core/serial.h>
+#include <core/io.h>
 #include <string.h>
 
 // error codes definitions
@@ -13,28 +14,30 @@
 
 
 
-#define PORT_NOT_OPEN        -401
-#define INVALID_BUFF_ADDRESS -402
-#define INVALID_COUNT        -403
-#define DEVICE_BUSY          -404
+#define PORT_NOT_OPEN           -401
+#define INVALID_BUFF_ADDRESS    -402
+#define INVALID_COUNT_P         -403
+#define DEVICE_BUSY             -404
 
 
 
 // DCB codes
-#define IDLE     0
-#define WRITING  1
-#define READING  2
+#define IDLING      0
+#define WRITING     1
+#define READING     2
 
-#define NOT_OPEN 0
-#define OPEN     1
+#define NOT_OPEN    0
+#define OPEN        1
 
 
 // DCB struct
 typedef struct dcb {
+    int port;
  int allocation_st; // the current status of the device 0 for avalible 1 for in use 
   int current_op; // indicate the current opearation 
   int* event_flag; //  indicate the status of the current operation and knows when the current operation is done so the next can start 
   char* user_buffer; // pointer to use buffer (call to sys_req)
+  int* count;
   char* internal_buff; // it is array store charecter recieved from device 
   int current_loc; // current location of the next charecter to transfer 
   int buffersize; // total numbe of charecter to read and write  
@@ -78,6 +81,9 @@ int com_read (char* buf_p, int* count_p);
 
 int com_close (void);
 
-int Second_read (char*	buf_p, int *count_p);
+void first_handler();
 
-int second_write(char*	userbuffer, int *currentloc, int buffersize);
+int second_read (char*	buf_p, int *count_p);
+// int Second_read (int *count_p);
+
+void second_write(char*	userbuffer, int *currentloc, int buffersize);

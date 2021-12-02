@@ -10,7 +10,7 @@
 #include <string.h>
 #include <core/serial.h>
 
-#include "R2/func.h"
+// #include "R2/func.h"
 #include "R6/func6.h"
 
 // global variable containing parameter used when making 
@@ -235,6 +235,8 @@ u32int* sys_call(context* registers){
 		old_Context = registers;
 	}
 
+
+// added section for R6 request handling
   if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
 
     cop -> state = BLOCKED;   // block the process
@@ -245,6 +247,9 @@ u32int* sys_call(context* registers){
   }
 
   IOscheduler();      // call the IO scheduler 
+
+
+  
 	
 	if (ready->head != NULL) {
 		
