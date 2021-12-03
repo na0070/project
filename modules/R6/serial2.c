@@ -95,6 +95,7 @@ int com_open(int baud_rate) {
             else if (bit1 & !bit2) {
                 // 01 : output
                 //call output handler
+                second_write();
             }
 
             else if (!bit1 & bit2) {
@@ -120,7 +121,6 @@ int com_open(int baud_rate) {
 
         }
 
-        set_int(1,0); // turn of finterrupt
 
         outb(0x20,0x20);
     }

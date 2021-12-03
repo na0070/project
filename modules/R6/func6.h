@@ -43,7 +43,7 @@ typedef struct dcb {
   int buffersize; // total numbe of charecter to read and write  
   int transferred; // number of charecer already transferred 
    int* address; // number of charcter to transfer the 4th parameter in the call of sys_req  
-    struct dcb* next;  // pointer to next DCB
+    // struct dcb* next;  // pointer to next DCB
 } DCB;
 
 
@@ -86,4 +86,4 @@ void first_handler();
 int second_read (char*	buf_p, int *count_p);
 // int Second_read (int *count_p);
 
-void second_write(char*	userbuffer, int *currentloc, int buffersize);
+void second_write();
