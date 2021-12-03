@@ -25,6 +25,7 @@
 // #include "modules/R2/func.h"
 #include "modules/R4/Alarm.h"
 #include "modules/R5/func5.h"
+#include "modules/R6/serial2.h"
 
 void infinite();
 

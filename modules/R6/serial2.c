@@ -9,9 +9,7 @@
 u32int dev = COM1;
 int level = 4;
 
-struct dcb serial_dcb = {
-
-}
+struct dcb serial_dcb;
 
 u32int original_idt_entry;
 

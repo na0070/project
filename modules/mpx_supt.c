@@ -237,16 +237,16 @@ u32int* sys_call(context* registers){
 
 
 // added section for R6 request handling
-  if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
+  // if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
 
-    cop -> state = BLOCKED;   // block the process
-    removePCB(cop);             // remove process from current list
-    insertPCB(cop);             // reinsert the process back to the correct list
-    loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
+  //   cop -> state = BLOCKED;   // block the process
+  //   removePCB(cop);             // remove process from current list
+  //   insertPCB(cop);             // reinsert the process back to the correct list
+  //   loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
 
-  }
+  // }
 
-  IOscheduler();      // call the IO scheduler 
+  // IOscheduler();      // call the IO scheduler 
 
 
   
