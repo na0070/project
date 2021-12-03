@@ -86,3 +86,8 @@ void init_gdt()
 
   write_gdt_ptr((u32int) &gdt_ptr, sizeof(gdt_ptr));
 }
+
+u32int idt_get_gate(u8int idx) {
+
+  return (u32int) &idt_entries[idx];
+}

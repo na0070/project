@@ -46,4 +46,6 @@ void gdt_init_entry(int idx, u32int base, u32int limit, u8int access,
 void init_idt();
 void init_gdt();
 
+u32int idt_get_gate(u8int idx);
+
 #endif
