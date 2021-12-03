@@ -9,9 +9,7 @@
 u32int dev = COM1;
 int level = 4;
 
-struct dcb serial_dcb = {
-
-}
+struct dcb serial_dcb;
 
 u32int original_idt_entry;
 
@@ -79,7 +77,7 @@ int com_open(int baud_rate) {
 
     void top_handler() {
 
-        outb(dev,'b');
+        // outb(dev,'b');
 
         if (serial_dcb.open) {  // if open
             cli();
@@ -92,15 +90,23 @@ int com_open(int baud_rate) {
                 // modem
                 inb(dev+6);
             }
-            else if (bit1 & !bit2) {
+            else if (bit1 && !bit2) {
                 // 01 : output
                 //call output handler
-                second_write();
+                //second_write();
+                outb(COM1,'w');
+                outb(COM1,':');
+                outb(COM1,' ');
+                // input_h();
+
             }
 
-            else if (!bit1 & bit2) {
+            else if (!bit1 && bit2) {
                 // 10: input
                 // call input handler
+                // outb(COM1,'r');
+                // outb(COM1,':');
+                outb(COM1,' ');
                 input_h();
             }
             else if (bit1 && bit2){
@@ -111,8 +117,8 @@ int com_open(int baud_rate) {
 
             
 
-            char in = inb(dev);
-            outb(dev,in);
+            // char in = inb(dev);
+            // outb(dev,in);
             // (void) in;
 
 
@@ -121,6 +127,7 @@ int com_open(int baud_rate) {
 
         }
 
+        set_int(1,0);
 
         outb(0x20,0x20);
     }
