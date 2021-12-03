@@ -5,63 +5,109 @@
 
 DCB device;
 
+int level = 4;
+u32int original_idt_entry;
+
 IOqueue IOlist = {.head = NULL, .tail = NULL};
 
 // com open function
+// OLD com_open
+// int com_open(int* eflag_p, int baud_rate) {
 
-int com_open(int* eflag_p, int baud_rate) {
+//     //1. error checking
+//     if (eflag_p == NULL)
+//         return INVALID_EFLAG;
 
-    //1. error checking
-    if (eflag_p == NULL)
-        return INVALID_EFLAG;
+//     if (baud_rate != 110  && baud_rate != 150  && baud_rate != 300 && 
+//         baud_rate != 600  && baud_rate != 1200 && baud_rate != 2400 && 
+//         baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
+//         return INVALID_BRD;
 
-    if (baud_rate != 110  && baud_rate != 150  && baud_rate != 300 && 
-        baud_rate != 600  && baud_rate != 1200 && baud_rate != 2400 && 
-        baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
-        return INVALID_BRD;
+//     if (device.port == OPEN)
+//         return PORT_ALREADY_OPEN;
 
-    if (device.port == OPEN)
-        return PORT_ALREADY_OPEN;
+//     //2. initialize the DCB
+//     device.port = OPEN;                                 // indicate device is open
 
-    //2. initialize the DCB
-    device.port = OPEN;                                 // indicate device is open
+//     device.event_flag = eflag_p;                              // device is not being used
 
-    device.event_flag = eflag_p;                              // device is not being used
+//     device.current_op = IDLE;                              // device status is idle
 
-    device.current_op = IDLE;                              // device status is idle
-
-    memset(device.internal_buff,'\0',sizeof(device.internal_buff));   // initialize and free the DCB's ring buffer
-
-
-    //3. getting address of current interrupt handler (not needed)
-
-    //4. compute baud rate divisor (BRD) using the baud rate: BRD = 115200 / baud_rate
-    int BRD = 115200/baud_rate;
-
-    //5. store value 0x80 in line control register (base+3) to access BRD registers
-    outb(COM1+3,0x80);
-
-    //6. store high order and low order BRD in correct registers
-    outb(COM1,BRD);    // lower byte stores BRD
-    outb(COM1+1,0x00); // higher byte stores 0
-
-    //7. store 0x03 in line control register to access data registers again (base and base+1)
-    outb(COM1+3,0x03);
-
-    //8. enable PIC level (level 4)
-    PIC(0x10);  // set bit 4 of PIC
+//     memset(device.internal_buff,'\0',sizeof(device.internal_buff));   // initialize and free the DCB's ring buffer
 
 
-    //9. store 0x08 in modem control register to allow overall serial port interrupts
-    outb(COM1+4,0x08);
+//     //3. getting address of current interrupt handler (not needed)
 
-    //10. store 0x01 in interrupt enable register to allow input ready interrupts only
-    outb(COM1+1,0x01);
+//     //4. compute baud rate divisor (BRD) using the baud rate: BRD = 115200 / baud_rate
+//     int BRD = 115200/baud_rate;
+
+//     //5. store value 0x80 in line control register (base+3) to access BRD registers
+//     outb(COM1+3,0x80);
+
+//     //6. store high order and low order BRD in correct registers
+//     outb(COM1,BRD);    // lower byte stores BRD
+//     outb(COM1+1,0x00); // higher byte stores 0
+
+//     //7. store 0x03 in line control register to access data registers again (base and base+1)
+//     outb(COM1+3,0x03);
+
+//     //8. enable PIC level (level 4)
+//     PIC(0x10);  // set bit 4 of PIC
 
 
-    //end of function
-    return 0;       
-}
+//     //9. store 0x08 in modem control register to allow overall serial port interrupts
+//     outb(COM1+4,0x08);
+
+//     //10. store 0x01 in interrupt enable register to allow input ready interrupts only
+//     outb(COM1+1,0x01);
+
+
+//     //end of function
+//     return 0;       
+// }
+
+int com_open(int baud_rate) {
+    // error checking, baud rate is valid, port not already open
+    cli();
+
+    device.port = 1;
+    device.events = 1;
+    device.status = IDLE;
+
+    original_idt_entry = idt_get_gate(0x24);
+    idt_set_gate(0x24,(u32int) top_handler, 0x08, 0x8e);
+
+    long brd = 115200/(long) baud_rate;
+
+    outb(COM1+1,0); // disable ints
+
+    outb(COM1+3,0b10000000); // set line control register
+
+    outb(COM1,brd); //lsb
+
+    outb(COM1+1,brd>>8); //msb
+
+    //lock divisor
+    outb(COM1+3,0b00000011);
+
+    // enable FIFO, clear, 14byte threshold
+    outb(COM1+2,0b11000111);
+
+    //enable PIC level
+    outb(0x21, inb(0x21) & ~(1<<level));
+
+
+    //enable read interrupt
+    outb(COM1+1,0b00000001);
+
+    (void) inb(COM1); // flush out the register
+
+    sti(); // enable interrupts
+
+    return 0;
+
+    }
+
 
 // com_write function
 
@@ -327,37 +373,103 @@ else {
 }// second write 
 
 // first level interrupt handler
-void first_handler() {
+// void first_handler() {
 
-    //1. if port is not open, clear interrupt and return
-    if (device.port == NOT_OPEN) {
+//     //1. if port is not open, clear interrupt and return
+//     if (device.port == NOT_OPEN) {
 
-        //clear interrupt
-        outb(0x20,0x20); // EOI?
-        return;
-    }
+//         //clear interrupt
+//         outb(0x20,0x20); // EOI?
+//         return;
+//     }
 
 
-    //2. read interrupt ID register to determine cause of interrupt
+//     //2. read interrupt ID register to determine cause of interrupt
 
-    int ID = inb(COM1+2);
+//     int ID = inb(COM1+2);
 
-    // bit 0 must be a 0 if interrupt caused by port before proceeding
-    if ((ID & 0b0001) == 0) {
-        // bits 2 and 1 being 01 means output interrupt
-        if ((ID & 0b0110) == 0b0010) {
-            // output interrupt
+//     // bit 0 must be a 0 if interrupt caused by port before proceeding
+//     if ((ID & 0b0001) == 0) {
+//         // bits 2 and 1 being 01 means output interrupt
+//         if ((ID & 0b0110) == 0b0010) {
+//             // output interrupt
+//             second_write();
+//         }
+//         // bits 2 and 1 being 10 means input interrupt
+//         if ((ID & 0b0110) == 0b0100) {
+//             // input interrupt
+//             second_read();
+//         }
+
+//     //4. call EOI for PIC
+//         outb(0x20,0x20);
+
+//     }
+// }
+
+// TODO: add his first handler (top_handler) instead of first_handler
+
+void top_handler() {
+
+    outb(COM1,'b');
+
+    if (device.open) {  // if open
+        cli();
+
+        int type = inb(COM1+2);
+        int bit1 = type>>1 & 1;
+        int bit2 = type>>2 & 1;
+
+        if (!bit1 && !bit2) {
+            // modem
+            inb(COM1+6);
+        }
+        else if (bit1 & !bit2) {
+            // 01 : output
+            //call output handler
             second_write();
         }
-        // bits 2 and 1 being 10 means input interrupt
-        if ((ID & 0b0110) == 0b0100) {
-            // input interrupt
-            second_read();
-        }
 
-    //4. call EOI for PIC
-        outb(0x20,0x20);
+        else if (!bit1 & bit2) {
+            // 10: input
+            // call input handler
+            input_h();
+        }
+        else if (bit1 && bit2){
+            // line
+            inb(COM1+5);
+        }
+        //klogv("int");
+
+        
+
+        char in = inb(COM1);
+        outb(COM1,in);
+        // (void) in;
+
+
+
+        sti();
 
     }
+
+    outb(0x20,0x20);
 }
-// TODO: add his first handler (top_handler) instead of first_handler
+
+void set_int(int bit, int on) {
+
+    if (on) {
+        outb(COM1+1,inb(COM1+1) | (1<<bit));
+
+    }
+    else {
+
+        outb(COM1+1,inb(COM1+1) & ~(1<<bit));
+    }
+}
+
+void input_h() {
+
+    char i = inb(COM1);
+    outb(COM1,i);
+}

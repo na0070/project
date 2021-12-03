@@ -55,37 +55,42 @@ int com_open(int baud_rate) {
 
     }
 
-    void set_int(int bit, int on) {
+void set_int(int bit, int on) {
 
-        if (on) {
-            outb(dev+1,inb(dev+1) | (1<<bit));
+    if (on) {
+        outb(dev+1,inb(dev+1) | (1<<bit));
 
-        }
-        else {
-
-            outb(dev+1,inb(dev+1) & ~(1<<bit));
-        }
     }
+    else {
 
-    void input_h() {
-
-        char i = inb(dev);
-        outb(dev,i);
+        outb(dev+1,inb(dev+1) & ~(1<<bit));
     }
+}
+
+void input_h() {
+
+    char i = inb(dev);
+    outb(dev,i);
+}
 
 
 
-    void top_handler() {
+void top_handler() {
 
+<<<<<<< HEAD
         // outb(dev,'b');
+=======
+    outb(dev,'b');
+>>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
-        if (serial_dcb.open) {  // if open
-            cli();
+    if (serial_dcb.open) {  // if open
+        cli();
 
-            int type = inb(dev+2);
-            int bit1 = type>>1 & 1;
-            int bit2 = type>>2 & 1;
+        int type = inb(dev+2);
+        int bit1 = type>>1 & 1;
+        int bit2 = type>>2 & 1;
 
+<<<<<<< HEAD
             if (!bit1 && !bit2) {
                 // modem
                 inb(dev+6);
@@ -114,20 +119,48 @@ int com_open(int baud_rate) {
                 inb(dev+5);
             }
             //klogv("int");
+=======
+        if (!bit1 && !bit2) {
+            // modem
+            inb(dev+6);
+        }
+        else if (bit1 && !bit2) {
+            // 01 : output
+            //call output handler
+            second_write();
+        }
 
-            
+        else if (!bit1 && bit2) {
+            // 10: input
+            // call input handler
+            input_h();
+        }
+        else if (bit1 && bit2){
+            // line
+            inb(dev+5);
+        }
+        //klogv("int");
+>>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
+        
+
+<<<<<<< HEAD
             // char in = inb(dev);
             // outb(dev,in);
             // (void) in;
+=======
+        char in = inb(dev);
+        outb(dev,in);
+        // (void) in;
+>>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
 
 
-            sti();
+        sti();
 
-        }
+    }
 
         set_int(1,0);
 
-        outb(0x20,0x20);
-    }
+    outb(0x20,0x20);
+}
