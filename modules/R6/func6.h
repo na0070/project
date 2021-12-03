@@ -22,9 +22,9 @@
 
 
 // DCB codes
-#define IDLING      0
-#define WRITING     1
-#define READING     2
+// #define IDLING      0
+// #define WRITING     1
+// #define READING     2
 
 #define NOT_OPEN    0
 #define OPEN        1

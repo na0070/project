@@ -15,8 +15,8 @@ int com_open(int* eflag_p, int baud_rate) {
     if (eflag_p == NULL)
         return INVALID_EFLAG;
 
-    if (baud_rate != 110 && baud_rate != 150 && baud_rate != 300 && 
-        baud_rate != 600 && baud_rate != 1200 && baud_rate != 2400 && 
+    if (baud_rate != 110  && baud_rate != 150  && baud_rate != 300 && 
+        baud_rate != 600  && baud_rate != 1200 && baud_rate != 2400 && 
         baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
         return INVALID_BRD;
 
@@ -28,7 +28,7 @@ int com_open(int* eflag_p, int baud_rate) {
 
     device.event_flag = eflag_p;                              // device is not being used
 
-    device.current_op = IDLING;                              // device status is idle
+    device.current_op = IDLE;                              // device status is idle
 
     memset(device.internal_buff,'\0',sizeof(device.internal_buff));   // initialize and free the DCB's ring buffer
 
@@ -99,7 +99,7 @@ int com_write(char *buf_p, int *count_p)
     if (device.port == NOT_OPEN)                  // check the device port status (0 = not open, 1 = open)
         return PORT_NOT_OPEN;
 
-    if (device.current_op != IDLING) // check if the device is currently busy (not idle)
+    if (device.current_op != IDLE) // check if the device is currently busy (not idle)
         return DEVICE_BUSY;
 
     // step 3: install pointers to DCB and set status to writing
@@ -114,7 +114,7 @@ int com_write(char *buf_p, int *count_p)
     *device.count = *device.count - 1;
 
     // step 5: get first character from requestor's buffer and store in output register
-    outb(COM1, *buf_p); // or buf_p[0] if it not happy
+    outb(COM1, *device.user_buffer); // or buf_p[0] if it not happy
 
     // step 6: enable write interrupts
     outb(COM1+1, (inb(COM1+1) | 0x02)); // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
@@ -131,7 +131,7 @@ int IOscheduler() {
 
     IOCB* request = IOlist.head;
 
-    if (device.port != OPEN || device.current_op != IDLING || request == NULL)
+    if (device.port != OPEN || device.current_op != IDLE || request == NULL)
         return -1;
 
     if (*device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
@@ -220,14 +220,14 @@ int com_read (char* buf_p, int* count_p) {
 		return -301;
 	}
 	
-	if (device.current_op != IDLING) {
+	if (device.current_op != IDLE) {
 		
 		return -304;
 	}
 	
 	char* buffer; 
 	
-	device.current_op = READING; 
+	device.current_op = READ; 
 	
 	device.event_flag = 0;
 	
@@ -238,7 +238,7 @@ int com_read (char* buf_p, int* count_p) {
 		return 0; 
 	}
 	
-	device.current_op = IDLING; 
+	device.current_op = IDLE; 
 	
 	*device.event_flag = 1; 
 	
@@ -250,7 +250,7 @@ int second_read (char*	buf_p, int *count_p) {
 	// int Second_read (int *count_p) {
 	char input = inb(COM1); 
 	
-		if (device.current_op != READING){
+		if (device.current_op != READ){
 			
 			device.buffer [count_p] = input; 
 			
@@ -264,7 +264,7 @@ int second_read (char*	buf_p, int *count_p) {
 			return -1;
 		}
 		
-		device.current_op = IDLING; 
+		device.current_op = IDLE; 
 		
 			device.event_flag = 1; 
 			
@@ -286,7 +286,7 @@ if (device.port != OPEN){
 
     device.event_flag = 0;    // device is being used
 
-    device.current_op = IDLING;    // device status is idle
+    device.current_op = IDLE;    // device status is idle
     //3. Disable the appropriate level in the PIC mask register.
   PIC(0x01); 
    // 4. Disable all interrupts in the ACC by loading zero values to the Modem Status register and the Interrupt Enable register.
@@ -302,10 +302,10 @@ void second_write() {
 
     //  1. If the current status is not writing, ignore the interrupt and return. 
  
-  if (device.current_op != WRITING){
+  if (device.current_op != WRITE){
 	
 						
-return Error;}// if 
+    return ;}// if 
 
 else {
     //2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
@@ -318,7 +318,7 @@ else {
     else{
     //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
      device.current_op = IDLE; 
-     device.eventflag = 0; 
+     device.event_flag = 0; 
      	 
  }//else 2     
 
@@ -332,7 +332,7 @@ void first_handler() {
     if (device.port == NOT_OPEN) {
 
         //clear interrupt
-        outb(0x20,0x20);
+        outb(0x20,0x20); // EOI?
         return;
     }
 
@@ -342,15 +342,15 @@ void first_handler() {
     int ID = inb(COM1+2);
 
     // bit 0 must be a 0 if interrupt caused by port before proceeding
-    if ((ID & 0x01) == 0) {
+    if ((ID & 0b0001) == 0) {
         // bits 2 and 1 being 01 means output interrupt
-        if ((ID & 0x06) == 0x02) {
+        if ((ID & 0b0110) == 0b0010) {
             // output interrupt
             second_write();
         }
         // bits 2 and 1 being 10 means input interrupt
-        if ((ID & 0x06) == 0x04) {
-            // inout interrupt
+        if ((ID & 0b0110) == 0b0100) {
+            // input interrupt
             second_read();
         }
 
