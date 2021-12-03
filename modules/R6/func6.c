@@ -251,15 +251,16 @@ int second_read (char*	buf_p, int *count_p) {
 	char input = inb(COM1); 
 	
 		if (device.current_op != READ){
-			
+			// use the internal buffer
 			device.buffer [count_p] = input; 
 			
 				return -1;
 		}
+        // else, use the user buffer
 		
 		buf_p [count_p] = input; 
 		
-		if (count_p	!= 0 && input != '\n\r'){
+		if (count_p	!= 0 && input != '\n'){
 			
 			return -1;
 		}
@@ -297,8 +298,6 @@ return 0; } // else
 }// com close 
 
 void second_write() {
- 
-  char data = device.user_buffer[ device.current_loc];
 
     //  1. If the current status is not writing, ignore the interrupt and return. 
  
@@ -310,15 +309,17 @@ void second_write() {
 else {
     //2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
 
-      outb(COM1,data);
-  
-    if (current_loc < buffersize ){
-      current_loc++;
+    if (device.current_loc < device.buffersize ){
+        char data = device.user_buffer[ device.current_loc];
+         outb(COM1,data);
+        device.current_loc++;
     }// if 
     else{
     //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
      device.current_op = IDLE; 
-     device.event_flag = 0; 
+     *device.event_flag = 1; 
+
+     set_int(1,0); // turn off finterrupt
      	 
  }//else 2     
 
@@ -359,3 +360,4 @@ void first_handler() {
 
     }
 }
+// TODO: add his first handler (top_handler) instead of first_handler
