@@ -57,70 +57,70 @@ int com_open(int baud_rate) {
 
     }
 
-    void set_int(int bit, int on) {
+void set_int(int bit, int on) {
 
-        if (on) {
-            outb(dev+1,inb(dev+1) | (1<<bit));
+    if (on) {
+        outb(dev+1,inb(dev+1) | (1<<bit));
 
-        }
-        else {
-
-            outb(dev+1,inb(dev+1) & ~(1<<bit));
-        }
     }
+    else {
 
-    void input_h() {
-
-        char i = inb(dev);
-        outb(dev,i);
+        outb(dev+1,inb(dev+1) & ~(1<<bit));
     }
+}
+
+void input_h() {
+
+    char i = inb(dev);
+    outb(dev,i);
+}
 
 
 
-    void top_handler() {
+void top_handler() {
 
-        outb(dev,'b');
+    outb(dev,'b');
 
-        if (serial_dcb.open) {  // if open
-            cli();
+    if (serial_dcb.open) {  // if open
+        cli();
 
-            int type = inb(dev+2);
-            int bit1 = type>>1 & 1;
-            int bit2 = type>>2 & 1;
+        int type = inb(dev+2);
+        int bit1 = type>>1 & 1;
+        int bit2 = type>>2 & 1;
 
-            if (!bit1 && !bit2) {
-                // modem
-                inb(dev+6);
-            }
-            else if (bit1 & !bit2) {
-                // 01 : output
-                //call output handler
-                second_write();
-            }
-
-            else if (!bit1 & bit2) {
-                // 10: input
-                // call input handler
-                input_h();
-            }
-            else if (bit1 && bit2){
-                // line
-                inb(dev+5);
-            }
-            //klogv("int");
-
-            
-
-            char in = inb(dev);
-            outb(dev,in);
-            // (void) in;
-
-
-
-            sti();
-
+        if (!bit1 && !bit2) {
+            // modem
+            inb(dev+6);
+        }
+        else if (bit1 && !bit2) {
+            // 01 : output
+            //call output handler
+            second_write();
         }
 
+        else if (!bit1 && bit2) {
+            // 10: input
+            // call input handler
+            input_h();
+        }
+        else if (bit1 && bit2){
+            // line
+            inb(dev+5);
+        }
+        //klogv("int");
 
-        outb(0x20,0x20);
+        
+
+        char in = inb(dev);
+        outb(dev,in);
+        // (void) in;
+
+
+
+        sti();
+
     }
+
+
+    outb(0x20,0x20);
+}
