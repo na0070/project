@@ -96,6 +96,17 @@ void kmain(void)
    klogv("Transferring control to commhand...");
 
 
+   // R6 testing purposes ONLY
+   com_open(1200);
+
+   int a = 1;
+   while (1) {
+      (void)a;
+   }
+
+
+
+
 // R5 phase 2 work
 sys_set_malloc((u32int (*)(u32int))allocateMemory);       // set the allocation function to be our created function
 sys_set_free((int (*)(void *))freeMemory);             // set the free memory function as our created function
