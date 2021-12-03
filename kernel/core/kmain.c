@@ -99,6 +99,9 @@ void kmain(void)
    // R6 testing purposes ONLY
    com_open(1200);
 
+
+   outb(COM1+1,inb(COM1+1) | (1<<1));
+   outb(COM1,'a');
    int a = 1;
    while (1) {
       (void)a;

@@ -21,7 +21,9 @@ R2/func.o\
 procsr3.o\
 R4/Alarm.o\
 R5/func5.o\
-R6/func6.o\
+R6/serial2.o\
+#R6/func6.o\
+
 
 
 .c.s:
