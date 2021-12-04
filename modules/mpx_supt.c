@@ -227,6 +227,15 @@ u32int* sys_call(context* registers){
 			
 			freePCB(cop);
 		}
+	// added section for R6 request handling
+		if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
+
+	    cop -> state = BLOCKED;   // block the process
+	    removePCB(cop);             // remove process from current list
+	    insertPCB(cop);             // reinsert the process back to the correct list
+	    loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
+
+	  }
 		
 	}
 	
@@ -235,21 +244,9 @@ u32int* sys_call(context* registers){
 		old_Context = registers;
 	}
 
+	// call the IO scheduler after each sys_call
+  IOscheduler();      
 
-// added section for R6 request handling
-  // if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
-
-  //   cop -> state = BLOCKED;   // block the process
-  //   removePCB(cop);             // remove process from current list
-  //   insertPCB(cop);             // reinsert the process back to the correct list
-  //   loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
-
-  // }
-
-  // IOscheduler();      // call the IO scheduler 
-
-
-  
 	
 	if (ready->head != NULL) {
 		

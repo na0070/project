@@ -1,4 +1,6 @@
 #include "func5.h"
+#include "../R2/func.h"
+#include "../mpx_supt.h"
 
 
 //global variable: start location of heap

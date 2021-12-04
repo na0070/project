@@ -1,5 +1,6 @@
 // functions for R6
 #include "func6.h"
+#include "../mpx_supt.h"
 
 // DCB global struct
 
@@ -67,17 +68,27 @@ IOqueue IOlist = {.head = NULL, .tail = NULL};
 // }
 
 int com_open(int baud_rate) {
-    // error checking, baud rate is valid, port not already open
+    // error checking; baud rate is valid, port not already open
+
+    if (baud_rate != 110  && baud_rate != 150  && baud_rate != 300 && 
+        baud_rate != 600  && baud_rate != 1200 && baud_rate != 2400 && 
+        baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
+        return INVALID_BRD;
+
+    if (device.port == OPEN)
+        return PORT_ALREADY_OPEN;
+
+
     cli();
 
-    device.port = 1;
-    device.event_flag = 1;
-    device.current_op = IDLE;
+    device.port = 1;            // open the port
+    device.event_flag = 1;      // set the event flag (not doing anything)
+    device.current_op = IDLE;   // set the device state to idle
 
-    original_idt_entry = idt_get_gate(0x24);
+    original_idt_entry = idt_get_gate(0x24);            // set the interrupt vector to the top_handler (whenever reading/writing)
     idt_set_gate(0x24,(u32int) top_handler, 0x08, 0x8e);
 
-    long brd = 115200/(long) baud_rate;
+    long brd = 115200/(long) baud_rate;                 // compute baud rate divisor
 
     outb(COM1+1,0); // disable ints
 
@@ -156,13 +167,16 @@ int com_write(char *buf_p, int *count_p)
     // step 4: clear the caller's event flag
     device.event_flag = 0; // clear the device's event flag
 
+    device.buffersize = *device.count;      // set device's buffersize to given count value
+
     // change the count (# of characters to print) before enabling the interrupt
     *device.count = *device.count - 1;
 
     // step 5: get first character from requestor's buffer and store in output register
     outb(COM1, *device.user_buffer); // or buf_p[0] if it not happy
 
-    device.current_loc = 0; // start at beginning of array for second_write to use
+    device.current_loc = 1; // start at beginning of array for second_write to use
+
 
     // step 6: enable write interrupts
     outb(COM1+1, (inb(COM1+1) | 0x02)); // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
@@ -197,7 +211,7 @@ int IOscheduler() {
             return -1;
 
         if (request -> op == READ)
-            com_read(request -> buffer, request -> count);
+            // com_read(request -> buffer, request -> count);
 
         if (request -> op == WRITE)
             com_write(request -> buffer, request -> count);
@@ -250,8 +264,6 @@ void PIC(int value) {
 }
 
 int com_read (char* buf_p, int* count_p) {
-    // char* p = buf_p;
-    // p = p+1;
 	
 	if (buf_p == NULL){
 		
@@ -279,7 +291,9 @@ int com_read (char* buf_p, int* count_p) {
 	
 	device.event_flag = 0;
 	
-	strcpy(buffer, device.internal_buff); 
+	// strcpy(buffer, device.internal_buff); 
+
+    // copy from ring to requester (buf_p)
 	
 	if (count_p != 0){
 		
@@ -292,6 +306,10 @@ int com_read (char* buf_p, int* count_p) {
 	
 	return *count_p ;  
 }
+
+
+
+/*
 
 int second_read (char*	buf_p, int *count_p) {
 
@@ -319,6 +337,10 @@ int second_read (char*	buf_p, int *count_p) {
 			
 			return *count_p; 
 }
+
+
+
+*/
 
 
 
@@ -359,6 +381,7 @@ void second_write() {
             char data = device.user_buffer[device.current_loc];
             outb(COM1,data);
             device.current_loc++;
+            // device.current_loc = device.current_loc+1;
         }// if 
         else{
             //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
@@ -430,9 +453,9 @@ void top_handler() {
                 // 01 : output
                 //call output handler
                 
-                outb(COM1,'w');
-                outb(COM1,':');
-                outb(COM1,' ');
+                // outb(COM1,'w');
+                // outb(COM1,':');
+                // outb(COM1,' ');
                 second_write();
                 // input_h();
 
@@ -464,7 +487,7 @@ void top_handler() {
 
     }
 
-        set_int(1,0);   // for now, turn off write interrupt (removed later)
+        // set_int(1,0);   // for now, turn off write interrupt (removed later)
 
     outb(0x20,0x20);        // EOI
 }

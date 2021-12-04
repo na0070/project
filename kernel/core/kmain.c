@@ -25,7 +25,8 @@
 // #include "modules/R2/func.h"
 #include "modules/R4/Alarm.h"
 #include "modules/R5/func5.h"
-#include "modules/R6/serial2.h"
+// #include "modules/R6/serial2.h"
+#include "modules/R6/func6.h"
 
 void infinite();
 
@@ -100,14 +101,18 @@ void kmain(void)
    // R6 testing purposes ONLY
    com_open(1200);
 
+   int n = 25;
+   char* str = "\x1B[31mThis is a test\n\x1B[39m";
 
-   outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
+   com_write(str,&n);
+   // outb(COM1,'\n');
+   // outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
    // set_int(1,1);
-   outb(COM1,'a');
-   int a = 1;
-   while (1) {
-      (void)a;
-   }
+   // outb(COM1,'a');
+   // int a = 1;
+   // while (1) {
+   //    (void)a;
+   // }
 
 
 
@@ -116,10 +121,11 @@ void kmain(void)
 sys_set_malloc((u32int (*)(u32int))allocateMemory);       // set the allocation function to be our created function
 sys_set_free((int (*)(void *))freeMemory);             // set the free memory function as our created function
 
+
 init_heap(50000);
 
-  
 logo();
+
 
 
 // initializing system processes (R3/R4)

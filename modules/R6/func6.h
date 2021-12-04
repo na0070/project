@@ -1,11 +1,13 @@
 // header for func6.c
-#include "../R2/func.h"
-#include "../mpx_supt.h"
+
 
 #include <core/serial.h>
 #include <core/io.h>
 #include <string.h>
 #include <core/tables.h>
+#include <system.h>
+
+#include "../R2/func.h"
 
 // error codes definitions
 
@@ -39,7 +41,7 @@ typedef struct dcb {
   int event_flag; //  indicate the status of the current operation and knows when the current operation is done so the next can start 
   char* user_buffer; // pointer to use buffer (call to sys_req)
   int* count;
-  char* internal_buff; // it is array store charecter recieved from device 
+  char internal_buff[20]; // it is array store charecter recieved from device 
   int current_loc; // current location of the next charecter to transfer 
   int buffersize; // total numbe of charecter to read and write  
   int transferred; // number of charecer already transferred 
@@ -88,3 +90,9 @@ int second_read ();
 // int Second_read (int *count_p);
 
 void second_write();
+
+void top_handler();
+
+void set_int(int,int);
+
+void input_h();

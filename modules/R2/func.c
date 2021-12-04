@@ -3,7 +3,7 @@
 //also where all the queues are initialized for function use
 
 #include "func.h"
-
+#include "../mpx_supt.h"
 
 struct queue ready = {.head = NULL, .tail = NULL};					// initializing the ready queue
 
