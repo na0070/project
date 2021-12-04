@@ -106,7 +106,7 @@ void top_handler() {
                 // call input handler
                 // outb(COM1,'r');
                 // outb(COM1,':');
-                outb(COM1,' ');
+                // outb(COM1,' ');
                 input_h();
             }
             else if (bit1 && bit2){
