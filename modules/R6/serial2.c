@@ -97,16 +97,15 @@ void top_handler() {
                 outb(COM1,'w');
                 outb(COM1,':');
                 outb(COM1,' ');
-                // input_h();
 
             }
 
             else if (!bit1 && bit2) {
                 // 10: input
                 // call input handler
-                // outb(COM1,'r');
-                // outb(COM1,':');
-                // outb(COM1,' ');
+                outb(COM1,'r');
+                outb(COM1,':');
+                outb(COM1,' ');
                 input_h();
             }
             else if (bit1 && bit2){
@@ -126,7 +125,7 @@ void top_handler() {
         sti();
 
     }
-
+        // set_int(1,1);
         set_int(1,0);
 
     outb(0x20,0x20);
