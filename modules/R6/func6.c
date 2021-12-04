@@ -154,13 +154,15 @@ int com_write(char *buf_p, int *count_p)
     device.current_op = WRITE; // det the device's current operation
 
     // step 4: clear the caller's event flag
-    *device.event_flag = 0; // clear the device's event flag
+    device.event_flag = 0; // clear the device's event flag
 
     // change the count (# of characters to print) before enabling the interrupt
     *device.count = *device.count - 1;
 
     // step 5: get first character from requestor's buffer and store in output register
     outb(COM1, *device.user_buffer); // or buf_p[0] if it not happy
+
+    device.current_loc = 0; // start at beginning of array for second_write to use
 
     // step 6: enable write interrupts
     outb(COM1+1, (inb(COM1+1) | 0x02)); // inb(COM1+1) takes the previous value, ORing it with 0x02 to set bit #1
@@ -347,30 +349,31 @@ void second_write() {
 
     //  1. If the current status is not writing, ignore the interrupt and return. 
  
-  if (device.current_op != WRITE){
-	
-						
-    return ;}// if 
+    if (device.current_op != WRITE)
+	    return;// if 
 
-else {
+    else {
     //2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
 
-    if (device.current_loc < device.buffersize ){
-        char data = device.user_buffer[ device.current_loc];
-         outb(COM1,data);
-        device.current_loc++;
-    }// if 
-    else{
-    //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
-     device.current_op = IDLE; 
-     *device.event_flag = 1; 
+        if (device.current_loc < device.buffersize ){
+            char data = device.user_buffer[device.current_loc];
+            outb(COM1,data);
+            device.current_loc++;
+        }// if 
+        else{
+            //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
+            device.current_op = IDLE; 
+            device.event_flag = 1; 
 
-     set_int(1,0); // turn off finterrupt
-     	 
- }//else 2     
+            set_int(1,0); // turn off interrupt
+            
+        }//else 2     
 
- }// else     
+    }// else     
 }// second write 
+
+
+// OLD first_handler
 
 // first level interrupt handler
 // void first_handler() {
@@ -407,55 +410,66 @@ else {
 //     }
 // }
 
-// TODO: add his first handler (top_handler) instead of first_handler
-
+// NEW first level interrupt handler
 void top_handler() {
 
-    outb(COM1,'b');
 
     if (device.port) {  // if open
-        cli();
+        cli();     // disable interrupts
 
-        int type = inb(COM1+2);
-        int bit1 = type>>1 & 1;
+        int type = inb(COM1+2); // read the type of interrupt
+        int bit1 = type>>1 & 1; // separate the 2 important bits (bit 1 and 2)
         int bit2 = type>>2 & 1;
 
-        if (!bit1 && !bit2) {
-            // modem
-            inb(COM1+6);
-        }
-        else if (bit1 & !bit2) {
-            // 01 : output
-            //call output handler
-            second_write();
-        }
+            // check the combination of bits 1 and 2 to determine the cause of interrupt
+            if (!bit1 && !bit2) {
+                // modem interrupt
+                inb(COM1+6);
+            }
+            else if (bit1 && !bit2) {
+                // 01 : output
+                //call output handler
+                
+                outb(COM1,'w');
+                outb(COM1,':');
+                outb(COM1,' ');
+                second_write();
+                // input_h();
 
-        else if (!bit1 & bit2) {
-            // 10: input
-            // call input handler
-            input_h();
-        }
-        else if (bit1 && bit2){
-            // line
-            inb(COM1+5);
-        }
-        //klogv("int");
+            }
+
+            else if (!bit1 && bit2) {
+                // 10: input
+                // call input handler
+                // outb(COM1,'r');
+                // outb(COM1,':');
+                // outb(COM1,' ');
+                input_h();
+            }
+            else if (bit1 && bit2){
+                // line interrupt
+                inb(COM1+5);
+            }
+            //klogv("int");
 
         
 
-        char in = inb(COM1);
-        outb(COM1,in);
-        // (void) in;
+            // char in = inb(COM1);
+            // outb(COM1,in);
+            // (void) in;
 
 
 
-        sti();
+        sti();  // enable all interrupts
 
     }
 
-    outb(0x20,0x20);
+        set_int(1,0);   // for now, turn off write interrupt (removed later)
+
+    outb(0x20,0x20);        // EOI
 }
 
+// set interrupt on or off
 void set_int(int bit, int on) {
 
     if (on) {
@@ -468,7 +482,9 @@ void set_int(int bit, int on) {
     }
 }
 
-void input_h() {
+
+// "input handler"
+void input_h() { 
 
     char i = inb(COM1);
     outb(COM1,i);

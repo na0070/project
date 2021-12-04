@@ -36,7 +36,7 @@ typedef struct dcb {
     int port;
  int allocation_st; // the current status of the device 0 for avalible 1 for in use 
   int current_op; // indicate the current opearation 
-  int* event_flag; //  indicate the status of the current operation and knows when the current operation is done so the next can start 
+  int event_flag; //  indicate the status of the current operation and knows when the current operation is done so the next can start 
   char* user_buffer; // pointer to use buffer (call to sys_req)
   int* count;
   char* internal_buff; // it is array store charecter recieved from device 
@@ -82,9 +82,9 @@ int com_read (char* buf_p, int* count_p);
 
 int com_close (void);
 
-void first_handler();
+// void first_handler();
 
-int second_read (char*	buf_p, int *count_p);
+int second_read ();
 // int Second_read (int *count_p);
 
 void second_write();
