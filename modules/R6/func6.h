@@ -42,6 +42,7 @@ typedef struct dcb {
   char* user_buffer; // pointer to use buffer (call to sys_req)
   int* count;
   char internal_buff[20]; // it is array store charecter recieved from device 
+  int internal_loc; // current lcoation of index for ring buffer
   int current_loc; // current location of the next charecter to transfer 
   int buffersize; // total numbe of charecter to read and write  
   int transferred; // number of charecer already transferred 
@@ -80,7 +81,7 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count);
 
 void PIC(int value);
 
-int com_read (char* buf_p, int* count_p);
+void com_read (char* buf_p, int* count_p);
 
 int com_close (void);
 
@@ -95,4 +96,4 @@ void top_handler();
 
 void set_int(int,int);
 
-void input_h();
+void input_h(); // "second level input handler"

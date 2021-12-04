@@ -253,14 +253,13 @@ u32int* sys_call(context* registers){
 		pcb* temp = ready->head;
 
 		if (temp == cop) 
-				temp = temp-> next;
+		  temp = temp-> next;
 		
+		removePCB(temp); 
 		
-			removePCB(temp); 
+		temp->state = RUNNING;
 		
-				temp->state = RUNNING;
-		
-			cop = temp; 
+		cop = temp; 
 		
 		return (u32int*)cop->stackTop;
 	}

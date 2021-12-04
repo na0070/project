@@ -263,7 +263,7 @@ void PIC(int value) {
 
 }
 
-int com_read (char* buf_p, int* count_p) {
+void com_read (char* buf_p, int* count_p) {
 	
 	if (buf_p == NULL){
 		
@@ -284,27 +284,40 @@ int com_read (char* buf_p, int* count_p) {
 		
 		return -304;
 	}
-	
-	char* buffer; 
-	
-	device.current_op = READ; 
-	
-	device.event_flag = 0;
-	
-	// strcpy(buffer, device.internal_buff); 
 
-    // copy from ring to requester (buf_p)
-	
-	if (count_p != 0){
-		
-		return 0; 
-	}
-	
-	device.current_op = IDLE; 
-	
-	device.event_flag = 1; 
-	
-	return *count_p ;  
+	memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
+	device.user_buffer = buf_p;
+    device.count = count_p;
+
+    set_int(0,0);       // disable read interrupt
+    cli();              // diaasble interrupts for now
+    
+
+	device.current_op = READ; 
+	device.event_flag = 0;
+
+    device.transferred = 0;
+    // transfer characters from ring buffer to user buffer
+    for (int i = 0; i <= device.internal_loc; i++) {
+        device.user_buffer[i] = device.internal_buff[i];
+        device.transferred++;
+        device.internal_buff[i] = '\0'; // remove character from ring buffer after copying
+
+        if (device.transferred == *count_p || device.user_buffer[i] == '\r') // stop reading from ring buffer if reached the target number of characters or CR entered
+            break;
+    } 
+
+    if (device.transferred == *count_p) {       // if reached the reading target
+        device.current_op = IDLE;
+        device.event_flag = 1;
+        device.user_buffer = NULL;              // user buffer shouldn't point to requestor buffer anymore
+        device.count = NULL;                    // count pointer shouldn't point to count_p anymore
+        device.internal_loc = 0;                // reset ring buffer index
+    }
+
+    sti();              // enable interrupts
+    set_int(0,1);       // enable read interrupt
+	 
 }
 
 
@@ -506,9 +519,41 @@ void set_int(int bit, int on) {
 }
 
 
-// "input handler"
+// "input handler" == second_read
 void input_h() { 
 
-    char i = inb(COM1);
-    outb(COM1,i);
+    char input = inb(COM1);
+    outb(COM1,input);                   // may want to make special character prints here
+
+    if (device.current_op != READ) {    // device is not reading (sys_req READ not called yet, but a key was pressed)
+        // store in ring buffer for later use (internal_buff)
+        if (device.internal_loc < sizeof(device.internal_buff)) {
+
+            device.internal_buff[device.internal_loc] = input;
+            device.internal_loc++;
+        }
+        return;
+    }
+
+    else {                              // device is reading (sys_req READ was called)
+        // store in requestor buffer instead (user_buffer)
+        device.internal_loc++;      // incremenet first since character at internal_loc already written in buffer
+        device.user_buffer[device.internal_loc] = input;
+        
+
+        // if count not reached and not CR, then reading not complete; return
+        if (device.internal_loc < *device.count-1 && input != '\r')
+            return;
+
+        else {          // otherwise, transfer is complete, signal completion
+            device.current_op = IDLE;
+            device.event_flag = 1;      // signal end of operation
+            *device.count = device.internal_loc + 1; // return modified count value
+            device.internal_loc = 0; // reset current location
+            device.user_buffer = NULL;
+            device.count = NULL;
+        }
+    }
+    
+    
 }
