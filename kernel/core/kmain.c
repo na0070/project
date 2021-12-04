@@ -101,7 +101,8 @@ void kmain(void)
    com_open(1200);
 
 
-   outb(COM1+1,inb(COM1+1) | (1<<1));
+   outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
+   // set_int(1,1);
    outb(COM1,'a');
    int a = 1;
    while (1) {

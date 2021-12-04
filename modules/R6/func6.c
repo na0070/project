@@ -182,7 +182,7 @@ int IOscheduler() {
     if (device.port != OPEN || device.current_op != IDLE || request == NULL)
         return -1;
 
-    if (*device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
+    if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
         request -> process -> state = READY;       // unblock the prcoess first
         removePCB(request -> process);             // remove process from current list
@@ -288,7 +288,7 @@ int com_read (char* buf_p, int* count_p) {
 	
 	device.current_op = IDLE; 
 	
-	*device.event_flag = 1; 
+	device.event_flag = 1; 
 	
 	return *count_p ;  
 }
