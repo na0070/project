@@ -71,8 +71,8 @@ int com_open(int baud_rate) {
     cli();
 
     device.port = 1;
-    device.events = 1;
-    device.status = IDLE;
+    device.event_flag = 1;
+    device.current_op = IDLE;
 
     original_idt_entry = idt_get_gate(0x24);
     idt_set_gate(0x24,(u32int) top_handler, 0x08, 0x8e);
@@ -413,7 +413,7 @@ void top_handler() {
 
     outb(COM1,'b');
 
-    if (device.open) {  // if open
+    if (device.port) {  // if open
         cli();
 
         int type = inb(COM1+2);

@@ -77,11 +77,7 @@ void input_h() {
 
 void top_handler() {
 
-<<<<<<< HEAD
         // outb(dev,'b');
-=======
-    outb(dev,'b');
->>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
     if (serial_dcb.open) {  // if open
         cli();
@@ -90,7 +86,6 @@ void top_handler() {
         int bit1 = type>>1 & 1;
         int bit2 = type>>2 & 1;
 
-<<<<<<< HEAD
             if (!bit1 && !bit2) {
                 // modem
                 inb(dev+6);
@@ -119,40 +114,12 @@ void top_handler() {
                 inb(dev+5);
             }
             //klogv("int");
-=======
-        if (!bit1 && !bit2) {
-            // modem
-            inb(dev+6);
-        }
-        else if (bit1 && !bit2) {
-            // 01 : output
-            //call output handler
-            second_write();
-        }
-
-        else if (!bit1 && bit2) {
-            // 10: input
-            // call input handler
-            input_h();
-        }
-        else if (bit1 && bit2){
-            // line
-            inb(dev+5);
-        }
-        //klogv("int");
->>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
         
 
-<<<<<<< HEAD
             // char in = inb(dev);
             // outb(dev,in);
             // (void) in;
-=======
-        char in = inb(dev);
-        outb(dev,in);
-        // (void) in;
->>>>>>> 49182a0a6f89d0ae39d8a92407ca185593044bbc
 
 
 
