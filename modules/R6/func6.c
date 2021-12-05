@@ -11,6 +11,8 @@ u32int original_idt_entry;
 
 IOqueue IOlist = {.head = NULL, .tail = NULL};
 
+int IOcount = 0;        // counter indicating number of requests made (for IO scheduler)
+
 // com open function
 // OLD com_open
 // int com_open(int* eflag_p, int baud_rate) {
@@ -202,6 +204,16 @@ int IOscheduler() {
 
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
+        // klogv("IO Scheduler: after event_flag == 1");
+
+        if (IOcount != 1) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
+            request -> process -> state = READY;       // unblock the prcoess first
+            removePCB(request -> process);             // remove process from current list
+            insertPCB(request -> process);             // reinsert the process back to the correct list
+            request = request -> next;
+            IOlist.head = request;
+        }
+        // klogv("IO scheduler: after initialization");
 
         if (request -> op == IDLE || request -> op == EXIT)
             return -1;
@@ -219,17 +231,6 @@ int IOscheduler() {
             com_write(request -> buffer, request -> count);
         }
 
-        if (device.event_flag == 1) {
-
-        // klogv("IO Scheduler: after event_flag == 1");
-        request -> process -> state = READY;       // unblock the prcoess first
-        removePCB(request -> process);             // remove process from current list
-        insertPCB(request -> process);             // reinsert the process back to the correct list
-        request = request -> next;
-        IOlist.head = request;
-
-        // klogv("IO scheduler: after initialization");
-        }
         
     } 
     // if event flag is still 0, then device still being used
@@ -261,6 +262,8 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
     }
 
     request->next = NULL;
+
+    IOcount++;      // increment number of IO requests made
 
     // klogv("load IOCB: END");
 }
@@ -427,45 +430,7 @@ void second_write() {
     }// else     
 }// second write 
 
-
-// OLD first_handler
-
 // first level interrupt handler
-// void first_handler() {
-
-//     //1. if port is not open, clear interrupt and return
-//     if (device.port == NOT_OPEN) {
-
-//         //clear interrupt
-//         outb(0x20,0x20); // EOI?
-//         return;
-//     }
-
-
-//     //2. read interrupt ID register to determine cause of interrupt
-
-//     int ID = inb(COM1+2);
-
-//     // bit 0 must be a 0 if interrupt caused by port before proceeding
-//     if ((ID & 0b0001) == 0) {
-//         // bits 2 and 1 being 01 means output interrupt
-//         if ((ID & 0b0110) == 0b0010) {
-//             // output interrupt
-//             second_write();
-//         }
-//         // bits 2 and 1 being 10 means input interrupt
-//         if ((ID & 0b0110) == 0b0100) {
-//             // input interrupt
-//             second_read();
-//         }
-
-//     //4. call EOI for PIC
-//         outb(0x20,0x20);
-
-//     }
-// }
-
-// NEW first level interrupt handler
 void top_handler() {
 
 

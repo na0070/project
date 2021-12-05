@@ -7,15 +7,13 @@
 
 struct queue ready = {.head = NULL, .tail = NULL};					// initializing the ready queue
 
-
 struct queue blocked = {.head = NULL, .tail = NULL};				// initializing the blocked queue
-
 
 struct queue sus_ready = {.head = NULL, .tail = NULL};				// initializing the suspended ready queue
 
 struct queue sus_blocked = {.head = NULL, .tail = NULL};			// initializing the suspended blocked queue
 
-struct queue* returnQueue() {
+struct queue* returnQueue() {	// function to return address of ready queue
 
 	return &ready;
 }
@@ -119,7 +117,7 @@ pcb* setupPCB(char* newName, unsigned char newClass, int newPriority) {
 
 char* freePCB( pcb* name ){
 
-return (char*)sys_free_mem(name );// return free memmory function
+return (char*)sys_free_mem(name );// return free memory function
 }// free pcb end 
 
 
