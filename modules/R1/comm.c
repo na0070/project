@@ -4,7 +4,7 @@
 #include "getandsettime.h"
 #include "help.h"
 #include "version.h"
-// #include "../R2/func.h"
+#include "../R2/func.h"
 #include "../procsr3.h"
 #include "../R4/Alarm.h"
 #include "../R5/func5.h"
