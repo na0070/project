@@ -35,7 +35,7 @@ u32int* init_heap(int size) {
 	heap_CMCB -> next = NULL;
 	heap_CMCB -> prev = NULL;
 
-  print("heap initialized\n",19);
+  print("heap initialized\n",17);
   return heap_head;
 
 }

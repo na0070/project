@@ -190,19 +190,18 @@ int com_write(char *buf_p, int *count_p)
 
 // IO scheduler
 int IOscheduler() {
+    // klogv("IO scheduler: IN");
 
     IOCB* request = IOlist.head;
+    // klogv("IO scheduler: after request pointer");
 
     if (device.port != OPEN || device.current_op != IDLE || request == NULL)
         return -1;
 
+    // klogv("IO scheduler: afte error check");
+
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
-        request -> process -> state = READY;       // unblock the prcoess first
-        removePCB(request -> process);             // remove process from current list
-        insertPCB(request -> process);             // reinsert the process back to the correct list
-        request = request -> next;
-        IOlist.head = request;
 
         if (request -> op == IDLE || request -> op == EXIT)
             return -1;
@@ -210,16 +209,32 @@ int IOscheduler() {
         if (request -> buffer == NULL)
             return -1;
 
-        if (request -> op == READ)
-            // com_read(request -> buffer, request -> count);
-
-        if (request -> op == WRITE)
+        // klogv("after error check");
+        if (request -> op == READ) {
+            // klogv("iO scheduler: READ");
+            com_read(request -> buffer, request -> count);
+        }
+        if (request -> op == WRITE) {
+            // klogv("iO scheduler: WRITE");
             com_write(request -> buffer, request -> count);
+        }
 
+        if (device.event_flag == 1) {
+
+        // klogv("IO Scheduler: after event_flag == 1");
+        request -> process -> state = READY;       // unblock the prcoess first
+        removePCB(request -> process);             // remove process from current list
+        insertPCB(request -> process);             // reinsert the process back to the correct list
+        request = request -> next;
+        IOlist.head = request;
+
+        // klogv("IO scheduler: after initialization");
+        }
+        
     } 
     // if event flag is still 0, then device still being used
     // do nothing instead
-    
+    // klogv("IO scheduler: END");
     return 0;
 }
 
@@ -227,9 +242,9 @@ int IOscheduler() {
 void loadIOCB(pcb* proc, int code, char* buff, int* count) {
 
     IOqueue* queue = &IOlist;
-
+    // klogv("load IOCB: BEFORE sys_alloc_mem");
     IOCB* request = (IOCB*)sys_alloc_mem(sizeof(IOCB));     // initialize the IOCB with given values
-
+    // klogv("load IOCB: AFTER sys_alloc_mem");
     request -> device = &device;
     request -> process = proc;
     request -> op = code;
@@ -246,6 +261,8 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
     }
 
     request->next = NULL;
+
+    // klogv("load IOCB: END");
 }
 
 // function to change the PIC level
@@ -263,7 +280,7 @@ void PIC(int value) {
 
 }
 
-void com_read (char* buf_p, int* count_p) {
+int com_read (char* buf_p, int* count_p) {
 	
 	if (buf_p == NULL){
 		
@@ -298,7 +315,8 @@ void com_read (char* buf_p, int* count_p) {
 
     device.transferred = 0;
     // transfer characters from ring buffer to user buffer
-    for (int i = 0; i <= device.internal_loc; i++) {
+    int i;
+    for (i = 0; i <= device.internal_loc; i++) {
         device.user_buffer[i] = device.internal_buff[i];
         device.transferred++;
         device.internal_buff[i] = '\0'; // remove character from ring buffer after copying
@@ -318,6 +336,7 @@ void com_read (char* buf_p, int* count_p) {
     sti();              // enable interrupts
     set_int(0,1);       // enable read interrupt
 	 
+     return 0;
 }
 
 
@@ -527,7 +546,7 @@ void input_h() {
 
     if (device.current_op != READ) {    // device is not reading (sys_req READ not called yet, but a key was pressed)
         // store in ring buffer for later use (internal_buff)
-        if (device.internal_loc < sizeof(device.internal_buff)) {
+        if (device.internal_loc < strlen(device.internal_buff)) {
 
             device.internal_buff[device.internal_loc] = input;
             device.internal_loc++;

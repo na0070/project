@@ -180,15 +180,15 @@ int sys_free_mem(void *ptr)
 */
 void idle()
 {
-  char msg[30];
-  int count=0;
+ //  char msg[30];
+ //  int count=0;
 	
-	memset( msg, '\0', sizeof(msg));
-	strcpy(msg, "IDLE PROCESS EXECUTING.\n");
-	count = strlen(msg);
+	// memset( msg, '\0', sizeof(msg));
+	// strcpy(msg, "IDLE PROCESS EXECUTING.\n");
+	// count = strlen(msg);
   
   while(1){
-	sys_req( WRITE, DEFAULT_DEVICE, msg, &count);
+	// sys_req( WRITE, DEFAULT_DEVICE, msg, &count);
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }
 }
@@ -211,11 +211,14 @@ void print(char* str, int size) {
 
 u32int* sys_call(context* registers){
 
+
+
 	struct queue* ready  = returnQueue();
 	
 	if (cop != NULL){
 		
 		if (params.op_code == IDLE){
+			// klogv("sys_call:  IDLE");
 			
 			cop->stackTop = (unsigned char*)registers;
 
@@ -224,14 +227,18 @@ u32int* sys_call(context* registers){
 		}
 		
 		if (params.op_code == EXIT) {
+			// klogv("sys_call:  EXIT");
 			
 			freePCB(cop);
 		}
 	// added section for R6 request handling
 		if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
+			// klogv("sys_call:  READ / WRITE                    1");
+			cop->stackTop = (unsigned char*)registers;
 
-	    cop -> state = BLOCKED;   // block the process
+	    
 	    removePCB(cop);             // remove process from current list
+	    cop -> state = BLOCKED;   // block the process
 	    insertPCB(cop);             // reinsert the process back to the correct list
 	    loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
 
@@ -242,6 +249,18 @@ u32int* sys_call(context* registers){
 	else {
 		
 		old_Context = registers;
+
+		// added section for R6 request handling
+		// if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
+		// 	// klogv("sys_call:  READ / WRITE     2");
+		// 	cop->stackTop = (unsigned char*)registers;
+
+	 //    cop -> state = BLOCKED;   // block the process
+	 //    removePCB(cop);             // remove process from current list
+	 //    insertPCB(cop);             // reinsert the process back to the correct list
+	 //    loadIOCB(cop, params.op_code, params.buffer_ptr, params.count_ptr); // load the request to the IO list
+
+	 //  }
 	}
 
 	// call the IO scheduler after each sys_call

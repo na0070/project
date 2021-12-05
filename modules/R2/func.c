@@ -364,7 +364,7 @@ void showqueue(char* queue){						 //function used to print an entire queue usin
 void loadr_pcb(char* name, unsigned char class,int status, int priority, u32int func ){
 
 	if (findPCB(name) != NULL)							// if a copy of a process is already in memory, don't load a new one
-		print("process already exists\n",24);
+		print("process already exists\n",23);
 
 	else {
 

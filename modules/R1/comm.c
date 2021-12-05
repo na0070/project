@@ -42,14 +42,17 @@ to perform.
 */
 
 void commhand() {
+
+	klogv("commhand\n");
 	
-	print("Welcome to MPX_core..\n",24);
+	// print("Welcome to MPX_core..\n",22);
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
 		memset(timeBuff,'\0',SIZEBUFF);
 
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
+		klogv("commhand: after sys_req read");
 		
 
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
@@ -849,7 +852,7 @@ void commhand() {
 		if (strcmp(token,"clear") != 0) print("\n",1);	// new lines if we didn't clear the screen yet
 	
 
-		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+		//sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 
 	} // leaving commhand
 

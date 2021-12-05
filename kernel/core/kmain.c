@@ -101,10 +101,10 @@ void kmain(void)
    // R6 testing purposes ONLY
    com_open(1200);
 
-   int n = 25;
-   char* str = "\x1B[31mThis is a test\n\x1B[39m";
+   // int n = 25;
+   // char* str = "\x1B[31mThis is a test\n\x1B[39m";
 
-   com_write(str,&n);
+   // com_write(str,&n);
    // outb(COM1,'\n');
    // outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
    // set_int(1,1);
@@ -124,7 +124,7 @@ sys_set_free((int (*)(void *))freeMemory);             // set the free memory fu
 
 init_heap(50000);
 
-logo();
+// logo();
 
 
 
@@ -147,7 +147,7 @@ logo();
 }
 void infinite(){
 while(1){
-print("\x1B[95minfinte command massage\x1B[39m\n",25);
+// print("\x1B[95minfinte command massage\x1B[39m\n",25);
 sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 
 }// end of the loop 

@@ -81,7 +81,7 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count);
 
 void PIC(int value);
 
-void com_read (char* buf_p, int* count_p);
+int com_read (char* buf_p, int* count_p);
 
 int com_close (void);
 
