@@ -227,13 +227,13 @@ u32int* sys_call(context* registers){
 		}
 		
 		if (params.op_code == EXIT) {
-			// klogv("sys_call:  EXIT");
+			klogv("sys_call:  EXIT");
 			
 			freePCB(cop);
 		}
 	// added section for R6 request handling
 		if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
-			// klogv("sys_call:  READ / WRITE                    1");
+			klogv("sys_call:  READ / WRITE                    1");
 			cop->stackTop = (unsigned char*)registers;
 
 	    

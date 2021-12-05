@@ -204,7 +204,7 @@ int IOscheduler() {
 
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
-        // klogv("IO Scheduler: after event_flag == 1");
+        klogv("IO Scheduler: inside event_flag == 1");
 
         if (IOcount != 1) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
             request -> process -> state = READY;       // unblock the prcoess first
@@ -212,6 +212,7 @@ int IOscheduler() {
             insertPCB(request -> process);             // reinsert the process back to the correct list
             request = request -> next;
             IOlist.head = request;
+            klogv("IO count != 1");
         }
         // klogv("IO scheduler: after initialization");
 
@@ -221,18 +222,24 @@ int IOscheduler() {
         if (request -> buffer == NULL)
             return -1;
 
-        // klogv("after error check");
+        klogv("after error check");
         if (request -> op == READ) {
-            // klogv("iO scheduler: READ");
+            klogv("iO scheduler: READ");
             com_read(request -> buffer, request -> count);
         }
         if (request -> op == WRITE) {
-            // klogv("iO scheduler: WRITE");
+            klogv("iO scheduler: WRITE");
             com_write(request -> buffer, request -> count);
+        }
+
+        if (IOcount == 1) {
+            klogv("IO count == 1");
+            IOcount++; 
         }
 
         
     } 
+    klogv("IO Scheduler: outside event == 1");
     // if event flag is still 0, then device still being used
     // do nothing instead
     // klogv("IO scheduler: END");
@@ -305,6 +312,8 @@ int com_read (char* buf_p, int* count_p) {
 		return -304;
 	}
 
+    klogv("com_read: after error check");
+
 	memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
 	device.user_buffer = buf_p;
     device.count = count_p;
@@ -319,7 +328,7 @@ int com_read (char* buf_p, int* count_p) {
     device.transferred = 0;
     // transfer characters from ring buffer to user buffer
     int i;
-    for (i = 0; i <= device.internal_loc; i++) {
+    for (i = 0; i < device.internal_loc; i++) {
         device.user_buffer[i] = device.internal_buff[i];
         device.transferred++;
         device.internal_buff[i] = '\0'; // remove character from ring buffer after copying
@@ -328,7 +337,10 @@ int com_read (char* buf_p, int* count_p) {
             break;
     } 
 
+     klogv("com_read: after ring buffer transfer");
+
     if (device.transferred == *count_p) {       // if reached the reading target
+        klogv("com_read: transferred == *count_p");
         device.current_op = IDLE;
         device.event_flag = 1;
         device.user_buffer = NULL;              // user buffer shouldn't point to requestor buffer anymore
