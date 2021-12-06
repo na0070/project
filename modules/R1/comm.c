@@ -45,7 +45,7 @@ void commhand() {
 
 	klogv("commhand\n");
 
-	logo();
+	// logo();
 	
 	// print("Welcome to MPX_core..\n",23);
 	// print("Welcome to MPX_core..\n",23);

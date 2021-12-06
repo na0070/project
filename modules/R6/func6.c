@@ -195,29 +195,29 @@ int IOscheduler() {
     // klogv("IO scheduler: IN");
 
     IOCB* request = IOlist.head;
-    klogv("IO scheduler: after request pointer"); 
+    // klogv("IO scheduler: after request pointer"); 
 
     if (device.port != OPEN || device.current_op != IDLE || request == NULL) {
         // klogv("IO scheduler: -1");
         return -1;
     }
 
-    klogv("IO scheduler: afte error check");
+    // klogv("IO scheduler: after error check");
 
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
-        klogv("IO Scheduler: inside event_flag == 1");
+        // klogv("IO Scheduler: inside event_flag == 1");
 
-        if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
+        // if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
             request -> process -> state = READY;       // unblock the prcoess first
             removePCB(request -> process);             // remove process from current list
             insertPCB(request -> process);             // reinsert the process back to the correct list
             request = request -> next;
             IOlist.head = request;
             // klogv("IO count != 0");
-        }
+        // }
         // klogv("IO scheduler: after initialization");
-
+if (request != NULL) {
         if (request -> op == IDLE || request -> op == EXIT)
             return -1;
 
@@ -238,7 +238,7 @@ int IOscheduler() {
             // klogv("IO count == 0");
             IOcount++; 
         }
-
+}
         
     } 
     // klogv("IO Scheduler: outside event == 1");
@@ -265,6 +265,11 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
         // klogv("loadIOCB: queue is empty");
         queue->head = request;
         queue->tail = request;
+
+        if (code == READ)
+            com_read(buff,count);
+        else 
+            com_write(buff,count);
     }
     else {                              // if queue is not empty
         // klogv("loadIOCB: queue is NOT empty");

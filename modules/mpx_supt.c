@@ -210,10 +210,6 @@ void print(char* str, int size) {
 //sys_call 
 
 u32int* sys_call(context* registers){
-
-
-
-	struct queue* ready  = returnQueue();
 	
 	
 	if (cop != NULL){
@@ -234,7 +230,7 @@ u32int* sys_call(context* registers){
 		}
 	// added section for R6 request handling
 		if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
-			// klogv("sys_call:  READ / WRITE                    1");
+			klogv("sys_call:  READ / WRITE                    1");
 			cop->stackTop = (unsigned char*)registers;
 
 	    
@@ -245,7 +241,7 @@ u32int* sys_call(context* registers){
 
 	  }
 
-	  
+
 		
 	}
 	
@@ -266,7 +262,10 @@ u32int* sys_call(context* registers){
 	 //  }
 	}
 
-	IOscheduler();
+		IOscheduler();
+	  struct queue* ready  = returnQueue();
+
+	
 
 	// call the IO scheduler after each sys_call
         
