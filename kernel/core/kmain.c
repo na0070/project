@@ -124,6 +124,17 @@ void kmain(void)
    //      break;
    // }
 
+   char strr[20];
+   int i = 20;
+
+   com_read(strr,&i);
+   klogv("");
+   com_write(strr,&i);
+
+ while (1) {
+      // (void)a;
+     
+   }
 
 
 

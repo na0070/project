@@ -209,8 +209,9 @@ int IOscheduler() {
         // klogv("IO Scheduler: inside event_flag == 1");
 
         // if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
-            request -> process -> state = READY;       // unblock the prcoess first
+            
             removePCB(request -> process);             // remove process from current list
+            request -> process -> state = READY;       // unblock the prcoess first
             insertPCB(request -> process);             // reinsert the process back to the correct list
             request = request -> next;
             IOlist.head = request;
@@ -234,10 +235,10 @@ if (request != NULL) {
             com_write(request -> buffer, request -> count);
         }
 
-        if (IOcount == 0) {
-            // klogv("IO count == 0");
-            IOcount++; 
-        }
+        // if (IOcount == 0) {
+        //     // klogv("IO count == 0");
+        //     IOcount++; 
+        // }
 }
         
     } 
@@ -321,7 +322,7 @@ int com_read (char* buf_p, int* count_p) {
 		return -304;
 	}
 
-    klogv("com_read: after error check");
+    // klogv("com_read: after error check");
 
 	memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
 	device.user_buffer = buf_p;
@@ -346,10 +347,10 @@ int com_read (char* buf_p, int* count_p) {
             break;
     } 
 
-     klogv("com_read: after ring buffer transfer");
+     // klogv("com_read: after ring buffer transfer");
 
     if (device.transferred == *count_p) {       // if reached the reading target
-        klogv("com_read: transferred == *count_p");
+        // klogv("com_read: transferred == *count_p");
         device.current_op = IDLE;
         device.event_flag = 1;
         device.user_buffer = NULL;              // user buffer shouldn't point to requestor buffer anymore
@@ -557,10 +558,17 @@ void input_h() {
             device.event_flag = 1;      // signal end of operation
             *device.count = device.internal_loc + 1; // return modified count value
             device.internal_loc = 0; // reset current location
-            device.user_buffer = NULL;
-            device.count = NULL;
+            // device.user_buffer = NULL;
+            // device.count = NULL;
+
+            // int i = 20;
+            // char* strr = device.user_buffer;
+            klogv("");
+            com_write(device.user_buffer,device.count);
         }
     }
+
+
     
     
 }

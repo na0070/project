@@ -55,7 +55,7 @@ void commhand() {
 		memset(timeBuff,'\0',SIZEBUFF);
 
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
-		klogv("commhand: after sys_req read");
+		// klogv("commhand: after sys_req read");
 		
 
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
