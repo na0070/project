@@ -45,9 +45,10 @@ void commhand() {
 
 	klogv("commhand\n");
 
-	// logo();
+	logo();
 	
-	// print("Welcome to MPX_core..\n",22);
+	// print("Welcome to MPX_core..\n",23);
+	// print("Welcome to MPX_core..\n",23);
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);

@@ -99,19 +99,29 @@ void kmain(void)
 
 
    // R6 testing purposes ONLY
-   // com_open(1200);
+   com_open(1200);
 
-   // int n = 25;
-   // char* str = "\x1B[31mThis is a test\n\x1B[39m";
+   int n = 26;
+   char* str = "\033[31mThis is a test\n\x1B[39m";
 
+   com_write(str,&n);
    // com_write(str,&n);
+   // print("print test\n",12);
+   // print("print test\n",12);
    // outb(COM1,'\n');
    // outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
    // set_int(1,1);
    // outb(COM1,'a');
    // int a = 1;
+
+   // char string[20];
+   // memset(string,'\0',sizeof(string));
+   // int nn = 20;
+   // com_read(string,&nn);
    // while (1) {
-   //    (void)a;
+   //    // (void)a;
+   //    if (strcpy(string,"test") == 0)
+   //      break;
    // }
 
 

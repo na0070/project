@@ -192,27 +192,29 @@ int com_write(char *buf_p, int *count_p)
 
 // IO scheduler
 int IOscheduler() {
-    klogv("IO scheduler: IN");
+    // klogv("IO scheduler: IN");
 
     IOCB* request = IOlist.head;
     klogv("IO scheduler: after request pointer"); 
 
-    if (device.port != OPEN || device.current_op != IDLE || request == NULL)
+    if (device.port != OPEN || device.current_op != IDLE || request == NULL) {
+        // klogv("IO scheduler: -1");
         return -1;
+    }
 
-    // klogv("IO scheduler: afte error check");
+    klogv("IO scheduler: afte error check");
 
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
 
         klogv("IO Scheduler: inside event_flag == 1");
 
-        if (IOcount != 1) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
+        if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
             request -> process -> state = READY;       // unblock the prcoess first
             removePCB(request -> process);             // remove process from current list
             insertPCB(request -> process);             // reinsert the process back to the correct list
             request = request -> next;
             IOlist.head = request;
-            klogv("IO count != 1");
+            // klogv("IO count != 0");
         }
         // klogv("IO scheduler: after initialization");
 
@@ -222,24 +224,24 @@ int IOscheduler() {
         if (request -> buffer == NULL)
             return -1;
 
-        klogv("after error check");
+        // klogv("after error check");
         if (request -> op == READ) {
-            klogv("iO scheduler: READ");
+            // klogv("iO scheduler: READ");
             com_read(request -> buffer, request -> count);
         }
         if (request -> op == WRITE) {
-            klogv("iO scheduler: WRITE");
+            // klogv("iO scheduler: WRITE");
             com_write(request -> buffer, request -> count);
         }
 
-        if (IOcount == 1) {
-            klogv("IO count == 1");
+        if (IOcount == 0) {
+            // klogv("IO count == 0");
             IOcount++; 
         }
 
         
     } 
-    klogv("IO Scheduler: outside event == 1");
+    // klogv("IO Scheduler: outside event == 1");
     // if event flag is still 0, then device still being used
     // do nothing instead
     // klogv("IO scheduler: END");
@@ -260,17 +262,19 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
     request -> count = count;
 
     if (queue->head == NULL) {           // if queue is empty
+        // klogv("loadIOCB: queue is empty");
         queue->head = request;
         queue->tail = request;
     }
     else {                              // if queue is not empty
+        // klogv("loadIOCB: queue is NOT empty");
         queue->tail->next = request;
         queue->tail = request;
     }
 
     request->next = NULL;
 
-    IOcount++;      // increment number of IO requests made
+    // IOcount++;      // increment number of IO requests made
 
     // klogv("load IOCB: END");
 }
@@ -533,8 +537,9 @@ void input_h() {
 
     else {                              // device is reading (sys_req READ was called)
         // store in requestor buffer instead (user_buffer)
-        device.internal_loc++;      // incremenet first since character at internal_loc already written in buffer
         device.user_buffer[device.internal_loc] = input;
+        device.internal_loc++;      // incremenet first since character at internal_loc already written in buffer
+        
         
 
         // if count not reached and not CR, then reading not complete; return
@@ -542,6 +547,7 @@ void input_h() {
             return;
 
         else {          // otherwise, transfer is complete, signal completion
+            // klogv("test");
             device.current_op = IDLE;
             device.event_flag = 1;      // signal end of operation
             *device.count = device.internal_loc + 1; // return modified count value
