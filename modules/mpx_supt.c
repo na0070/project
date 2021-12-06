@@ -234,7 +234,7 @@ u32int* sys_call(context* registers){
 	// added section for R6 request handling
 		if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
 			klogv("sys_call:  READ / WRITE                    1");
-			cop->stackTop = (unsigned char*)registers;
+			// cop->stackTop = (unsigned char*)registers;
 
 	    
 	    removePCB(cop);             // remove process from current list
@@ -250,7 +250,7 @@ u32int* sys_call(context* registers){
 		
 		old_Context = registers;
 
-		// added section for R6 request handling
+		// // added section for R6 request handling
 		// if (params.op_code == WRITE || params.op_code == READ) {  // write/read request
 		// 	// klogv("sys_call:  READ / WRITE     2");
 		// 	cop->stackTop = (unsigned char*)registers;

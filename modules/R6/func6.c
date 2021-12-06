@@ -192,10 +192,10 @@ int com_write(char *buf_p, int *count_p)
 
 // IO scheduler
 int IOscheduler() {
-    // klogv("IO scheduler: IN");
+    klogv("IO scheduler: IN");
 
     IOCB* request = IOlist.head;
-    // klogv("IO scheduler: after request pointer");
+    klogv("IO scheduler: after request pointer"); 
 
     if (device.port != OPEN || device.current_op != IDLE || request == NULL)
         return -1;
