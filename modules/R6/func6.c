@@ -315,42 +315,6 @@ int com_read (char* buf_p, int* count_p) {
 }
 
 
-
-/*
-
-int second_read (char*	buf_p, int *count_p) {
-
-	// int Second_read (int *count_p) {
-	char input = inb(COM1); 
-	
-		if (device.current_op != READ){
-			// use the internal buffer
-			device.buffer [count_p] = input; 
-			
-				return -1;
-		}
-        // else, use the user buffer
-		
-		buf_p [count_p] = input; 
-		
-		if (count_p	!= 0 && input != '\n'){
-			
-			return -1;
-		}
-		
-		device.current_op = IDLE; 
-		
-			device.event_flag = 1; 
-			
-			return *count_p; 
-}
-
-
-
-*/
-
-
-
   // com close 
 int com_close (void){
 // from the document 
@@ -394,6 +358,7 @@ void second_write() {
             //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
             device.current_op = IDLE; 
             device.event_flag = 1; 
+            inb(COM1);
 
             set_int(1,0); // turn off interrupt
             
@@ -512,6 +477,7 @@ void input_h() {
             // device.count = NULL;
 
             outb(COM1,'\n');
+            inb(COM1);
 
 
             // outb(COM1,'\n');
