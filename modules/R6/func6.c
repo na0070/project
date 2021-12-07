@@ -111,6 +111,7 @@ int com_write(char *buf_p, int *count_p)
     device.user_buffer = buf_p;  // set the device's buffer pointer
     device.count = count_p; // set the device's count pointer
     device.current_op = WRITE; // det the device's current operation
+    device.current_loc = 0;
 
     // step 4: clear the caller's event flag
     device.event_flag = 0; // clear the device's event flag
@@ -121,9 +122,9 @@ int com_write(char *buf_p, int *count_p)
     // *device.count = *device.count - 1;
 
     // step 5: get first character from requestor's buffer and store in output register
-    outb(COM1, *device.user_buffer); // or buf_p[0] if it not happy
+    outb(COM1, device.user_buffer[device.current_loc]); // or buf_p[0] if it not happy
 
-    device.current_loc = 1; // start at beginning of array for second_write to use
+    device.current_loc++; // start at beginning of array for second_write to use
 
 
     // step 6: enable write interrupts
@@ -155,14 +156,19 @@ int IOscheduler() {
         // klogv("IO Scheduler: inside event_flag == 1");
 
         // if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
+
+        IOCB* temp = request;
             
             removePCB(request -> process);             // remove process from current list
             request -> process -> state = READY;       // unblock the prcoess first
             insertPCB(request -> process);             // reinsert the process back to the correct list
             request = request -> next;
+            sys_free_mem(temp);
             IOlist.head = request;
             // klogv("IO count != 0");
         // }
+
+
         // klogv("IO scheduler: after initialization");
         if (request != NULL) {
             if (request -> op == IDLE || request -> op == EXIT)
@@ -471,13 +477,14 @@ void input_h() {
             // klogv("test");
             device.current_op = IDLE;
             device.event_flag = 1;      // signal end of operation
+            device.user_buffer[device.internal_loc-1] = '\0';
             *device.count = device.internal_loc + 1; // return modified count value
             device.internal_loc = 0; // reset current location
             // device.user_buffer = NULL;
             // device.count = NULL;
 
             outb(COM1,'\n');
-            inb(COM1);
+            //inb(COM1);
 
 
             // outb(COM1,'\n');

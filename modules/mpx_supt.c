@@ -200,7 +200,10 @@ void idle()
 // custom print function (uses sys_req WRITE)
 
 void print(char* str, int size) {
-	sys_req(WRITE,DEFAULT_DEVICE,str,&size);
+	char aBuff[ strlen(str)];
+	strcpy(aBuff, str);
+
+	sys_req(WRITE,DEFAULT_DEVICE,aBuff,&size);
 }
 
 

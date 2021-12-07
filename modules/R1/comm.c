@@ -57,9 +57,9 @@ void commhand() {
 		print("$ ", 3);
 
 		// klogv("commhand\n");
+		size = SIZE;
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		// klogv("commhand: after sys_req read");
-		
 
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
 		
@@ -251,8 +251,8 @@ void commhand() {
 		
 		else if (strcmp(token,"clear") == 0) {						// clearing the screen
 			
-			print("\x1B[2J",4); // clear screen
-			print("\x1B[H",3); // send cursor back to (0,0) position (top left corner) before printing main menu
+			print("\x1B[2J",5); // clear screen
+			print("\x1B[H",4); // send cursor back to (0,0) position (top left corner) before printing main menu
 			
 		}
 		
@@ -267,7 +267,7 @@ void commhand() {
 			token = strtok(NULL,split);						// token now is the word after "pcb"
 			
 			if (token == NULL)								// if nothing is entered after "pcb"
-				print("[31mERROR: no command entered after pcb.\x1B[39m\n",40);
+				print("[31mERROR: no command entered after pcb.\x1B[39m\n",48);
 				
 				
 			else if (strcmp(token,"suspend") == 0) {		//suspend command
@@ -323,7 +323,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m\n",24);
+					print("[31mERROR: too few inputs.\x1B[39m\n",33);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -333,14 +333,14 @@ void commhand() {
 					pcb* ptr = findPCB(name);				// find the pcb pointer of the same name and store the pointer for later use
 					
 					if (ptr == NULL)						// if PCB was not found
-						print("[31mERROR: could not find PCB.\x1B[39m\n",27);
+						print("[31mERROR: could not find PCB.\x1B[39m\n",38);
 					
 					else {
 						
 						int code = removePCB(ptr);				// store the function's code to check if error or not after remving PCB from its location
 					
 						if (code == -1)							// error
-						print("[31mERROR: could not remove PCB.\x1B[39m\n",30);
+						print("[31mERROR: could not remove PCB.\x1B[39m\n",36);
 						
 						else {
 							
@@ -360,7 +360,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m",23);
+					print("[31mERROR: too few inputs.\x1B[39m",33);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -368,7 +368,7 @@ void commhand() {
 					token = strtok(NULL,split);				// token = <priority>
 					
 					if (token == NULL)
-						print("[31mERROR: too few inputs.\x1B[39m",23);
+						print("[31mERROR: too few inputs.\x1B[39m",33);
 				
 					else {
 						priority = atoi(token);				// stored pcb's priority
@@ -393,7 +393,7 @@ void commhand() {
 						}
 					
 						else
-							print("\nInvalid PCB",12);
+							print("\nInvalid PCB",13);
 						
 					}
 					
@@ -406,14 +406,14 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m\n",24);
+					print("[31mERROR: too few inputs.\x1B[39m\n",34);
 				
 				else if (strcmp(token,"all") == 0) {
 					
-					print("\nREADY QUEUE:",16);
+					print("\nREADY QUEUE:",14);
 					showqueue("ready");				//prints information of the entire ready queue
 					
-					print("\n\nSUSPENDED READY QUEUE:",26);
+					print("\n\nSUSPENDED READY QUEUE:",25);
 					showqueue("sus_ready");			//prints information of the suspended ready queue
 					
 					print("\n\nBLOCKED QUEUE:",17);
@@ -530,20 +530,20 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("ERROR: too few inputs.\x1B[39m\n",25);
+					print("ERROR: too few inputs.\x1B[39m\n",29);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
 					
 					// deletePCB code here (use "name")
 					if (strcmp(name,"command_handler") == 0)
-						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",55);
 						
 					else if(strcmp(name,"idle_process") == 0)
-						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",55);
 
 					else if (strcmp(name,"alarm_process") == 0)
-						print("[31mERROR: cannot remove this process\x1B[39m\n",36);
+						print("[31mERROR: cannot remove this process\x1B[39m\n",55);
 
 					else {
 
@@ -552,12 +552,12 @@ void commhand() {
 						
 						if (pntr == NULL) {																// Checking if the PCB is unavalibale 
 							
-							print("[31mERROR: PCB couldn't be found.\x1B[39m\n",31);
+							print("[31mERROR: PCB couldn't be found.\x1B[39m\n",41);
 							
 						} 
 
 						else if (strcmp(name,"infinite_process") == 0 && pntr->susp == NOT_SUSPENDED)
-							print("[31mERROR: Trying to remove infinite process requires it to be suspended first\x1B[39m\n",77);
+							print("[31mERROR: Trying to remove infinite process requires it to be suspended first\x1B[39m\n",86);
 
 						else {
 							
@@ -565,12 +565,12 @@ void commhand() {
 							
 							if (error_Check == -1) {
 								
-								print("[31mERROR: PCB couldn't be removed (pcb may not be found)\x1B[39m\n",56);
+								print("[31mERROR: PCB couldn't be removed (pcb may not be found)\x1B[39m\n",65);
 								
 							} else { 
 								
 								freePCB(pntr);															// Delete PCB 
-								print("PCB has been deleted succesfully!\n",36);
+								print("PCB has been deleted succesfully!\n",35);
 							}
 						}
 
@@ -586,7 +586,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",34);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -601,7 +601,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nInvalid PCB\x1B[39m\n",13); // error massage
+					print("\nInvalid PCB\x1B[39m\n",20); // error massage
 					
 					} 
 					
@@ -614,7 +614,7 @@ void commhand() {
 				token = strtok(NULL,split);					// token = <name>
 				
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",34);
 				
 				else {
 					strcpy(name,token);						// stored pcb's name
@@ -629,7 +629,7 @@ void commhand() {
 					
 					}
 					else{
-					print("\nInvalid PCB\x1B[39m\n",13); // error massage
+					print("\nInvalid PCB\x1B[39m\n",20); // error massage
 					
 					} 
 				
@@ -641,7 +641,7 @@ void commhand() {
 
 			// invalid command issued
 			else
-				print("[31mERROR: Unknown pcb command entered.\x1B[39m",36);
+				print("[31mERROR: Unknown pcb command entered.\x1B[39m",46);
 		}	// end pcb commands
 		
 		//=================================================================================================================================
@@ -675,7 +675,7 @@ void commhand() {
 
 			token = strtok(NULL,split);
 			if (token == NULL)
-				print("[31mERROR: too few inputs\x1B[39m\n",23);
+				print("[31mERROR: too few inputs\x1B[39m\n",33);
 
 			else {
 
@@ -684,7 +684,7 @@ void commhand() {
 				token = strtok(NULL,split);
 
 				if (token == NULL)
-					print("[31mERROR: too few inputs\x1B[39m\n",23);
+					print("[31mERROR: too few inputs\x1B[39m\n",33);
 
 				else {
 					int time = atoi(token);
@@ -707,7 +707,7 @@ void commhand() {
 			token = strtok(NULL,split);						// token now is the word after "heap"
 			
 			if (token == NULL)								// if nothing is entered after "heap"
-				print("[31mERROR: no command entered after heap.\x1B[39m\n",41);
+				print("[31mERROR: no command entered after heap.\x1B[39m\n",49);
 
 			// else if (strcmp(token,"init") == 0) {			// initialize the heap
 
@@ -767,12 +767,12 @@ void commhand() {
 			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not, "isEmpty"
 				
 				if (isEmpty()) {
-					print("Heap is empty\n",16);
-					print("\n",1);
+					print("Heap is empty\n",15);
+					print("\n",2);
 				}
 				else {
-					print("Heap is NOT empty\n",20);
-					print("\n",1);
+					print("Heap is NOT empty\n",19);
+					print("\n",2);
 				}
 
 			}
@@ -782,12 +782,12 @@ void commhand() {
 				token = strtok(NULL,split);						// token is now word after "show" (either free or allocated)
 
 				if (token == NULL)
-					print("[31mERROR: too few inputs.\x1B[39m\n",25);
+					print("[31mERROR: too few inputs.\x1B[39m\n",34);
 
 				else if (strcmp(token,"free") == 0) {
 
 					// show free memory here
-					print("free\n",5);
+					print("free\n",6);
 					showList(FREE);
 
 				}
@@ -801,14 +801,14 @@ void commhand() {
 				}
 
 				else												// neither free nor allocated (invalid)
-					print("[31mERROR: invalid input entered.\x1B[39m\n",32);
+					print("[31mERROR: invalid input entered.\x1B[39m\n",41);
 
 
 
 			}
 
 			else
-				print("[31mERROR: Unknown heap command\x1B[39m\n",30);
+				print("[31mERROR: Unknown heap command\x1B[39m\n",39);
 
 		}	// end of heap commands
 
@@ -825,7 +825,7 @@ void commhand() {
 
 			else if (strcmp(token,"red") == 0) {
 
-				print("\x1B[31mred\x1B[39m\n",14);
+				print("\x1B[31mred\x1B[39m\n",15);
 
 
 
@@ -833,7 +833,7 @@ void commhand() {
 
 			else if (strcmp(token,"green") == 0) {
 
-				print("\x1B[41m green\n",18);
+				print("\x1B[41m green\n",13);
 
 
 			}
@@ -851,11 +851,12 @@ void commhand() {
 
 		else {		// an unknown command
 			
+			
 			print("\x1B[91munknown command entered. Please check spelling and/or syntax..\x1B[39m",73);
 			
 		}
 		
-		if (strcmp(token,"clear") != 0) print("\n",1);	// new lines if we didn't clear the screen yet
+		if (strcmp(token,"clear") != 0) print("\n",2);	// new lines if we didn't clear the screen yet
 	
 
 		//sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
@@ -892,42 +893,42 @@ print("welcome to MPX of group\n",25);
               print("                1111 \n",23);
               print("\x1B[32m",6);
               
-            print("                                            666666666666666666666666666666666666666 \n",85);
-            print("                                      6666666666666666666666666666666666666666666666666 \n",89);
-            print("                                   666666666666666666666666666666666666666666666666666666666 \n",94);
-            print("                                666666666666666666666666666666666666666666666666666666666666666 \n",97);
-            print("                              6666666666666666666666666666666666666666666666666666666666666666666 \n",99);
-            print("                            66666666666666666666666666666666666666666666666666666666666666666666666 \n",101);
-            print("                          666666666666666666666666666666666666666666666666666666666666666666666666666 \n",103);
-            print("                         66666666666666666666666666666666666666666666666666666666666666666666666666666 \n",104);
-            print("                       666666666666666666666666666666666666666666666666666666666666666666666666666666666 \n",106);
-            print("                      6666666666666666                        66666                      6666666666666666 \n",107);
-            print("                     66666666666                                66666                          66666666666 \n",108);
-            print("                    666666666                                    66666                            666666666 \n",109);
-            print("                    6666666                                        6666                             6666666 \n",109);
-            print("                   666666                                           6666                              666666 \n",110);
-            print("                   66666                                             6666                              66666 \n",110);
-            print("                  66666                                               6666                              66666 \n",111);
-            print("                  6666                                                6666                              66666 \n",111);
-            print("                  6666                                                66666                              6666 \n",111);
-            print("                  6666                                                66666                              6666 \n",111);
-            print("                  6666                                                66666                              6666 \n",111);
-            print("                  66666                                               66666                              6666 \n",111);
-            print("                   66666                                             666666                              6666 \n",111);
-            print("                   666666                                           6666666                              6666 \n",111);
-            print("                    6666666                                        66666666                              6666 \n",111);
-            print("                    666666666                                    666666666                              66666 \n",111);
-            print("                     66666666666                               66666666666                              6666 \n",110);
-            print("                      6666666666666666                   6666666666666666                              66666 \n",110);
-            print("                       6666666666666666666666666666666666666666666666666                              66666 \n",109);
-            print("                         6666666666666666666666666666666666666666666666                              66666 \n",108);
-            print("                          66666666666666666666666666666666666666666666                              666666 \n",108);
-            print("                            66666666666666666666666666666666666666666                               66666 \n",107);
-            print("                              6666666666666666666666666666666666666                                  666 \n",106);
-            print("                                666666666666666666666666666666666                                     6 \n",105);
-            print("                                   666666666666666666666666666 \n",64);
-            print("                                       66666666666666666 \n",58);
-            print("\x1B[39m",5);
+            print("                                            666666666666666666666666666666666666666 \n",86);
+            print("                                      6666666666666666666666666666666666666666666666666 \n",90);
+            print("                                   666666666666666666666666666666666666666666666666666666666 \n",95);
+            print("                                666666666666666666666666666666666666666666666666666666666666666 \n",98);
+            print("                              6666666666666666666666666666666666666666666666666666666666666666666 \n",100);
+            print("                            66666666666666666666666666666666666666666666666666666666666666666666666 \n",102);
+            print("                          666666666666666666666666666666666666666666666666666666666666666666666666666 \n",104);
+            print("                         66666666666666666666666666666666666666666666666666666666666666666666666666666 \n",105);
+            print("                       666666666666666666666666666666666666666666666666666666666666666666666666666666666 \n",107);
+            print("                      6666666666666666                        66666                      6666666666666666 \n",108);
+            print("                     66666666666                                66666                          66666666666 \n",109);
+            print("                    666666666                                    66666                            666666666 \n",110);
+            print("                    6666666                                        6666                             6666666 \n",110);
+            print("                   666666                                           6666                              666666 \n",111);
+            print("                   66666                                             6666                              66666 \n",111);
+            print("                  66666                                               6666                              66666 \n",112);
+            print("                  6666                                                6666                              66666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  66666                                               66666                              6666 \n",112);
+            print("                   66666                                             666666                              6666 \n",112);
+            print("                   666666                                           6666666                              6666 \n",112);
+            print("                    6666666                                        66666666                              6666 \n",112);
+            print("                    666666666                                    666666666                              66666 \n",112);
+            print("                     66666666666                               66666666666                              6666 \n",111);
+            print("                      6666666666666666                   6666666666666666                              66666 \n",111);
+            print("                       6666666666666666666666666666666666666666666666666                              66666 \n",110);
+            print("                         6666666666666666666666666666666666666666666666                              66666 \n",109);
+            print("                          66666666666666666666666666666666666666666666                              666666 \n",109);
+            print("                            66666666666666666666666666666666666666666                               66666 \n",108);
+            print("                              6666666666666666666666666666666666666                                  666 \n",107);
+            print("                                666666666666666666666666666666666                                     6 \n",106);
+            print("                                   666666666666666666666666666 \n",65);
+            print("                                       66666666666666666 \n",59);
+            print("\x1B[39m",6);
 
 
 }

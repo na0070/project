@@ -316,7 +316,7 @@ void showPCB(pcb* ptr) {
 	print("\nState: ",9);
 	
 	if (ptr->state == READY)													// print the state (based on value)
-		print("READY",7);
+		print("READY",6);
 	
 	else
 		print("BLOCKED",8);
