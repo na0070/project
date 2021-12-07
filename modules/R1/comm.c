@@ -43,17 +43,20 @@ to perform.
 
 void commhand() {
 
-	klogv("commhand\n");
+	
 
 	// logo();
+	print("Welcome to MPX_core..\n",23);
 	
-	// print("Welcome to MPX_core..\n",23);
 	// print("Welcome to MPX_core..\n",23);
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
 		memset(timeBuff,'\0',SIZEBUFF);
 
+		print("$ ", 3);
+
+		// klogv("commhand\n");
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
 		// klogv("commhand: after sys_req read");
 		
@@ -848,7 +851,7 @@ void commhand() {
 
 		else {		// an unknown command
 			
-			print("\x1B[91munknown command entered. Please check spelling and/or syntax..\x1B[39m",64);
+			print("\x1B[91munknown command entered. Please check spelling and/or syntax..\x1B[39m",73);
 			
 		}
 		

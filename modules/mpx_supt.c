@@ -262,6 +262,7 @@ u32int* sys_call(context* registers){
 	 //  }
 	}
 
+
 		IOscheduler();
 	  struct queue* ready  = returnQueue();
 

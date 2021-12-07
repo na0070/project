@@ -101,10 +101,10 @@ void kmain(void)
    // R6 testing purposes ONLY
    com_open(1200);
 
-   int n = 26;
-   char* str = "\033[31mThis is a test\n\x1B[39m";
+   // int n = 26;
+   // char* str = "This is a test\n";
 
-   com_write(str,&n);
+   // com_write(str,&n);
    // com_write(str,&n);
    // print("print test\n",12);
    // print("print test\n",12);
@@ -124,17 +124,21 @@ void kmain(void)
    //      break;
    // }
 
-   char strr[20];
-   int i = 20;
+   // char strr[20];
+   // int i = 20;
 
-   com_read(strr,&i);
-   klogv("");
-   com_write(strr,&i);
+   
+   // com_read(strr,&i);
+   // com_write(strr,&i);
 
- while (1) {
-      // (void)a;
+ // while (1) {
+ //      // (void)a;
+ //  com_write(str,&n);
+ //  outb(COM1,'\n');
+ //  // outb(COM1,'\n');
+
      
-   }
+ //   }
 
 
 

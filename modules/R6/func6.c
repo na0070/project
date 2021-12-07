@@ -4,70 +4,16 @@
 
 // DCB global struct
 
-DCB device;
+DCB device = {.internal_loc = 0};
+
 
 int level = 4;
 u32int original_idt_entry;
 
 IOqueue IOlist = {.head = NULL, .tail = NULL};
 
-int IOcount = 0;        // counter indicating number of requests made (for IO scheduler)
+// int IOcount = 0;        // counter indicating number of requests made (for IO scheduler)
 
-// com open function
-// OLD com_open
-// int com_open(int* eflag_p, int baud_rate) {
-
-//     //1. error checking
-//     if (eflag_p == NULL)
-//         return INVALID_EFLAG;
-
-//     if (baud_rate != 110  && baud_rate != 150  && baud_rate != 300 && 
-//         baud_rate != 600  && baud_rate != 1200 && baud_rate != 2400 && 
-//         baud_rate != 4800 && baud_rate != 9600 && baud_rate != 19200)
-//         return INVALID_BRD;
-
-//     if (device.port == OPEN)
-//         return PORT_ALREADY_OPEN;
-
-//     //2. initialize the DCB
-//     device.port = OPEN;                                 // indicate device is open
-
-//     device.event_flag = eflag_p;                              // device is not being used
-
-//     device.current_op = IDLE;                              // device status is idle
-
-//     memset(device.internal_buff,'\0',sizeof(device.internal_buff));   // initialize and free the DCB's ring buffer
-
-
-//     //3. getting address of current interrupt handler (not needed)
-
-//     //4. compute baud rate divisor (BRD) using the baud rate: BRD = 115200 / baud_rate
-//     int BRD = 115200/baud_rate;
-
-//     //5. store value 0x80 in line control register (base+3) to access BRD registers
-//     outb(COM1+3,0x80);
-
-//     //6. store high order and low order BRD in correct registers
-//     outb(COM1,BRD);    // lower byte stores BRD
-//     outb(COM1+1,0x00); // higher byte stores 0
-
-//     //7. store 0x03 in line control register to access data registers again (base and base+1)
-//     outb(COM1+3,0x03);
-
-//     //8. enable PIC level (level 4)
-//     PIC(0x10);  // set bit 4 of PIC
-
-
-//     //9. store 0x08 in modem control register to allow overall serial port interrupts
-//     outb(COM1+4,0x08);
-
-//     //10. store 0x01 in interrupt enable register to allow input ready interrupts only
-//     outb(COM1+1,0x01);
-
-
-//     //end of function
-//     return 0;       
-// }
 
 int com_open(int baud_rate) {
     // error checking; baud rate is valid, port not already open
@@ -172,7 +118,7 @@ int com_write(char *buf_p, int *count_p)
     device.buffersize = *device.count;      // set device's buffersize to given count value
 
     // change the count (# of characters to print) before enabling the interrupt
-    *device.count = *device.count - 1;
+    // *device.count = *device.count - 1;
 
     // step 5: get first character from requestor's buffer and store in output register
     outb(COM1, *device.user_buffer); // or buf_p[0] if it not happy
@@ -218,28 +164,28 @@ int IOscheduler() {
             // klogv("IO count != 0");
         // }
         // klogv("IO scheduler: after initialization");
-if (request != NULL) {
-        if (request -> op == IDLE || request -> op == EXIT)
-            return -1;
+        if (request != NULL) {
+            if (request -> op == IDLE || request -> op == EXIT)
+                return -1;
 
-        if (request -> buffer == NULL)
-            return -1;
+            if (request -> buffer == NULL)
+                return -1;
 
-        // klogv("after error check");
-        if (request -> op == READ) {
-            // klogv("iO scheduler: READ");
-            com_read(request -> buffer, request -> count);
+            // klogv("after error check");
+            if (request -> op == READ) {
+                // klogv("iO scheduler: READ");
+                com_read(request -> buffer, request -> count);
+            }
+            if (request -> op == WRITE) {
+                // klogv("iO scheduler: WRITE");
+                com_write(request -> buffer, request -> count);
+            }
+
+            // if (IOcount == 0) {
+            //     // klogv("IO count == 0");
+            //     IOcount++; 
+            // }
         }
-        if (request -> op == WRITE) {
-            // klogv("iO scheduler: WRITE");
-            com_write(request -> buffer, request -> count);
-        }
-
-        // if (IOcount == 0) {
-        //     // klogv("IO count == 0");
-        //     IOcount++; 
-        // }
-}
         
     } 
     // klogv("IO Scheduler: outside event == 1");
@@ -267,10 +213,14 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
         queue->head = request;
         queue->tail = request;
 
-        if (code == READ)
+        if (code == READ) {
+            // klogv("LoadIOCB: come_read");
             com_read(buff,count);
-        else 
+        }
+        else {
+             // klogv("LoadIOCB: come_write");
             com_write(buff,count);
+        }
     }
     else {                              // if queue is not empty
         // klogv("loadIOCB: queue is NOT empty");
@@ -324,7 +274,7 @@ int com_read (char* buf_p, int* count_p) {
 
     // klogv("com_read: after error check");
 
-	memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
+	// memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
 	device.user_buffer = buf_p;
     device.count = count_p;
 
@@ -561,10 +511,15 @@ void input_h() {
             // device.user_buffer = NULL;
             // device.count = NULL;
 
-            // int i = 20;
-            // char* strr = device.user_buffer;
-            klogv("");
-            com_write(device.user_buffer,device.count);
+            outb(COM1,'\n');
+
+
+            // outb(COM1,'\n');
+            // klogv("");
+            // outb(COM1,'\n');
+            // com_write(device.user_buffer,device.count);
+
+
         }
     }
 
