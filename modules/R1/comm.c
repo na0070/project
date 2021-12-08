@@ -44,11 +44,8 @@ to perform.
 void commhand() {
 
 	
-
-	// logo();
 	print("Welcome to MPX_core..\n",23);
-	
-	// print("Welcome to MPX_core..\n",23);
+
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
@@ -56,10 +53,8 @@ void commhand() {
 
 		print("$ ", 3);
 
-		// klogv("commhand\n");
-		size = SIZE;
+		size = SIZE;		// reset size before sys_req READ
 		sys_req(READ,DEFAULT_DEVICE,buffer,&size);	// goes to polling
-		// klogv("commhand: after sys_req read");
 
 		token = strtok(buffer,split);	// use strtok() to split the first word from the buffer
 		
@@ -220,10 +215,6 @@ void commhand() {
 				
 				}
 				
-				
-				// sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
-				// print("\x1B[2K",6);	// delete what is printed
-				// print("\b",1);
 				
 
 			} 
@@ -709,60 +700,7 @@ void commhand() {
 			if (token == NULL)								// if nothing is entered after "heap"
 				print("[31mERROR: no command entered after heap.\x1B[39m\n",49);
 
-			// else if (strcmp(token,"init") == 0) {			// initialize the heap
 
-			// 	init_heap(testSize);				// testing to initialize heap w/ 1KB
-
-
-			// }
-
-			// no longer need to manually allocate / free
-
-			// else if (strcmp(token,"allocate") == 0) {
-
-			// 	token = strtok(NULL,split);						// token now is the word after "allocate" which should be size of memory to allocate
-
-
-			// 	if (token == NULL)
-			// 		print("ERROR: size of allocated memory not entered.\n",46);
-
-			// 	else {
-
-			// 		u32int allocSize = atoi(token);
-
-			// 		if (allocSize + sizeof(CMCB) + sizeof(LMCB) >= testSize)
-			// 			print("Size is too big.\n",18);
-
-			// 		else {
-
-			// 			if (allocateMemory(allocSize) == 0)
-			// 				print("ERROR: unable to allocate\n",27);
-
-
-			// 		}
-			// 	}
-				
-
-
-			// }
-
-			// else if (strcmp(token,"free") == 0) {
-
-			// 	token = strtok(NULL,split);			// token is now word after "free" which should be address of the block
-
-			// 	if (token == NULL)
-			// 		print("ERROR: name not specified.\n",29);
-
-			// 	else {
-			// 		// code related to free memory here
-
-			// 		u32int address = atoi(token);
-
-			// 		freeMemory(address);
-
-			// 	}
-
-			// }
 
 			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not, "isEmpty"
 				
@@ -814,39 +752,8 @@ void commhand() {
 
 
 
-
-
-
-
-
-
-
-		// testing
-
-			else if (strcmp(token,"red") == 0) {
-
-				print("\x1B[31mred\x1B[39m\n",15);
-
-
-
-			}
-
-			else if (strcmp(token,"green") == 0) {
-
-				print("\x1B[41m green\n",13);
-
-
-			}
-
-
 			else if (strcmp(token,"logo") == 0)
 				logo();
-
-
-
-
-
-
 
 
 		else {		// an unknown command

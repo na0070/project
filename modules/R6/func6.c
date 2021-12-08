@@ -12,8 +12,6 @@ u32int original_idt_entry;
 
 IOqueue IOlist = {.head = NULL, .tail = NULL};
 
-// int IOcount = 0;        // counter indicating number of requests made (for IO scheduler)
-
 
 int com_open(int baud_rate) {
     // error checking; baud rate is valid, port not already open
@@ -72,26 +70,6 @@ int com_open(int baud_rate) {
 
 int com_write(char *buf_p, int *count_p)
 {
-
-    // get first character from requestor’s buffer
-    // store to output buffer
-    // enable the ‘write’ interrupt
-    // ‘write’ interrupt handler performs rest
-
-    // note: sys_req WRITE also uses buffer pointer and count pointer
-
-    // int count = *count_p;       // store value of count into a local variable for future use
-    // char* ptr = buf_p;          // create a loop pointer sstarting at buffer's location (may not even use it)
-
-    /* from document
-        1-(done) ensure that input parameters  are valid 
-        2-(done) ensure that port is open and idle
-        3-(done) install buf_p and count_p to DCB, and set current status to writing
-        4-(done) clear caller's event flag
-        5-(done) get first character from requestor's buffer and store it in output register
-        6-(done) enable write interrupts by setting bit 1 of interrupt enable register (set register to OR of previous then AND 0x02)
-    */
-
     // step 1: ensure the parameters are valid
     if (buf_p == NULL) // checking if buffer pointer is valid
         return INVALID_BUFF_ADDRESS;
@@ -118,9 +96,6 @@ int com_write(char *buf_p, int *count_p)
 
     device.buffersize = *device.count;      // set device's buffersize to given count value
 
-    // change the count (# of characters to print) before enabling the interrupt
-    // *device.count = *device.count - 1;
-
     // step 5: get first character from requestor's buffer and store in output register
     outb(COM1, device.user_buffer[device.current_loc]); // or buf_p[0] if it not happy
 
@@ -139,24 +114,15 @@ int com_write(char *buf_p, int *count_p)
 
 // IO scheduler
 int IOscheduler() {
-    // klogv("IO scheduler: IN");
 
     IOCB* request = IOlist.head;
-    // klogv("IO scheduler: after request pointer"); 
 
-    if (device.port != OPEN || device.current_op != IDLE || request == NULL) {
-        // klogv("IO scheduler: -1");
+    if (device.port != OPEN || device.current_op != IDLE || request == NULL) 
         return -1;
-    }
 
-    // klogv("IO scheduler: after error check");
 
     if (device.event_flag == 1) {   // if event flag == 1, an IO was completed, go to next request
-
-        // klogv("IO Scheduler: inside event_flag == 1");
-
-        // if (IOcount != 0) {                            // if not the very first request (edge case) otherwise, call com_read/write immediately 
-
+    
         IOCB* temp = request;
             
             removePCB(request -> process);             // remove process from current list
@@ -165,11 +131,7 @@ int IOscheduler() {
             request = request -> next;
             sys_free_mem(temp);
             IOlist.head = request;
-            // klogv("IO count != 0");
-        // }
 
-
-        // klogv("IO scheduler: after initialization");
         if (request != NULL) {
             if (request -> op == IDLE || request -> op == EXIT)
                 return -1;
@@ -177,27 +139,17 @@ int IOscheduler() {
             if (request -> buffer == NULL)
                 return -1;
 
-            // klogv("after error check");
-            if (request -> op == READ) {
-                // klogv("iO scheduler: READ");
+            if (request -> op == READ) 
                 com_read(request -> buffer, request -> count);
-            }
-            if (request -> op == WRITE) {
-                // klogv("iO scheduler: WRITE");
+            
+            if (request -> op == WRITE) 
                 com_write(request -> buffer, request -> count);
-            }
-
-            // if (IOcount == 0) {
-            //     // klogv("IO count == 0");
-            //     IOcount++; 
-            // }
+ 
         }
         
     } 
-    // klogv("IO Scheduler: outside event == 1");
     // if event flag is still 0, then device still being used
     // do nothing instead
-    // klogv("IO scheduler: END");
     return 0;
 }
 
@@ -205,9 +157,9 @@ int IOscheduler() {
 void loadIOCB(pcb* proc, int code, char* buff, int* count) {
 
     IOqueue* queue = &IOlist;
-    // klogv("load IOCB: BEFORE sys_alloc_mem");
+
     IOCB* request = (IOCB*)sys_alloc_mem(sizeof(IOCB));     // initialize the IOCB with given values
-    // klogv("load IOCB: AFTER sys_alloc_mem");
+
     request -> device = &device;
     request -> process = proc;
     request -> op = code;
@@ -215,30 +167,23 @@ void loadIOCB(pcb* proc, int code, char* buff, int* count) {
     request -> count = count;
 
     if (queue->head == NULL) {           // if queue is empty
-        // klogv("loadIOCB: queue is empty");
+
         queue->head = request;
         queue->tail = request;
 
-        if (code == READ) {
-            // klogv("LoadIOCB: come_read");
+        if (code == READ) 
             com_read(buff,count);
-        }
-        else {
-             // klogv("LoadIOCB: come_write");
+        
+        else 
             com_write(buff,count);
-        }
+        
     }
     else {                              // if queue is not empty
-        // klogv("loadIOCB: queue is NOT empty");
         queue->tail->next = request;
         queue->tail = request;
     }
 
     request->next = NULL;
-
-    // IOcount++;      // increment number of IO requests made
-
-    // klogv("load IOCB: END");
 }
 
 // function to change the PIC level
@@ -278,8 +223,6 @@ int com_read (char* buf_p, int* count_p) {
 		return -304;
 	}
 
-    // klogv("com_read: after error check");
-
 	// memset(device.user_buffer, '\0', *count_p); // initialize the user buffer to be filled 
 	device.user_buffer = buf_p;
     device.count = count_p;
@@ -303,10 +246,9 @@ int com_read (char* buf_p, int* count_p) {
             break;
     } 
 
-     // klogv("com_read: after ring buffer transfer");
 
     if (device.transferred == *count_p) {       // if reached the reading target
-        // klogv("com_read: transferred == *count_p");
+
         device.current_op = IDLE;
         device.event_flag = 1;
         device.user_buffer = NULL;              // user buffer shouldn't point to requestor buffer anymore
@@ -352,13 +294,12 @@ void second_write() {
 	    return;// if 
 
     else {
-    //2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
+    //  2. Otherwise, if the count has not been exhausted, get the next character from the requestor's output buffer and store it in the output register. Return without signaling completion. 
 
         if (device.current_loc < device.buffersize ){
             char data = device.user_buffer[device.current_loc];
             outb(COM1,data);
             device.current_loc++;
-            // device.current_loc = device.current_loc+1;
         }// if 
         else{
             //  3. Otherwise, all characters have been transferred. Reset the status to idle. Set the event flag and return the count value. Disable write interrupts by clearing bit 1 in the interrupt enable register.
@@ -392,42 +333,22 @@ void top_handler() {
             else if (bit1 && !bit2) {
                 // 01 : output
                 //call output handler
-                
-                // outb(COM1,'w');
-                // outb(COM1,':');
-                // outb(COM1,' ');
                 second_write();
-                // input_h();
-
             }
 
             else if (!bit1 && bit2) {
                 // 10: input
                 // call input handler
-                // outb(COM1,'r');
-                // outb(COM1,':');
-                // outb(COM1,' ');
                 input_h();
             }
             else if (bit1 && bit2){
                 // line interrupt
                 inb(COM1+5);
             }
-            //klogv("int");
-
-        
-
-            // char in = inb(COM1);
-            // outb(COM1,in);
-            // (void) in;
-
-
 
         sti();  // enable all interrupts
 
     }
-
-        // set_int(1,0);   // for now, turn off write interrupt (removed later)
 
     outb(0x20,0x20);        // EOI
 }
@@ -474,25 +395,15 @@ void input_h() {
             return;
 
         else {          // otherwise, transfer is complete, signal completion
-            // klogv("test");
             device.current_op = IDLE;
             device.event_flag = 1;      // signal end of operation
             device.user_buffer[device.internal_loc-1] = '\0';
             *device.count = device.internal_loc + 1; // return modified count value
             device.internal_loc = 0; // reset current location
-            // device.user_buffer = NULL;
-            // device.count = NULL;
+
 
             outb(COM1,'\n');
-            //inb(COM1);
-
-
-            // outb(COM1,'\n');
-            // klogv("");
-            // outb(COM1,'\n');
-            // com_write(device.user_buffer,device.count);
-
-
+  
         }
     }
 

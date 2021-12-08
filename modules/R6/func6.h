@@ -11,23 +11,14 @@
 
 // error codes definitions
 
-#define INVALID_EFLAG         -101
-#define INVALID_BRD           -102
-#define PORT_ALREADY_OPEN     -103
+#define INVALID_EFLAG            -101
+#define INVALID_BRD              -102
+#define PORT_ALREADY_OPEN        -103
 
-
-
-#define PORT_NOT_OPEN           -401
-#define INVALID_BUFF_ADDRESS    -402
-#define INVALID_COUNT_P         -403
-#define DEVICE_BUSY             -404
-
-
-
-// DCB codes
-// #define IDLING      0
-// #define WRITING     1
-// #define READING     2
+#define PORT_NOT_OPEN            -401
+#define INVALID_BUFF_ADDRESS     -402
+#define INVALID_COUNT_P          -403
+#define DEVICE_BUSY              -404
 
 #define NOT_OPEN    0
 #define OPEN        1
@@ -47,7 +38,6 @@ typedef struct dcb {
   int buffersize; // total numbe of charecter to read and write  
   int transferred; // number of charecer already transferred 
    int* address; // number of charcter to transfer the 4th parameter in the call of sys_req  
-    // struct dcb* next;  // pointer to next DCB
 } DCB;
 
 
@@ -85,10 +75,7 @@ int com_read (char* buf_p, int* count_p);
 
 int com_close (void);
 
-// void first_handler();
-
 int second_read ();
-// int Second_read (int *count_p);
 
 void second_write();
 
