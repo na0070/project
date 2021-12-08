@@ -43,7 +43,9 @@ to perform.
 
 void commhand() {
 	
-	print("Welcome to MPX_core..\n",24);
+	// print("Welcome to MPX_core..\n",24);
+
+	logo();
 	while (TRUE) {							// Keep asking for inputs
 		memset(buffer,'\0',SIZE);			// set aside memory for the buffer (and wipe it clean)
 		memset(dateBuff,'\0',SIZEBUFF);
@@ -210,11 +212,6 @@ void commhand() {
 					break;
 				
 				}
-				
-				
-				// sys_req(READ,DEFAULT_DEVICE,&input,&size);	// goes to polling 
-				// print("\x1B[2K",6);	// delete what is printed
-				// print("\b",1);
 				
 
 			} 
@@ -700,60 +697,7 @@ void commhand() {
 			if (token == NULL)								// if nothing is entered after "heap"
 				print("[31mERROR: no command entered after heap.\x1B[39m\n",41);
 
-			// else if (strcmp(token,"init") == 0) {			// initialize the heap
-
-			// 	init_heap(testSize);				// testing to initialize heap w/ 1KB
-
-
-			// }
-
-			// no longer need to manually allocate / free
-
-			// else if (strcmp(token,"allocate") == 0) {
-
-			// 	token = strtok(NULL,split);						// token now is the word after "allocate" which should be size of memory to allocate
-
-
-			// 	if (token == NULL)
-			// 		print("ERROR: size of allocated memory not entered.\n",46);
-
-			// 	else {
-
-			// 		u32int allocSize = atoi(token);
-
-			// 		if (allocSize + sizeof(CMCB) + sizeof(LMCB) >= testSize)
-			// 			print("Size is too big.\n",18);
-
-			// 		else {
-
-			// 			if (allocateMemory(allocSize) == 0)
-			// 				print("ERROR: unable to allocate\n",27);
-
-
-			// 		}
-			// 	}
-				
-
-
-			// }
-
-			// else if (strcmp(token,"free") == 0) {
-
-			// 	token = strtok(NULL,split);			// token is now word after "free" which should be address of the block
-
-			// 	if (token == NULL)
-			// 		print("ERROR: name not specified.\n",29);
-
-			// 	else {
-			// 		// code related to free memory here
-
-			// 		u32int address = atoi(token);
-
-			// 		freeMemory(address);
-
-			// 	}
-
-			// }
+			
 
 			else if (strcmp(token,"check") == 0) {			// check if heap is empty or not, "isEmpty"
 				
@@ -803,42 +747,7 @@ void commhand() {
 
 		}	// end of heap commands
 
-
-
-
-
-
-
-
-
-
-		// testing
-
-			else if (strcmp(token,"red") == 0) {
-
-				print("\x1B[31mred\x1B[39m\n",14);
-
-
-
-			}
-
-			else if (strcmp(token,"green") == 0) {
-
-				print("\x1B[41m green\n",18);
-
-
-			}
-
-
-
-
-
-
-
-
-
-
-
+		
 		else {		// an unknown command
 			
 			print("\x1B[91munknown command entered. Please check spelling and/or syntax..\x1B[39m",64);
@@ -854,5 +763,69 @@ void commhand() {
 
 
 	
+
+}
+
+// function to print custom logo
+void logo() {
+
+print("welcome to MPX of group\n",25);
+  print("\x1B[31m",6);
+	          print("                1111 \n",23);
+              print("                1111                                                                  1 \n",90);
+              print("                1111                                                                  111 \n",92);
+              print("                1111                                                                  11111 \n",94);
+              print("                1111111111111111111111111111111111111111111111111111111111111111111111111111 \n",95);
+              print("                111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",97);
+              print("                11111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",99);
+              print("                1111111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",101);
+              print("                11111111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",102);
+              print("                1111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",104);
+              print("                111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",106);
+              print("                11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \n",108);
+              print("                1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111\n",109);
+              print("                1111 \n",23);
+              print("                1111 \n",23);
+              print("                1111 \n",23);
+              print("                1111 \n",23);
+              print("\x1B[32m",6);
+              
+            print("                                            666666666666666666666666666666666666666 \n",86);
+            print("                                      6666666666666666666666666666666666666666666666666 \n",90);
+            print("                                   666666666666666666666666666666666666666666666666666666666 \n",95);
+            print("                                666666666666666666666666666666666666666666666666666666666666666 \n",98);
+            print("                              6666666666666666666666666666666666666666666666666666666666666666666 \n",100);
+            print("                            66666666666666666666666666666666666666666666666666666666666666666666666 \n",102);
+            print("                          666666666666666666666666666666666666666666666666666666666666666666666666666 \n",104);
+            print("                         66666666666666666666666666666666666666666666666666666666666666666666666666666 \n",105);
+            print("                       666666666666666666666666666666666666666666666666666666666666666666666666666666666 \n",107);
+            print("                      6666666666666666                        66666                      6666666666666666 \n",108);
+            print("                     66666666666                                66666                          66666666666 \n",109);
+            print("                    666666666                                    66666                            666666666 \n",110);
+            print("                    6666666                                        6666                             6666666 \n",110);
+            print("                   666666                                           6666                              666666 \n",111);
+            print("                   66666                                             6666                              66666 \n",111);
+            print("                  66666                                               6666                              66666 \n",112);
+            print("                  6666                                                6666                              66666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  6666                                                66666                              6666 \n",112);
+            print("                  66666                                               66666                              6666 \n",112);
+            print("                   66666                                             666666                              6666 \n",112);
+            print("                   666666                                           6666666                              6666 \n",112);
+            print("                    6666666                                        66666666                              6666 \n",112);
+            print("                    666666666                                    666666666                              66666 \n",112);
+            print("                     66666666666                               66666666666                              6666 \n",111);
+            print("                      6666666666666666                   6666666666666666                              66666 \n",111);
+            print("                       6666666666666666666666666666666666666666666666666                              66666 \n",110);
+            print("                         6666666666666666666666666666666666666666666666                              66666 \n",109);
+            print("                          66666666666666666666666666666666666666666666                              666666 \n",109);
+            print("                            66666666666666666666666666666666666666666                               66666 \n",108);
+            print("                              6666666666666666666666666666666666666                                  666 \n",107);
+            print("                                666666666666666666666666666666666                                     6 \n",106);
+            print("                                   666666666666666666666666666 \n",65);
+            print("                                       66666666666666666 \n",59);
+            print("\x1B[39m",6);
+
 
 }
