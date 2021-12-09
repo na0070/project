@@ -101,45 +101,6 @@ void kmain(void)
    // R6 testing purposes ONLY
    com_open(1200);
 
-   // int n = 26;
-   // char* str = "This is a test\n";
-
-   // com_write(str,&n);
-   // com_write(str,&n);
-   // print("print test\n",12);
-   // print("print test\n",12);
-   // outb(COM1,'\n');
-   // outb(COM1+1,inb(COM1+1) | (1<<1)); // enable write interrupt
-   // set_int(1,1);
-   // outb(COM1,'a');
-   // int a = 1;
-
-   // char string[20];
-   // memset(string,'\0',sizeof(string));
-   // int nn = 20;
-   // com_read(string,&nn);
-   // while (1) {
-   //    // (void)a;
-   //    if (strcpy(string,"test") == 0)
-   //      break;
-   // }
-
-   // char strr[20];
-   // int i = 20;
-
-   
-   // com_read(strr,&i);
-   // com_write(strr,&i);
-
- // while (1) {
- //      // (void)a;
- //  com_write(str,&n);
- //  outb(COM1,'\n');
- //  // outb(COM1,'\n');
-
-     
- //   }
-
 
 
 // R5 phase 2 work
@@ -165,6 +126,8 @@ init_heap(50000);
 
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
+
+   com_close();
    
    /* Shutdown Procedure */
    klogv("Shutdown complete. You may now turn off the machine. (QEMU: C-a x)");
