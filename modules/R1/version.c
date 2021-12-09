@@ -11,6 +11,6 @@
 @param none
 */
 void version(){
-print("R5 published 11/04/2021 \n",26);
+print("R6 published 12/07/2021 \n",26);
 
 }
